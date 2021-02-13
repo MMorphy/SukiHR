@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Lokali</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#siteTable').DataTable();
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Lokali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="siteTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Ime</th>
+						<th>Adresa</th>
+						<th>Zadnji Obračun</th>
+						<th>Dug (+ dug / - preplata)</th>
+						<th>Aparati</th>
+						<th>Povuci</th>
+						<th>Izmjeni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="site : ${sites}">
+						<td th:text="${site.id}"></td>
+						<td th:text="${site.name}"></td>
+						<td th:text="${site.address}"></td>
+						<td th:text="${site.lastVisit}"></td>
+						<td
+							th:text="${siteDebt == ''}? 0:${#numbers.formatDecimal(site.debt, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td><a th:if="${site.devices != null}"
+							th:href="@{'/device/' + ${site.id}}"> Aparati</a> <span
+							th:if="${site.devices == null}"> Nema aparata </span></td>
+						<td>
+							<form th:action="@{'/site/disable/' + ${site.id}}" method="post"
+								onsubmit="return confirm('Povuci lokal?');">
+
+								<button>Povuci</button>
+							</form>
+
+						</td>
+						<td>
+							<form th:action="@{'/site/edit/' + ${site.id}}" method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<form th:action="@{/site/add/}" method="get">
+			<button>Dodaj novi lokal</button>
+		</form>
+
+	</div>
+
+</body>
+</html>

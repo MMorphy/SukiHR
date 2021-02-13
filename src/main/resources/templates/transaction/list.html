@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Transactions</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#transTable').DataTable();
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Transakcije</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="transTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Korisnik</th>
+						<th>Datum</th>
+						<th>Lokal</th>
+						<th>Iznos</th>
+						<th>Napomena</th>
+						<th>Aparati</th>
+						<th>Briši</th>
+						<th>Izmjeni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="trans : ${transactions}">
+						<td th:text="${trans.id}"></td>
+						<td th:text="${trans.createdBy.username}"></td>
+						<td th:text="${trans.createDate}"></td>
+						<td th:text="${trans.site !=null ? trans.site.name : ''}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td th:text="${trans.description}"></td>
+						<td><a th:if="${trans.site != null}"
+							th:href="@{'/device/' + ${trans.site.id}}"> Aparati</a> <span
+							th:if="${trans.site == null}"> Nema aparata </span></td>
+						<td>
+							<form th:action="@{'/transaction/delete/' + ${trans.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+						</td>
+						<td>
+							<!-- 							<form th:action="@{'/trans/edit/' + ${trans.id}}" method="get">
+ -->
+							<button>Izmjeni</button> <!-- 							</form>
+ -->
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+
+
+</body>
+</html>

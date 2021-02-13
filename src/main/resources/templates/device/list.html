@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Aparati</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#deviceTable').DataTable();
+			$('#siteTable').DataTable();
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Aparati u lokalima</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="siteTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Lokal</th>
+						<th>Aparati</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="site : ${sites}">
+						<td th:text="${site.id}"></td>
+						<td th:text="${site.name}"></td>
+						<td><span th:if="${#lists.isEmpty(site.devices)}">Nema
+								aparata</span> <span th:if="${not #lists.isEmpty(site.devices)}"
+							th:each="device, iterStat: ${site.devices}"
+							th:text="!${iterStat.last} ? ${device.device.name} + ' ' + ${device.amount} + ' / ' : ${device.device.name} + ' ' + ${device.amount}"></span>
+
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+
+	<div class="col-md-12" sec:authorize="hasRole('ROLE_ADMIN')">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Aparati na stanju</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="deviceTable">
+				<thead>
+					<tr>
+						<th>Aparat</th>
+						<th>Ukupno</th>
+						<th>U lokalu</th>
+						<th>Stanje</th>
+						<th>Dodaj</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="device : ${devices}">
+						<td th:text="${device.name}"></td>
+						<td th:text="${device.amount}"></td>
+						<td th:text="${device.inUse}"></td>
+						<td th:text="${device.amount} - ${device.inUse}"></td>
+						<td>
+							<form th:action="@{'/device/add/' + ${device.id}}" method="get">
+								<button>Dodaj</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<form th:action="@{/device/add/}" method="get">
+		<button>Dodaj novi aparat</button>
+	</form>
+</body>
+</html>
