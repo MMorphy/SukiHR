@@ -10,27 +10,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import hr.petkovic.iehr.entity.Device;
+import hr.petkovic.iehr.entity.DeviceHistory;
+import hr.petkovic.iehr.service.DeviceHistoryService;
 import hr.petkovic.iehr.service.DeviceService;
 import hr.petkovic.iehr.service.SiteService;
-import hr.petkovic.iehr.service.UserService;
 
 @Controller
 @RequestMapping("/device")
 public class DeviceController {
-	Logger logger = LoggerFactory.getLogger(UserService.class);
+	Logger logger = LoggerFactory.getLogger(DeviceController.class);
 
 	private DeviceService deviceSer;
 	private SiteService siteSer;
+	private DeviceHistoryService dhSer;
 
-	public DeviceController(DeviceService deviceService, SiteService siteService) {
+	public DeviceController(DeviceService deviceService, SiteService siteService, DeviceHistoryService dhService) {
 		deviceSer = deviceService;
 		siteSer = siteService;
+		dhSer = dhService;
 	}
 
 	@GetMapping("/")
 	public String getAllDevices(Model model) {
 		model.addAttribute("sites", siteSer.findAllActiveSites());
 		model.addAttribute("devices", deviceSer.findAllDevices());
+		model.addAttribute("history", dhSer.findAllDeviceHistory());
 		return "device/list";
 	}
 
@@ -53,9 +57,19 @@ public class DeviceController {
 	@PostMapping(value = { "/add/" })
 	public String addDevice(Device addDevice) {
 		Device dev = deviceSer.findDeviceByName(addDevice.getName());
+		DeviceHistory devHistory = new DeviceHistory();
+		devHistory.setDescription("Novi aparat");
 		if (dev == null) {
+			devHistory.setDevice(addDevice);
+			devHistory.setAmount(addDevice.getAmount());
+			dhSer.saveDeviceHistory(devHistory);
+			addDevice.getHistory().add(devHistory);
 			deviceSer.saveDevice(addDevice);
 		} else {
+			devHistory.setDevice(dev);
+			devHistory.setAmount(addDevice.getAmount());
+			dhSer.saveDeviceHistory(devHistory);
+			dev.getHistory().add(devHistory);
 			deviceSer.increaseNumberOfDevicesAndSave(dev, addDevice.getAmount());
 		}
 		return "redirect:/device/";

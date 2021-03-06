@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,40 +12,40 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import hr.petkovic.iehr.DTO.TransactionDebtDTO;
 import hr.petkovic.iehr.entity.Transaction;
 import hr.petkovic.iehr.entity.TransactionType;
 import hr.petkovic.iehr.service.SiteService;
 import hr.petkovic.iehr.service.TransactionService;
 import hr.petkovic.iehr.service.TransactionTypeService;
-import hr.petkovic.iehr.service.UserService;
 
 @Controller
 @RequestMapping("/transaction")
 public class TransactionController {
-	Logger logger = LoggerFactory.getLogger(UserService.class);
+	Logger logger = LoggerFactory.getLogger(TransactionController.class);
 
-	private SiteService siteSer;
 	private TransactionService transSer;
 	private TransactionTypeService typeSer;
+	private SiteService siteSer;
 
-	public TransactionController(SiteService siteService, TransactionService transService,
-			TransactionTypeService typeService) {
-		siteSer = siteService;
+	public TransactionController(TransactionService transService, TransactionTypeService typeService,
+			SiteService siteService) {
 		transSer = transService;
 		typeSer = typeService;
+		siteSer = siteService;
 	}
 
 	@GetMapping("/income/add")
 	public String getIncomeAdding(Model model) {
-		model.addAttribute("addTrans", new TransactionDebtDTO());
-		model.addAttribute("sites", siteSer.findAllSites());
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		model.addAttribute("addTrans", new Transaction());
+		model.addAttribute("sites", transSer.makeFullSiteList(siteSer.findAllSitesByUsernameRole(username),
+				transSer.findAllSitesWithDebtForUsername(username)));
 		return "transaction/income";
 	}
 
 	@PostMapping("/income/add")
-	public String addIncome(TransactionDebtDTO addTrans) {
-		transSer.saveIncomeWithLoggedInUserAndAddDebtRepay(addTrans.getTrans(), addTrans.getDebtRepay());
+	public String addIncome(Transaction addTrans) {
+		transSer.saveIncomeWithLoggedInUserAndAddDebtRepay(addTrans, addTrans.getDebt());
 		return "redirect:/";
 	}
 
@@ -77,10 +78,6 @@ public class TransactionController {
 		return "transaction/list";
 	}
 
-	//TODO edit transakcija
-	
-	
-	
 	@PostMapping("/delete/{id}")
 	public String deleteTransaction(@PathVariable("id") Long id) {
 		transSer.deleteTransById(id);

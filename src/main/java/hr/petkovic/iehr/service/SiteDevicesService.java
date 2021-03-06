@@ -21,4 +21,7 @@ public class SiteDevicesService {
 		return this.sdRepo.save(sd);
 	}
 
+	public void delete(SiteDevices sd) {
+		this.sdRepo.delete(sd);
+	}
 }

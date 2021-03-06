@@ -29,17 +29,10 @@
 					<div class="collapse navbar-collapse" id="myNavbar">
 						<ul class="nav navbar-nav">
 							<li><a th:href="@{/}">Home</a></li>
-<!-- 														<li class="dropdown" sec:authorize="hasRole('ROLE_ADMIN')"><a
-								class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics
-									<span class="caret"></span>
-							</a>
-								<ul class="dropdown-menu">
-									<li><a th:href="@{/statistics/planned/}">
-											Planned/Achieved</a></li>
-									<li><a th:href="@{/statistics/time/}"> Time comparison</a></li>
-
-								</ul></li> -->
+							<li><a th:text="@{'Saldo:' + ${session.saldo} + ' HRK'}"></a></li>
 						</ul>
+
+
 						<ul class="nav navbar-nav navbar-right">
 							<li sec:authorize="isAuthenticated()"><a
 								href="javascript: document.logoutForm.submit()"> <span

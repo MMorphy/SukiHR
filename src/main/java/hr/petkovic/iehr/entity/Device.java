@@ -1,6 +1,8 @@
 package hr.petkovic.iehr.entity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -34,6 +36,9 @@ public class Device {
 	@OneToMany(mappedBy = "device")
 	private Set<SiteDevices> sites;
 
+	@OneToMany(mappedBy = "device")
+	private List<DeviceHistory> history = new ArrayList<>();
+
 	// Constructors
 	public Device() {
 		this.sites = new HashSet<SiteDevices>();
@@ -44,13 +49,15 @@ public class Device {
 		this.name = name;
 	}
 
-	public Device(Long id, String name, Integer amount, Integer inUse, Set<SiteDevices> sites) {
+	public Device(Long id, String name, Integer amount, Integer inUse, Set<SiteDevices> sites,
+			List<DeviceHistory> history) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.amount = amount;
 		this.inUse = inUse;
 		this.sites = sites;
+		this.history = history;
 	}
 
 	// Getters and Setters
@@ -92,6 +99,14 @@ public class Device {
 
 	public void setSites(Set<SiteDevices> sites) {
 		this.sites = sites;
+	}
+
+	public List<DeviceHistory> getHistory() {
+		return history;
+	}
+
+	public void setHistory(List<DeviceHistory> history) {
+		this.history = history;
 	}
 
 }

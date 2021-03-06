@@ -13,4 +13,6 @@ public interface SiteRepo extends JpaRepository<Site, Long> {
 	List<Site> findAllByActive(Boolean active);
 
 	List<Site> findAllByUser_usernameAndActive(String username, Boolean active);
+
+	 
 }

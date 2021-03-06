@@ -73,4 +73,15 @@ public class DeviceService {
 			return null;
 		}
 	}
+
+	public Device decreaseInUse(Device device, Integer amount) {
+		Device dev = deviceRepo.findById(device.getId()).get();
+		if (dev != null) {
+			dev.setInUse(dev.getInUse() - amount);
+			return saveDevice(dev);
+		} else {
+			logger.error("Want to increase usage of device " + device.getName() + " which can't be found in DB!");
+			return null;
+		}
+	}
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Dugovanja</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#debtTable').DataTable();
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Dugovanja</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="debtTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Lokal</th>
+						<th>Datum</th>
+						<th>Iznos (+ ako vraća / - ako se zadužuje)</th>
+						<th>Korisnik</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="debt : ${debts}">
+						<td th:text="${debt.id}"></td>
+						<td th:text="${debt.transaction.site.name}"></td>
+						<td th:text="${debt.createDate}"></td>
+						<td th:text="${debt.amount}"></td>
+						<td th:text="${debt.transaction.createdBy.username}"></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+
+
+</body>
+</html>

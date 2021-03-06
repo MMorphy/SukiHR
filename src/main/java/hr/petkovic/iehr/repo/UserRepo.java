@@ -10,6 +10,7 @@ import hr.petkovic.iehr.entity.User;
 public interface UserRepo extends JpaRepository<User, Long> {
 
 	Optional<User> findByUsername(String username);
-	
-	List<User> findByEnabled (Boolean enabled);
+
+	List<User> findByEnabled(Boolean enabled);
+
 }

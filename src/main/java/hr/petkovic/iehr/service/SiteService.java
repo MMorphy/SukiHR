@@ -8,7 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import hr.petkovic.iehr.DTO.SiteAndDevicesDTO;
+import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
 import hr.petkovic.iehr.entity.Device;
+import hr.petkovic.iehr.entity.Role;
 import hr.petkovic.iehr.entity.Site;
 import hr.petkovic.iehr.entity.SiteDeviceKey;
 import hr.petkovic.iehr.entity.SiteDevices;
@@ -22,13 +24,15 @@ public class SiteService {
 	private DeviceService deviceSer;
 	private SiteDevicesService sdSer;
 	private UserService userSer;
+	private TransactionService transSer;
 
 	public SiteService(SiteRepo siteRepo, DeviceService deviceService, SiteDevicesService sdService,
-			UserService userService) {
+			UserService userService, TransactionService transService) {
 		this.siteRepo = siteRepo;
 		deviceSer = deviceService;
 		sdSer = sdService;
 		userSer = userService;
+		transSer = transService;
 	}
 
 	public Site findSiteById(Long id) {
@@ -48,8 +52,13 @@ public class SiteService {
 		return siteRepo.findAllByActive(true);
 	}
 
-	public List<Site> findAllSitesForUsername(String username) {
-		return siteRepo.findAllByUser_username(username);
+	public List<Site> findAllSitesByUsernameRole(String username) {
+		for (Role r : userSer.findUserByUsername(username).getRoles()) {
+			if (r.getName().equals("ROLE_ADMIN")) {
+				return findAllSites();
+			}
+		}
+		return findAllActiveSitesForUsername(username);
 	}
 
 	public List<Site> findAllActiveSitesForUsername(String username) {

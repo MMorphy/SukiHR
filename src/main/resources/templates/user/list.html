@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Korisnici</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#userTable').DataTable();
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Korisnici</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="userTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Username</th>
+						<th>Password</th>
+						<th>Saldo</th>
+						<th>Lokali</th>
+						<th>Dugovanja</th>
+						<th>Transakcije</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${users}">
+						<td th:text="${user.user.id}"></td>
+						<td th:text="${user.user.username}"></td>
+						<td th:text="${user.user.password}"></td>
+						<td
+							th:text="${user.user.saldo == ''}? 0:${#numbers.formatDecimal(user.user.saldo, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td><a th:if="${user.user.sites != null}"
+							th:href="@{'/site/' + ${user.user.username}}"> Lokali</a> <span
+							th:if="${user.user.sites == null}"> Nema lokala </span></td>
+						<td><a th:if="${user.totalDebt != null}"
+							th:href="@{'/debt/' + ${user.user.username}}"
+							th:text="${user.totalDebt}"> </a> <span
+							th:if="${user.user.sites == null}"> Nema dugovanja </span></td>
+						<td><a th:if="${user.user.transactions != null}"
+							th:href="@{'/transaction/' + ${user.user.username}}"> Transakcije
+						</a> <span th:if="${user.user.transactions == null}"> Nema transakcija </span></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+
+
+</body>
+</html>

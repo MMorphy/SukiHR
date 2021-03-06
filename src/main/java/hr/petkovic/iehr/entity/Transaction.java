@@ -2,13 +2,16 @@ package hr.petkovic.iehr.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,8 +45,14 @@ public class Transaction {
 	private Float amount;
 
 	@ManyToOne(targetEntity = Site.class)
-	@JoinColumn(name="fk_site")
+	@JoinColumn(name = "fk_site")
 	private Site site;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinTable(name = "transaction_debt", joinColumns = {
+			@JoinColumn(name = "transaction_id", referencedColumnName = "id") }, inverseJoinColumns = {
+					@JoinColumn(name = "debt_id", referencedColumnName = "id") })
+	private Debt debt;
 
 	// Utility methods
 	public void addType(TransactionType type) {
@@ -69,8 +78,8 @@ public class Transaction {
 		super();
 	}
 
-	public Transaction(Long id, Date createDate, String description, TransactionType type, User createdBy,
-			Float amount) {
+	public Transaction(Long id, Date createDate, String description, TransactionType type, User createdBy, Float amount,
+			Debt debt) {
 		super();
 		this.id = id;
 		this.createDate = createDate;
@@ -78,6 +87,7 @@ public class Transaction {
 		this.type = type;
 		this.createdBy = createdBy;
 		this.amount = amount;
+		this.debt = debt;
 	}
 
 	// Getters & Setters
@@ -135,6 +145,14 @@ public class Transaction {
 
 	public void setSite(Site site) {
 		this.site = site;
+	}
+
+	public Debt getDebt() {
+		return debt;
+	}
+
+	public void setDebt(Debt debt) {
+		this.debt = debt;
 	}
 
 }

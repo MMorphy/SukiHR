@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import hr.petkovic.iehr.entity.User;
@@ -28,6 +29,19 @@ public class UserService {
 		}
 	}
 
+	public Float getSaldoForLoggedInUser() {
+		return findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getSaldo();
+	}
+
+	public Float updateSaldoAndSave(Float amount, boolean increase) {
+		User u = findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		if (increase) {
+			u.increaseSaldo(amount);
+		} else {
+			u.decreaseSaldo(amount);
+		}
+		return saveUser(u).getSaldo();
+	}
 	public User findUserById(Long id) {
 		try {
 			return this.userRepo.findById(id).get();

@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
+import hr.petkovic.iehr.DTO.UserWithTotalDebtDTO;
+import hr.petkovic.iehr.entity.Debt;
+import hr.petkovic.iehr.entity.Site;
 import hr.petkovic.iehr.entity.Transaction;
+import hr.petkovic.iehr.entity.User;
 import hr.petkovic.iehr.repo.TransactionRepo;
 
 @Service
@@ -46,18 +52,19 @@ public class TransactionService {
 		return transRepo.save(trans);
 	}
 
-	public Transaction saveIncomeWithLoggedInUserAndAddDebtRepay(Transaction trans, Float debt) {
-		trans.setCreatedBy(
-				userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()));
+	public Transaction saveIncomeWithLoggedInUserAndAddDebtRepay(Transaction trans, Debt debt) {
+		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		trans.setCreatedBy(u);
+		userSer.updateSaldoAndSave(trans.getAmount(), true);
 		trans.setType(typeSer.getDefaultIncomeType());
 		trans.getSite().setLastVisit(new Date());
-		trans.getSite().setDebt(trans.getSite().getDebt() - debt);
 		return this.saveTransaction(trans);
 	}
 
 	public Transaction saveExpenseWithLoggedInUser(Transaction trans) {
-		trans.setCreatedBy(
-				userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()));
+		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		trans.setCreatedBy(u);
+		userSer.updateSaldoAndSave(trans.getAmount(), false);
 		return this.saveTransaction(trans);
 	}
 
@@ -73,5 +80,30 @@ public class TransactionService {
 		} else {
 			logger.warn("Trying to delete transaction which doesn't exist!");
 		}
+	}
+
+	public List<SiteWithTotalDebtDTO> findAllSitesWithDebt() {
+		return transRepo.findAllSitesAndDebt();
+	}
+
+	public List<SiteWithTotalDebtDTO> findAllSitesWithDebtForUsername(String username) {
+		return transRepo.findAllSitesAndDebtCreatedBy(username);
+	}
+
+	public List<SiteWithTotalDebtDTO> makeFullSiteList(List<Site> sitesWithoutDebt,
+			List<SiteWithTotalDebtDTO> sitesWithDebt) {
+		List<Site> newSites = new ArrayList<Site>();
+		for (SiteWithTotalDebtDTO siteD : sitesWithDebt) {
+			newSites.add(siteD.getSite());
+		}
+		sitesWithoutDebt.removeAll(newSites);
+		for (Site s : sitesWithoutDebt) {
+			sitesWithDebt.add(new SiteWithTotalDebtDTO(s, 0d));
+		}
+		return sitesWithDebt;
+	}
+
+	public List<UserWithTotalDebtDTO> findAllUsersAndDebt(){
+		return transRepo.findAllDebtForUser();
 	}
 }

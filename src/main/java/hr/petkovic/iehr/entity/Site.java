@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -37,6 +38,7 @@ public class Site {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastVisit;
 
+	//TODO makni ovo i refaktoriraj
 	@Column(precision = 2)
 	private Float debt = 0F;
 
@@ -58,22 +60,21 @@ public class Site {
 	// Utility methods
 	public void addDevice(SiteDevices device) {
 		this.devices.add(device);
-		// TODO stavi i s druge strane poziv
 	}
 
 	public void removeDevice(SiteDevices device) {
 		if (this.devices.remove(device)) {
-			// TODO stavi i s druge strane poziv
 		}
 	}
 
 	// Constructors
 	public Site() {
 		this.devices = new HashSet<SiteDevices>();
+		this.transactions = new ArrayList<>();
 	}
 
 	public Site(Long id, String address, Date lastVisit, Float debt, String contact, Boolean active,
-			Set<SiteDevices> devices, User user, String name) {
+			Set<SiteDevices> devices, User user, String name, List<Transaction> transactions) {
 		super();
 		this.id = id;
 		this.address = address;
@@ -84,6 +85,7 @@ public class Site {
 		this.devices = devices;
 		this.user = user;
 		this.name = name;
+		this.transactions = transactions;
 	}
 
 	// Getters & Setters
@@ -157,6 +159,14 @@ public class Site {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Collection<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Collection<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 
 	// Hashcode and equals

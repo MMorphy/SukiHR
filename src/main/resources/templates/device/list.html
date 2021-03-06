@@ -17,6 +17,7 @@
 		$(document).ready(function() {
 			$('#deviceTable').DataTable();
 			$('#siteTable').DataTable();
+			$('#historyTable').DataTable();
 		});
 	</script>
 
@@ -77,6 +78,34 @@
 								<button>Dodaj</button>
 							</form>
 						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-12" sec:authorize="hasRole('ROLE_ADMIN')">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Povijest dodavanja</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="deviceTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Aparat</th>
+						<th>Datum</th>
+						<th>Količina</th>
+						<th>Opis</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="h : ${history}">
+						<td th:text="${h.id}"></td>
+						<td th:text="${h.device.name}"></td>
+						<td th:text="${h.createDate}"></td>
+						<td th:text="${h.amount}"></td>
+						<td th:text="${h.description}"></td>
+						<td></td>
 					</tr>
 				</tbody>
 			</table>
