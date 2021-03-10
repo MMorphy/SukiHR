@@ -60,6 +60,7 @@ public class DeviceController {
 		DeviceHistory devHistory = new DeviceHistory();
 		devHistory.setDescription("Novi aparat");
 		if (dev == null) {
+			addDevice = deviceSer.saveDevice(addDevice);
 			devHistory.setDevice(addDevice);
 			devHistory.setAmount(addDevice.getAmount());
 			dhSer.saveDeviceHistory(devHistory);
