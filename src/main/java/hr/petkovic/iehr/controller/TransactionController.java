@@ -38,7 +38,7 @@ public class TransactionController {
 	public String getIncomeAdding(Model model) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		model.addAttribute("addTrans", new Transaction());
-		model.addAttribute("sites", transSer.makeFullSiteList(siteSer.findAllSitesByUsernameRole(username),
+		model.addAttribute("sites", transSer.makeFullSiteListActive(siteSer.findAllSitesByUsernameRole(username),
 				transSer.findAllSitesWithDebtForUsername(username)));
 		return "transaction/income";
 	}
@@ -46,6 +46,12 @@ public class TransactionController {
 	@PostMapping("/income/add")
 	public String addIncome(Transaction addTrans) {
 		transSer.saveIncomeWithLoggedInUserAndAddDebtRepay(addTrans, addTrans.getDebt());
+		return "redirect:/";
+	}
+
+	@PostMapping("/income/edit/{id}")
+	public String editIncome(@PathVariable Long id, Transaction editTrans) {
+		transSer.editTransaction(id, editTrans);
 		return "redirect:/";
 	}
 
@@ -66,6 +72,35 @@ public class TransactionController {
 	public String addExpense(Transaction addTrans) {
 		transSer.saveExpenseWithLoggedInUser(addTrans);
 		return "redirect:/";
+	}
+
+	@PostMapping("/expense/edit/{id}")
+	public String editExpense(@PathVariable Long id, Transaction editTrans) {
+		transSer.editTransaction(id, editTrans);
+		return "redirect:/";
+	}
+
+	@GetMapping("/edit/{id}")
+	public String getExpenseEditing(@PathVariable Long id, Model model) {
+		Transaction trans = transSer.findTransactionById(id);
+		model.addAttribute("editTrans", trans);
+		// Expenses
+		if (trans.getSite() == null) {
+			List<TransactionType> types = typeSer.getAllExpenseTypes();
+			if (types.isEmpty()) {
+				logger.error("No expense types when adding expenses. Redirect to home page!");
+				return "redirect:/";
+			} else {
+				model.addAttribute("types", types);
+			}
+			return "transaction/expenseEdit";
+			// Incomes
+		} else {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			model.addAttribute("sites", transSer.makeFullSiteListActive(siteSer.findAllSitesByUsernameRole(username),
+					transSer.findAllSitesWithDebtForUsername(username)));
+			return "transaction/incomeEdit";
+		}
 	}
 
 	@GetMapping(value = { "/", "/{username}" })

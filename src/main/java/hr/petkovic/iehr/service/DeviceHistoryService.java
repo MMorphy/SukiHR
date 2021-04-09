@@ -20,6 +20,10 @@ public class DeviceHistoryService {
 		return this.deviceHistoryRepo.findAll();
 	}
 
+	public List<DeviceHistory> findAllDeviceHistoryNotZero() {
+		return this.deviceHistoryRepo.findAllByAmountNot(0);
+	}
+
 	public DeviceHistory saveDeviceHistory(DeviceHistory dh) {
 		return this.deviceHistoryRepo.save(dh);
 	}

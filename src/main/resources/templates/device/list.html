@@ -83,12 +83,15 @@
 			</table>
 		</div>
 	</div>
+	<form th:action="@{/device/add/}" method="get">
+		<button>Dodaj novi aparat</button>
+	</form>
 	<div class="col-md-12" sec:authorize="hasRole('ROLE_ADMIN')">
 		<div class="col-md-12">
 			<h1 class="col-md-3">Povijest dodavanja</h1>
 		</div>
 		<div class="col-md-12">
-			<table class="table" id="deviceTable">
+			<table class="table" id="historyTable">
 				<thead>
 					<tr>
 						<th>ID</th>
@@ -105,14 +108,10 @@
 						<td th:text="${h.createDate}"></td>
 						<td th:text="${h.amount}"></td>
 						<td th:text="${h.description}"></td>
-						<td></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-	<form th:action="@{/device/add/}" method="get">
-		<button>Dodaj novi aparat</button>
-	</form>
 </body>
 </html>

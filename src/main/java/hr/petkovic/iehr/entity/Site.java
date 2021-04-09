@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -32,13 +33,20 @@ public class Site {
 	@Column(nullable = false)
 	private String name;
 
+	@CreationTimestamp
+	@Temporal(TemporalType.DATE)
+	private Date createDate;
+
+	@Temporal(TemporalType.DATE)
+	private Date releaseDate = null;
+
 	@Column(nullable = false)
 	private String address;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastVisit;
 
-	//TODO makni ovo i refaktoriraj
+	// TODO makni ovo i refaktoriraj
 	@Column(precision = 2)
 	private Float debt = 0F;
 
@@ -74,7 +82,7 @@ public class Site {
 	}
 
 	public Site(Long id, String address, Date lastVisit, Float debt, String contact, Boolean active,
-			Set<SiteDevices> devices, User user, String name, List<Transaction> transactions) {
+			Set<SiteDevices> devices, User user, String name, List<Transaction> transactions, Date createDate, Date releaseDate) {
 		super();
 		this.id = id;
 		this.address = address;
@@ -167,6 +175,22 @@ public class Site {
 
 	public void setTransactions(Collection<Transaction> transactions) {
 		this.transactions = transactions;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Date getReleaseDate() {
+		return releaseDate;
+	}
+
+	public void setReleaseDate(Date releaseDate) {
+		this.releaseDate = releaseDate;
 	}
 
 	// Hashcode and equals

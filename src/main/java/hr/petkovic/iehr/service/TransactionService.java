@@ -82,6 +82,75 @@ public class TransactionService {
 		}
 	}
 
+	public Transaction editTransaction(Long oldTransId, Transaction newTransaction) {
+		Transaction oldTransaction = findTransactionById(oldTransId);
+		if (oldTransaction == null) {
+			logger.error("Trying to edit transaction which doesn't exists. Trans id = " + oldTransId.toString());
+		}
+		if (oldTransaction.getSite() == null && newTransaction.getSite() == null) {
+			return editExpense(oldTransaction, newTransaction);
+		} else if (oldTransaction.getSite() != null && newTransaction.getSite() != null) {
+			return editIncome(oldTransaction, newTransaction);
+		} else {
+			logger.error("Transaction type mismatch during edit!");
+			return null;
+		}
+	}
+
+	public Transaction editExpense(Transaction oldTrans, Transaction newTrans) {
+		if (checkIfDifferent(oldTrans, newTrans)) {
+			userSer.updateSaldoAndSave(oldTrans.getAmount(), true);
+			oldTrans.setAmount(newTrans.getAmount());
+			oldTrans.setType(newTrans.getType());
+			oldTrans.setDescription(newTrans.getDescription());
+			return saveExpenseWithLoggedInUser(oldTrans);
+		} else {
+			return oldTrans;
+		}
+	}
+
+	public Transaction editIncome(Transaction oldTrans, Transaction newTrans) {
+		if (checkIfDifferent(oldTrans, newTrans)) {
+			userSer.updateSaldoAndSave(oldTrans.getAmount(), false);
+			oldTrans.setAmount(newTrans.getAmount());
+			oldTrans.setDescription(newTrans.getDescription());
+			if (!equalsFloat(oldTrans.getDebt().getAmount(), newTrans.getDebt().getAmount())) {
+				oldTrans.getDebt().setAmount(newTrans.getDebt().getAmount());
+			}
+			if (!oldTrans.getSite().equals(newTrans.getSite())) {
+				oldTrans.setSite(newTrans.getSite());
+			}
+			return saveIncomeWithLoggedInUserAndAddDebtRepay(oldTrans, oldTrans.getDebt());
+		} else {
+			return oldTrans;
+		}
+	}
+
+	public boolean checkIfDifferent(Transaction oldT, Transaction newT) {
+		if (oldT.getSite() == null) {
+			if (!equalsFloat(oldT.getAmount(), newT.getAmount()) || !oldT.getDescription().equals(newT.getDescription())
+					|| !oldT.getType().equals(newT.getType())) {
+				return true;
+			}
+			return false;
+		} else {
+			if (!equalsFloat(oldT.getAmount(), newT.getAmount()) || !oldT.getDescription().equals(newT.getDescription())
+					|| !oldT.getSite().equals(newT.getSite())
+					|| !equalsFloat(oldT.getDebt().getAmount(), newT.getDebt().getAmount())) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	public boolean equalsFloat(Float first, Float second) {
+		Float epsilon = 0.000000001F;
+		if (Math.abs((first - second)) < epsilon) {
+			return true;
+		}
+		return false;
+	}
+
 	public List<SiteWithTotalDebtDTO> findAllSitesWithDebt() {
 		return transRepo.findAllSitesAndDebt();
 	}
@@ -90,7 +159,7 @@ public class TransactionService {
 		return transRepo.findAllSitesAndDebtCreatedBy(username);
 	}
 
-	public List<SiteWithTotalDebtDTO> makeFullSiteList(List<Site> sitesWithoutDebt,
+	public List<SiteWithTotalDebtDTO> makeFullSiteListActive(List<Site> sitesWithoutDebt,
 			List<SiteWithTotalDebtDTO> sitesWithDebt) {
 		List<Site> newSites = new ArrayList<Site>();
 		for (SiteWithTotalDebtDTO siteD : sitesWithDebt) {
@@ -100,10 +169,35 @@ public class TransactionService {
 		for (Site s : sitesWithoutDebt) {
 			sitesWithDebt.add(new SiteWithTotalDebtDTO(s, 0d));
 		}
-		return sitesWithDebt;
+		List<SiteWithTotalDebtDTO> listToReturn = new ArrayList<>();
+		for (SiteWithTotalDebtDTO s : sitesWithDebt) {
+			if (s.getSite().getReleaseDate() == null) {
+				listToReturn.add(s);
+			}
+		}
+		return listToReturn;
 	}
 
-	public List<UserWithTotalDebtDTO> findAllUsersAndDebt(){
+	public List<SiteWithTotalDebtDTO> makeFullSiteListInactive(List<Site> sitesWithoutDebt,
+			List<SiteWithTotalDebtDTO> sitesWithDebt) {
+		List<Site> newSites = new ArrayList<Site>();
+		for (SiteWithTotalDebtDTO siteD : sitesWithDebt) {
+			newSites.add(siteD.getSite());
+		}
+		sitesWithoutDebt.removeAll(newSites);
+		for (Site s : sitesWithoutDebt) {
+			sitesWithDebt.add(new SiteWithTotalDebtDTO(s, 0d));
+		}
+		List<SiteWithTotalDebtDTO> listToReturn = new ArrayList<>();
+		for (SiteWithTotalDebtDTO s : sitesWithDebt) {
+			if (s.getSite().getReleaseDate() != null) {
+				listToReturn.add(s);
+			}
+		}
+		return listToReturn;
+	}
+
+	public List<UserWithTotalDebtDTO> findAllUsersAndDebt() {
 		return transRepo.findAllDebtForUser();
 	}
 }

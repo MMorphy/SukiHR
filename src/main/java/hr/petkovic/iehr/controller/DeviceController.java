@@ -34,7 +34,7 @@ public class DeviceController {
 	public String getAllDevices(Model model) {
 		model.addAttribute("sites", siteSer.findAllActiveSites());
 		model.addAttribute("devices", deviceSer.findAllDevices());
-		model.addAttribute("history", dhSer.findAllDeviceHistory());
+		model.addAttribute("history", dhSer.findAllDeviceHistoryNotZero());
 		return "device/list";
 	}
 

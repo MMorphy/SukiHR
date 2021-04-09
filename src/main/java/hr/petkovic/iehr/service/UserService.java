@@ -1,10 +1,12 @@
 package hr.petkovic.iehr.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,21 @@ public class UserService {
 		}
 	}
 
+	public Float getSummarySaldo() {
+		Float sumSaldo = 0.0f;
+		List<User> users = findAllEnabledUsers();
+		for (User u : users) {
+			sumSaldo += u.getSaldo();
+		}
+		return sumSaldo;
+	}
+
 	public Float getSaldoForLoggedInUser() {
+		for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+			if (ga.toString().equals("ROLE_ADMIN")) {
+				return getSummarySaldo();
+			}
+		}
 		return findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getSaldo();
 	}
 
@@ -42,6 +58,7 @@ public class UserService {
 		}
 		return saveUser(u).getSaldo();
 	}
+
 	public User findUserById(Long id) {
 		try {
 			return this.userRepo.findById(id).get();

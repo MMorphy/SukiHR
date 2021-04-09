@@ -42,9 +42,14 @@ public class SiteController {
 	@GetMapping(value = { "/", "/{username}" })
 	public String getAllSites(@PathVariable(required = false) String username, Model model) {
 		if (username == null || username.isEmpty()) {
-			model.addAttribute("sites", tServ.makeFullSiteList(siteSer.findAllSites(), tServ.findAllSitesWithDebt()));
+			model.addAttribute("sites",
+					tServ.makeFullSiteListActive(siteSer.findAllSites(), tServ.findAllSitesWithDebt()));
+			model.addAttribute("inactive",
+					tServ.makeFullSiteListInactive(siteSer.findAllSites(), tServ.findAllSitesWithDebt()));
 		} else {
-			model.addAttribute("sites", tServ.makeFullSiteList(siteSer.findAllSitesByUsernameRole(username),
+			model.addAttribute("sites", tServ.makeFullSiteListActive(siteSer.findAllSitesByUsernameRole(username),
+					tServ.findAllSitesWithDebtForUsername(username)));
+			model.addAttribute("inactive", tServ.makeFullSiteListInactive(siteSer.findAllSitesByUsernameRole(username),
 					tServ.findAllSitesWithDebtForUsername(username)));
 		}
 		return "site/list";
@@ -62,7 +67,20 @@ public class SiteController {
 		return "redirect:/";
 	}
 
-	// TODO dodati vracanje na stanje
+	@GetMapping("/edit/{id}")
+	public String getSiteEditing(@PathVariable Long id, Model model) {
+		model.addAttribute("DTO", new SiteAndDevicesDTO(siteSer.findSiteById(id),
+				deviceSer.getDeviceMapForSiteId(siteSer.findSiteById(id))));
+		return "site/edit";
+	}
+
+	@PostMapping("/edit/{id}")
+	public String editSite(@PathVariable Long id, Model model, SiteAndDevicesDTO siteAndDevices) {
+		siteSer.updateSiteWithDevices(new SiteAndDevicesDTO(siteSer.findSiteById(id),
+				deviceSer.getDeviceMapForSiteId(siteSer.findSiteById(id))), siteAndDevices);
+		return "redirect:/";
+	}
+
 	@PostMapping("/disable/{id}")
 	public String disableSite(@PathVariable("id") Long id) {
 		Site site = siteSer.findSiteById(id);
