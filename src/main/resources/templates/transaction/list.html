@@ -27,11 +27,11 @@
 			<table class="table" id="transTable">
 				<thead>
 					<tr>
-						<th>ID</th>
 						<th>Korisnik</th>
 						<th>Datum</th>
 						<th>Lokal</th>
 						<th>Iznos</th>
+						<th>Tip</th>
 						<th>Napomena</th>
 						<th>Aparati</th>
 						<th>Briši</th>
@@ -40,12 +40,12 @@
 				</thead>
 				<tbody>
 					<tr th:each="trans : ${transactions}">
-						<td th:text="${trans.id}"></td>
 						<td th:text="${trans.createdBy.username}"></td>
 						<td th:text="${trans.createDate}"></td>
-						<td th:text="${trans.site !=null ? trans.site.name : ''}"></td>
+						<td th:text="${trans.site !=null ? trans.site.name : 'Izlaz'}"></td>
 						<td
 							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td th:if="${trans.type != null}" th:text="${trans.type.subType}"></td>
 						<td th:text="${trans.description}"></td>
 						<td><a th:if="${trans.site != null}"
 							th:href="@{'/device/' + ${trans.site.id}}"> Aparati</a> <span
@@ -57,7 +57,8 @@
 							</form>
 						</td>
 						<td>
-							<form th:action="@{'/transaction/edit/' + ${trans.id}}" method="get">
+							<form th:action="@{'/transaction/edit/' + ${trans.id}}"
+								method="get">
 								<button>Izmjeni</button>
 							</form>
 
