@@ -1,6 +1,5 @@
 package hr.petkovic.iehr.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +45,11 @@ public class UserService {
 				return getSummarySaldo();
 			}
 		}
-		return findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getSaldo();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		if (username == null || findUserByUsername(username) == null || findUserByUsername(username).getSaldo() == null)
+			return new Float(0);
+		else
+			return findUserByUsername(username).getSaldo();
 	}
 
 	public Float updateSaldoAndSave(Float amount, boolean increase) {
