@@ -1,13 +1,17 @@
 package hr.petkovic.iehr.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import hr.petkovic.iehr.DTO.DeviceMapDTO;
 import hr.petkovic.iehr.DTO.SiteAndDevicesDTO;
 import hr.petkovic.iehr.entity.Device;
 import hr.petkovic.iehr.entity.DeviceHistory;
@@ -53,6 +57,24 @@ public class SiteService {
 		return siteRepo.findAllByActive(true);
 	}
 
+	public List<Site> findAllActiveSitesWithoutZeroDevices() {
+		List<Site> siteList = findAllActiveSites();
+		List<Site> returnList = new ArrayList<Site>();
+		for (int i = 0; i < siteList.size(); i++) {
+			Set<SiteDevices> set = new HashSet<>();
+			for (SiteDevices d : siteList.get(i).getDevices()) {
+				// TODO makni null ako radi nakon testa
+				if (d.getAmount() != null && !d.getAmount().equals(0)) {
+					set.add(d);
+				}
+			}
+			Site s = siteList.get(i);
+			s.setDevices(set);
+			returnList.add(s);
+		}
+		return returnList;
+	}
+
 	public List<Site> findAllSitesByUsernameRole(String username) {
 		for (Role r : userSer.findUserByUsername(username).getRoles()) {
 			if (r.getName().equals("ROLE_ADMIN")) {
@@ -78,78 +100,138 @@ public class SiteService {
 
 	public Site saveSiteWithDevices(SiteAndDevicesDTO dto) {
 		Site site = dto.getSite();
+		site = validateSite(site);
 		site.setUser(userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()));
 		saveSite(site);
-		for (Device d : dto.getDevices().keySet()) {
-			site.addDevice(sdSer.save(
-					new SiteDevices(new SiteDeviceKey(site.getId(), d.getId()), site, d, dto.getDevices().get(d))));
-			deviceSer.increaseInUse(d, dto.getDevices().get(d));
+		for (DeviceMapDTO dMap : dto.getDevices()) {
+			Device d = deviceSer.findDeviceByName(dMap.getDevice().getName());
+			site.addDevice(
+					sdSer.save(new SiteDevices(new SiteDeviceKey(site.getId(), d.getId()), site, d, dMap.getAmount())));
+			deviceSer.increaseInUse(d, dMap.getAmount());
 		}
 		return saveSite(site);
 	}
 
+	private Site validateSite(Site site) {
+		if (site.getAddress() == null) {
+			site.setAddress("");
+		}
+		if (site.getContact() == null) {
+			site.setContact("");
+		}
+		return site;
+	}
+
 	public Site updateSiteWithDevices(SiteAndDevicesDTO oldDTO, SiteAndDevicesDTO newDTO) {
 		Site oldSite = oldDTO.getSite();
+		newDTO.setSite(validateSite(newDTO.getSite()));
 		oldSite.setAddress(newDTO.getSite().getAddress());
 		oldSite.setContact(newDTO.getSite().getContact());
 		oldSite.setName(newDTO.getSite().getName());
 		oldSite = saveSite(oldSite);
-		for (Device newD : newDTO.getDevices().keySet()) {
-			// old type of device which existed when the site was created
-			if (oldDTO.getDevices().containsKey(newD)) {
-				// device amount changed
-				if (oldDTO.getDevices().get(newD) != newDTO.getDevices().get(newD)) {
-					// new device amount set to 0, increase lager, delete site devices entry and
-					// generate history
-					if (newDTO.getDevices().get(newD) == 0) {
-						sdSer.setAmountToZero(oldSite, newD);
-						deviceSer.decreaseInUse(newD, oldDTO.getDevices().get(newD));
+
+		for (DeviceMapDTO newDeviceMap : newDTO.getDevices()) {
+			if (dtoExistsByNameInList(newDeviceMap, oldDTO.getDevices())) {
+				DeviceMapDTO oldDeviceMap = findDtoInListByName(newDeviceMap, oldDTO.getDevices());
+				if (isSameDeviceName(newDeviceMap, oldDeviceMap) && !isSameDeviceAmount(newDeviceMap, oldDeviceMap)) {
+					if (isNewZeroAndOldIsnt(newDeviceMap, oldDeviceMap)) {
+						sdSer.setAmountToZero(oldSite, newDeviceMap.getDevice());
+						deviceSer.decreaseInUse(newDeviceMap.getDevice(), oldDeviceMap.getAmount());
 						DeviceHistory dh = new DeviceHistory();
-						dh.setDevice(newD);
-						dh.setAmount(oldDTO.getDevices().get(newD) - newDTO.getDevices().get(newD));
+						dh.setDevice(newDeviceMap.getDevice());
+						dh.setAmount(oldDeviceMap.getAmount() - newDeviceMap.getAmount());
 						dh.setDescription("Izmjena lokala: " + oldSite.getName());
 						dhSer.saveDeviceHistory(dh);
-					}
-					// new device amount set to a larger number, change lager
-					else if (newDTO.getDevices().get(newD) > oldDTO.getDevices().get(newD)) {
-						SiteDevices sd = sdSer.findBySiteAndDevice(oldSite, newD);
+					} else if (isNewLessThanOld(newDeviceMap, oldDeviceMap)) {
+						SiteDevices sd = sdSer.findBySiteAndDevice(oldSite, newDeviceMap.getDevice());
 						if (sd == null) {
-							sd = new SiteDevices(new SiteDeviceKey(oldSite.getId(), newD.getId()), oldSite, newD, 0);
+							sd = new SiteDevices(new SiteDeviceKey(oldSite.getId(), newDeviceMap.getDevice().getId()),
+									oldSite, newDeviceMap.getDevice(), 0);
 							sd = sdSer.save(sd);
 						}
-						Integer difference = Math.abs(
-								sdSer.findBySiteAndDevice(oldSite, newD).getAmount() - newDTO.getDevices().get(newD));
-						sd.setAmount(newDTO.getDevices().get(newD));
+						Integer difference = Math
+								.abs(sdSer.findBySiteAndDevice(oldSite, newDeviceMap.getDevice()).getAmount()
+										- newDeviceMap.getAmount());
+						sd.setAmount(newDeviceMap.getAmount());
 						sdSer.save(sd);
-						deviceSer.increaseInUse(newD, difference);
-					}
-					// new device amount set to a smaller number, change lager and generate history
-					else {
-						SiteDevices sd = sdSer.findBySiteAndDevice(oldSite, newD);
-						if (sd == null) {
-							sd = new SiteDevices(new SiteDeviceKey(oldSite.getId(), newD.getId()), oldSite, newD, 0);
-							sd = sdSer.save(sd);
-						}
-						Integer difference = Math.abs(
-								sdSer.findBySiteAndDevice(oldSite, newD).getAmount() - newDTO.getDevices().get(newD));
-						sd.setAmount(newDTO.getDevices().get(newD));
-						sdSer.save(sd);
-						deviceSer.decreaseInUse(newD, difference);
+						deviceSer.decreaseInUse(newDeviceMap.getDevice(), difference);
 						DeviceHistory dh = new DeviceHistory();
-						dh.setDevice(newD);
+						dh.setDevice(newDeviceMap.getDevice());
 						dh.setAmount(difference);
 						dh.setDescription("Izmjena lokala: " + oldSite.getName());
 						dhSer.saveDeviceHistory(dh);
+					} else if (isNewGreaterThanOld(newDeviceMap, oldDeviceMap)) {
+						SiteDevices sd = sdSer.findBySiteAndDevice(oldSite, newDeviceMap.getDevice());
+						if (sd == null) {
+							sd = new SiteDevices(new SiteDeviceKey(oldSite.getId(), newDeviceMap.getDevice().getId()),
+									oldSite, newDeviceMap.getDevice(), 0);
+							sd = sdSer.save(sd);
+						}
+						Integer difference = Math
+								.abs(sdSer.findBySiteAndDevice(oldSite, newDeviceMap.getDevice()).getAmount()
+										- newDeviceMap.getAmount());
+						sd.setAmount(newDeviceMap.getAmount());
+						sdSer.save(sd);
+						deviceSer.increaseInUse(newDeviceMap.getDevice(), difference);
 					}
 				}
-			}
-			// new device type/amount added
-			else {
-				oldSite.addDevice(sdSer.save(new SiteDevices(new SiteDeviceKey(oldSite.getId(), newD.getId()), oldSite,
-						newD, newDTO.getDevices().get(newD))));
-				deviceSer.increaseInUse(newD, newDTO.getDevices().get(newD));
+			} else {
+				oldSite.addDevice(
+						sdSer.save(new SiteDevices(new SiteDeviceKey(oldSite.getId(), newDeviceMap.getDevice().getId()),
+								oldSite, newDeviceMap.getDevice(), newDeviceMap.getAmount())));
+				deviceSer.increaseInUse(newDeviceMap.getDevice(), newDeviceMap.getAmount());
 			}
 		}
 		return saveSite(oldSite);
+	}
+
+	private boolean isNewLessThanOld(DeviceMapDTO newDeviceMap, DeviceMapDTO oldDeviceMap) {
+		if (newDeviceMap.getAmount().compareTo(oldDeviceMap.getAmount()) == -1) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isNewGreaterThanOld(DeviceMapDTO newDeviceMap, DeviceMapDTO oldDeviceMap) {
+		if (newDeviceMap.getAmount().compareTo(oldDeviceMap.getAmount()) == 1) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isSameDeviceName(DeviceMapDTO first, DeviceMapDTO second) {
+		if (first.getDevice().getName().equals(second.getDevice().getName()))
+			return true;
+		return false;
+	}
+
+	private boolean isSameDeviceAmount(DeviceMapDTO first, DeviceMapDTO second) {
+		if (first.getAmount().equals(second.getAmount()))
+			return true;
+		return false;
+	}
+
+	private boolean isNewZeroAndOldIsnt(DeviceMapDTO newer, DeviceMapDTO older) {
+		if (newer.getAmount().equals(0) && !older.getAmount().equals(0))
+			return true;
+		return false;
+	}
+
+	private DeviceMapDTO findDtoInListByName(DeviceMapDTO dto, List<DeviceMapDTO> list) {
+		for (DeviceMapDTO d : list) {
+			if (d.getDevice().getName().equals(dto.getDevice().getName())) {
+				return d;
+			}
+		}
+		return null;
+	}
+
+	private boolean dtoExistsByNameInList(DeviceMapDTO dto, List<DeviceMapDTO> list) {
+		for (DeviceMapDTO d : list) {
+			if (d.getDevice().getName().equals(dto.getDevice().getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

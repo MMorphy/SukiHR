@@ -9,7 +9,8 @@
 <body>
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
-	<form method="POST" th:object="${DTO}" th:action="@{'/site/edit/' + *{site.id}}">
+	<form method="POST" th:object="${DTO}"
+		th:action="@{'/site/edit/' + *{site.id}}">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="form-group col-lg-4">
@@ -19,11 +20,13 @@
 				</div>
 				<div class="form-group col-lg-4">
 					<label for="subtype">Adresa:</label> <input type="text"
-						class="form-control" id="adress" th:field="*{site.address}">
+						class="form-control" id="adress" th:field="*{site.address}"
+						required="required">
 				</div>
 				<div class="form-group col-lg-4">
-					<label for="subtype">Kontakt (Ime i broj):</label> <input type="text"
-						class="form-control" id="contact" th:field="*{site.contact}">
+					<label for="subtype">Kontakt (Ime i broj):</label> <input
+						type="text" class="form-control" id="contact"
+						th:field="*{site.contact}">
 				</div>
 			</div>
 			<div class="row">
@@ -37,10 +40,15 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="pr, stat : *{devices}">
-								<td><span th:text="${pr.key.name}"></span></td>
-								<td><span th:text="${pr.key.amount} - ${pr.key.inUse}"></span></td>
-								<td><input type="number" class="form-control" th:field="*{devices['__${stat.index}+1__']}"></td>
+							<tr th:each="d,stat:*{devices}">
+								<input type="hidden" class="form-control"
+									th:field="*{devices['__${stat.index}__'].device.id}">
+								<td><input type="text" class="form-control"
+									readonly="readonly"
+									th:field="*{devices['__${stat.index}__'].device.name}"></td>
+								<td><span th:text="${d.device.amount} - ${d.device.inUse}"></span></td>
+								<td><input type="number" class="form-control"
+									th:field="*{devices['__${stat.index}__'].amount}"></td>
 							</tr>
 						</tbody>
 					</table>

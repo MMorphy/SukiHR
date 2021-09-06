@@ -1,14 +1,13 @@
 package hr.petkovic.iehr.service;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import hr.petkovic.iehr.DTO.DeviceMapDTO;
 import hr.petkovic.iehr.entity.Device;
 import hr.petkovic.iehr.entity.Site;
 import hr.petkovic.iehr.repo.DeviceRepo;
@@ -31,6 +30,10 @@ public class DeviceService {
 
 	public List<Device> findAllAvailableDevices() {
 		return deviceRepo.findAllAvailableDevices();
+	}
+
+	public List<Device> findAllUnavailableDevices() {
+		return deviceRepo.findAllUnavailableDevices();
 	}
 
 	public Device findDeviceByName(String name) {
@@ -58,23 +61,37 @@ public class DeviceService {
 		}
 	}
 
-	public Map<Device, Integer> getAvailableDeviceMap() {
-		Map<Device, Integer> map = new LinkedHashMap<Device, Integer>();
-		List<Device> availDevices = findAllAvailableDevices();
-		for (Device dev : availDevices) {
-			map.put(dev, 0);
-		}
-		return map;
+	public List<DeviceMapDTO> getAvailableDeviceMapDTO() {
+		return deviceRepo.findAvailableDeviceMapDTO();
 	}
 
-	public Map<Device, Integer> getDeviceMapForSiteId(Site s) {
-		Map<Device, Integer> map = new LinkedHashMap<Device, Integer>();
+	/*
+	 * public Map<Device, Integer> getAvailableDeviceMap() { Map<Device, Integer>
+	 * map = new LinkedHashMap<Device, Integer>(); List<Device> availDevices =
+	 * findAllAvailableDevices(); for (Device dev : availDevices) { map.put(dev, 0);
+	 * } return map; }
+	 */
+	public List<DeviceMapDTO> getAvailableDeviceMapDTOForSiteId(Site s) {
+		List<DeviceMapDTO> list = new ArrayList<>();
 		List<Device> availDevices = findAllAvailableDevices();
 		for (Device dev : availDevices) {
-			map.put(dev, sdServ.findAmountForSiteAndDevice(s, dev));
+			list.add(new DeviceMapDTO(dev, sdServ.findAmountForSiteAndDevice(s, dev)));
 		}
-		return map;
+		List<Device> unavailDevices = findAllUnavailableDevices();
+		for (Device dev : unavailDevices) {
+			Integer amount = sdServ.findAmountForSiteAndDevice(s, dev);
+			if (amount != 0) {
+				list.add(new DeviceMapDTO(dev, amount));
+			}
+		}
+		return list;
 	}
+	/*
+	 * public Map<Device, Integer> getDeviceMapForSiteId(Site s) { Map<Device,
+	 * Integer> map = new LinkedHashMap<Device, Integer>(); List<Device>
+	 * availDevices = findAllAvailableDevices(); for (Device dev : availDevices) {
+	 * map.put(dev, sdServ.findAmountForSiteAndDevice(s, dev)); } return map; }
+	 */
 
 	public Device increaseInUse(Device device, Integer amount) {
 		Device dev = deviceRepo.findById(device.getId()).get();

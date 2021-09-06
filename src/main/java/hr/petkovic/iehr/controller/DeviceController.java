@@ -32,7 +32,7 @@ public class DeviceController {
 
 	@GetMapping("/")
 	public String getAllDevices(Model model) {
-		model.addAttribute("sites", siteSer.findAllActiveSites());
+		model.addAttribute("sites", siteSer.findAllActiveSitesWithoutZeroDevices());
 		model.addAttribute("devices", deviceSer.findAllDevices());
 		model.addAttribute("history", dhSer.findAllDeviceHistoryNotZero());
 		return "device/list";

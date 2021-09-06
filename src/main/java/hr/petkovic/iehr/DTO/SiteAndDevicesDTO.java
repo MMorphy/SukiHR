@@ -1,22 +1,21 @@
 package hr.petkovic.iehr.DTO;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import hr.petkovic.iehr.entity.Device;
 import hr.petkovic.iehr.entity.Site;
 
 public class SiteAndDevicesDTO {
 
 	private Site site;
-	private Map<Device, Integer> devices;
+	private List<DeviceMapDTO> devices;
 
 	// Constructors
 	public SiteAndDevicesDTO() {
-		this.devices = new HashMap<>();
+		this.devices = new ArrayList<>();
 	}
 
-	public SiteAndDevicesDTO(Site site, Map<Device, Integer> devices) {
+	public SiteAndDevicesDTO(Site site, List<DeviceMapDTO> devices) {
 		super();
 		this.site = site;
 		this.devices = devices;
@@ -31,11 +30,12 @@ public class SiteAndDevicesDTO {
 		this.site = site;
 	}
 
-	public Map<Device, Integer> getDevices() {
+	public List<DeviceMapDTO> getDevices() {
 		return devices;
 	}
 
-	public void setDevices(Map<Device, Integer> devices) {
+	public void setDevices(List<DeviceMapDTO> devices) {
 		this.devices = devices;
 	}
+
 }

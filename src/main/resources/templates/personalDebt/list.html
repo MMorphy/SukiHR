@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Posudbe</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#debtTable').DataTable();
+			$('#allDebtTable').DataTable()
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Aktivne posudbe</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="debtTable">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Korisnik</th>
+						<th>Ugovoreno dugovanje</th>
+						<th>Preostalo dugovanje</th>
+						<th>Prethodne otplate</th>
+						<th>Otplata</th>
+						<th>Izmjeni</th>
+						<th>Briši</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="debt : ${active}">
+						<td th:text="${debt.debt.createDate}"></td>
+						<td th:text="${debt.debt.user}"></td>
+						<td th:text="${debt.debt.amount}"></td>
+						<td th:text="${debt.debt.amount - debt.outstandingAmount}"></td>
+						<td><a th:if="${debt.debt.payments != null}"
+							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
+								Otplate</a> <span th:if="${debt.debt.payments == null}"> Nema
+								otplata </span></td>
+						<td>
+							<form
+								th:action="@{'/personal_debt/payment/add/' + ${debt.debt.id}}"
+								method="get">
+								<button>Otplata</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/personal_debt/edit/' + ${debt.debt.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/personal_debt/delete/' + ${debt.debt.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<form th:action="@{/personal_debt/add/}" method="get">
+		<button>Dodaj novu posudbu</button>
+	</form>
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Sve posudbe</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="allDebtTable">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Korisnik</th>
+						<th>Ugovoreno dugovanje</th>
+						<th>Otplate</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="debt : ${debts}">
+						<td th:text="${debt.createDate}"></td>
+						<td th:text="${debt.user}"></td>
+						<td th:text="${debt.amount}"></td>
+						<td><a th:if="${debt.payments != null}"
+							th:href="@{'/personal_debt/payment/' + ${debt.id}}">
+								Otplate</a> <span th:if="${debt.payments == null}"> Nema
+								otplata </span></td>
+						<td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

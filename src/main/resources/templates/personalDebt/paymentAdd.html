@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Dodaj posudbu</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</head>
+<body>
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<form method="POST" th:object="${addPayment}"
+		th:action="@{'/personal_debt/payment/add/' + ${id}}">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="form-group col-lg-6">
+					<label for="subtype">Iznos:</label> <input type="number"
+						class="form-control" id="amount" th:field="*{amount}"
+						required="required" step="1">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group col-lg-4">
+				<input type="submit" th:value="Submit" name="action"> <input
+					type="button" onclick="history.go(-1);" value="Back">
+			</div>
+		</div>
+	</form>
+
+
+</body>
+</html>

@@ -44,8 +44,16 @@ public class TransactionService {
 		return transRepo.findAll();
 	}
 
+	public List<Transaction> findNonNullTransactions() {
+		return transRepo.findAllWithValues();
+	}
+	
 	public List<Transaction> findAllTransactionsForUsername(String username) {
 		return transRepo.findAllByCreatedBy_Username(username);
+	}
+
+	public List<Transaction> findNonNullTransactionsForUsername(String username) {
+		return transRepo.findAllWithValuesForUser(username);
 	}
 
 	public Transaction saveTransaction(Transaction trans) {
@@ -199,5 +207,9 @@ public class TransactionService {
 
 	public List<UserWithTotalDebtDTO> findAllUsersAndDebt() {
 		return transRepo.findAllDebtForUser();
+	}
+
+	public List<Transaction> findAllBankTransactions(){
+		return transRepo.findAllByCreatedBy_Roles_NameOrType_SubType("ROLE_ADMIN", "Razduzenje");
 	}
 }

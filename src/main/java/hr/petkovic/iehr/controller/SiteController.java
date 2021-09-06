@@ -57,7 +57,10 @@ public class SiteController {
 
 	@GetMapping("/add")
 	public String getSiteAdding(Model model) {
-		model.addAttribute("DTO", new SiteAndDevicesDTO(new Site(), deviceSer.getAvailableDeviceMap()));
+		SiteAndDevicesDTO dto = new SiteAndDevicesDTO();
+		dto.setSite(new Site());
+		dto.setDevices(deviceSer.getAvailableDeviceMapDTO());
+		model.addAttribute("DTO", dto);
 		return "site/add";
 	}
 
@@ -70,14 +73,14 @@ public class SiteController {
 	@GetMapping("/edit/{id}")
 	public String getSiteEditing(@PathVariable Long id, Model model) {
 		model.addAttribute("DTO", new SiteAndDevicesDTO(siteSer.findSiteById(id),
-				deviceSer.getDeviceMapForSiteId(siteSer.findSiteById(id))));
+				deviceSer.getAvailableDeviceMapDTOForSiteId(siteSer.findSiteById(id))));
 		return "site/edit";
 	}
 
 	@PostMapping("/edit/{id}")
 	public String editSite(@PathVariable Long id, Model model, SiteAndDevicesDTO siteAndDevices) {
 		siteSer.updateSiteWithDevices(new SiteAndDevicesDTO(siteSer.findSiteById(id),
-				deviceSer.getDeviceMapForSiteId(siteSer.findSiteById(id))), siteAndDevices);
+				deviceSer.getAvailableDeviceMapDTOForSiteId(siteSer.findSiteById(id))), siteAndDevices);
 		return "redirect:/";
 	}
 

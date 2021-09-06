@@ -14,6 +14,14 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
 	public List<Transaction> findAllByCreatedBy_Username(String username);
 
+	public List<Transaction> findAllByCreatedBy_Roles_NameOrType_SubType(String roleName, String subtype);
+
+	@Query("SELECT t FROM Transaction t WHERE t.amount <> 0")
+	public List<Transaction> findAllWithValues();
+
+	@Query("SELECT t FROM Transaction t WHERE t.amount <> 0 AND t.createdBy.username = ?1")
+	public List<Transaction> findAllWithValuesForUser(String username);
+
 	@Query("SELECT new hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO(t.site, SUM(t.debt.amount)) "
 			+ "FROM Transaction t GROUP BY t.site")
 	List<SiteWithTotalDebtDTO> findAllSitesAndDebt();

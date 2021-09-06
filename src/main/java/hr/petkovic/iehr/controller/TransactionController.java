@@ -106,9 +106,9 @@ public class TransactionController {
 	@GetMapping(value = { "/", "/{username}" })
 	public String getAllTransactions(@PathVariable(required = false) String username, Model model) {
 		if (username == null || username.isEmpty()) {
-			model.addAttribute("transactions", transSer.findAllTransactions());
+			model.addAttribute("transactions", transSer.findNonNullTransactions());
 		} else {
-			model.addAttribute("transactions", transSer.findAllTransactionsForUsername(username));
+			model.addAttribute("transactions", transSer.findNonNullTransactionsForUsername(username));
 		}
 		return "transaction/list";
 	}

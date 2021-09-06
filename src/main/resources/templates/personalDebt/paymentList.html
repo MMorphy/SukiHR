@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Otplate</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#debtTable').DataTable();
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Otplate</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="debtTable">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Iznos</th>
+						<th>Izmjeni</th>
+						<th>Briši</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="pay : ${payments}">
+						<td th:text="${pay.paymentDate}"></td>
+						<td th:text="${pay.amount}"></td>
+						<td>
+							<form th:action="@{'/personal_debt/payment/edit/' + ${pay.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/personal_debt/payment/delete/' + ${pay.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>
