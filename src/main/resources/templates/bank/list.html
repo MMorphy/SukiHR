@@ -13,9 +13,11 @@
 
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
-	<script>
+<script>
 		$(document).ready(function() {
-			$('#transTable').DataTable();
+			$('#transTable').dataTable( {
+				"order": [1, 'desc']
+			});
 		});
 	</script>
 

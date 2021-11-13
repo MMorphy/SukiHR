@@ -15,7 +15,9 @@
 
 	<script>
 		$(document).ready(function() {
-			$('#siteTable').DataTable();
+			$('#siteTable').dataTable({
+				"order" : [ 3, 'desc' ]
+			});
 			$('#inactiveTable').DataTable();
 		});
 	</script>

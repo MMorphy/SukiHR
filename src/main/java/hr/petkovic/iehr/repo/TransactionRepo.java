@@ -33,4 +33,7 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 	@Query("SELECT new hr.petkovic.iehr.DTO.UserWithTotalDebtDTO(t.createdBy, SUM(t.debt.amount)) "
 			+ "FROM Transaction t GROUP BY t.createdBy")
 	List<UserWithTotalDebtDTO> findAllDebtForUser();
+
+	@Query("SELECT sum(t.amount) FROM Transaction t WHERE t.createdBy.username = :username AND t.type.mainType = :mainType")
+	public Double findAllTransactionsOfMainTypeForUsername(@Param("username") String username, @Param("mainType") String mainType);
 }

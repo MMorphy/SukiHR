@@ -39,21 +39,21 @@
 				</thead>
 				<tbody>
 					<tr th:each="user : ${users}">
-						<td th:text="${user.user.id}"></td>
-						<td th:text="${user.user.username}"></td>
-						<td th:text="${user.user.password}"></td>
+						<td th:text="${user.dto.user.id}"></td>
+						<td th:text="${user.dto.user.username}"></td>
+						<td th:text="${user.dto.user.password}"></td>
 						<td
-							th:text="${user.user.saldo == ''}? 0:${#numbers.formatDecimal(user.user.saldo, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-						<td><a th:if="${user.user.sites != null}"
-							th:href="@{'/site/' + ${user.user.username}}"> Lokali</a> <span
-							th:if="${user.user.sites == null}"> Nema lokala </span></td>
-						<td><a th:if="${user.totalDebt != null}"
-							th:href="@{'/debt/' + ${user.user.username}}"
-							th:text="${user.totalDebt}"> </a> <span
-							th:if="${user.user.sites == null}"> Nema dugovanja </span></td>
-						<td><a th:if="${user.user.transactions != null}"
-							th:href="@{'/transaction/' + ${user.user.username}}"> Transakcije
-						</a> <span th:if="${user.user.transactions == null}"> Nema transakcija </span></td>
+							th:text="${user.saldo == ''}? 0:${#numbers.formatDecimal(user.saldo, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td><a th:if="${user.dto.user.sites != null}"
+							th:href="@{'/site/' + ${user.dto.user.username}}"> Lokali</a> <span
+							th:if="${user.dto.user.sites == null}"> Nema lokala </span></td>
+						<td><a th:if="${user.dto.totalDebt != null}"
+							th:href="@{'/debt/' + ${user.dto.user.username}}"
+							th:text="${user.dto.totalDebt}"> </a> <span
+							th:if="${user.dto.user.sites == null}"> Nema dugovanja </span></td>
+						<td><a th:if="${user.dto.user.transactions != null}"
+							th:href="@{'/transaction/' + ${user.dto.user.username}}"> Transakcije
+						</a> <span th:if="${user.dto.user.transactions == null}"> Nema transakcija </span></td>
 					</tr>
 				</tbody>
 			</table>

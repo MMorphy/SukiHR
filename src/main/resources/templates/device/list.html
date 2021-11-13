@@ -15,7 +15,9 @@
 
 	<script>
 		$(document).ready(function() {
-			$('#deviceTable').DataTable();
+			$('#deviceTable').dataTable({
+				"order" : [ 1, 'desc' ]
+			});
 			$('#siteTable').DataTable();
 			$('#historyTable').DataTable();
 		});
@@ -38,8 +40,8 @@
 					<tr th:each="site : ${sites}">
 						<td th:text="${site.id}"></td>
 						<td th:text="${site.name}"></td>
-						<td><span th:if="${#lists.isEmpty(site.devices)}">Nema aparata</span> 
-							<span th:if="${not #lists.isEmpty(site.devices)}"
+						<td><span th:if="${#lists.isEmpty(site.devices)}">Nema
+								aparata</span> <span th:if="${not #lists.isEmpty(site.devices)}"
 							th:each="device, iterStat: ${site.devices}"
 							th:text="!${iterStat.last} ? ${device.device.name} + ' ' + ${device.amount} + ' / ' : ${device.device.name} + ' ' + ${device.amount}"></span>
 

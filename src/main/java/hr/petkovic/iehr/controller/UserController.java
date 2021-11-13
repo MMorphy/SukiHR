@@ -19,7 +19,7 @@ public class UserController {
 
 	@GetMapping("/")
 	public String getAllUserList(Model model) {
-		model.addAttribute("users", tServ.findAllUsersAndDebt());
+		model.addAttribute("users", tServ.updateSaldoForUserDTOs(tServ.findAllUsersAndDebt()));
 		return "user/list";
 	}
 }

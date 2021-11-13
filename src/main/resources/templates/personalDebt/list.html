@@ -12,11 +12,14 @@
 <body>
 
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
-
 	<script>
 		$(document).ready(function() {
-			$('#debtTable').DataTable();
-			$('#allDebtTable').DataTable()
+			$('#debtTable').dataTable({
+				"order" : [ 1, 'desc' ]
+			});
+			$('#allDebtTable').dataTable({
+				"order" : [ 1, 'desc' ]
+			});
 		});
 	</script>
 
@@ -97,9 +100,8 @@
 						<td th:text="${debt.user}"></td>
 						<td th:text="${debt.amount}"></td>
 						<td><a th:if="${debt.payments != null}"
-							th:href="@{'/personal_debt/payment/' + ${debt.id}}">
-								Otplate</a> <span th:if="${debt.payments == null}"> Nema
-								otplata </span></td>
+							th:href="@{'/personal_debt/payment/' + ${debt.id}}"> Otplate</a>
+							<span th:if="${debt.payments == null}"> Nema otplata </span></td>
 						<td>
 					</tr>
 				</tbody>

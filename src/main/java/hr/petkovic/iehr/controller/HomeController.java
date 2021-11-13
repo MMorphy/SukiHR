@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import hr.petkovic.iehr.service.DebtService;
-import hr.petkovic.iehr.service.UserService;
+import hr.petkovic.iehr.service.TransactionService;
 
 @Controller
 @RequestMapping("")
@@ -17,17 +17,17 @@ public class HomeController {
 
 	Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-	UserService userSer;
+	TransactionService tServ;
 	DebtService debtSer;
 
-	public HomeController(UserService userService, DebtService debtService) {
-		userSer = userService;
+	public HomeController(TransactionService transService, DebtService debtService) {
 		debtSer = debtService;
+		tServ = transService;
 	}
 
 	@GetMapping
 	public String getIndex(HttpSession session) {
-		session.setAttribute("saldo", userSer.getSaldoForLoggedInUser());
+		session.setAttribute("saldo", tServ.getSaldoForLoggedInUser());
 		session.setAttribute("dugovanja", debtSer.getDebtsForLoggedInUser());
 		return "index";
 	}

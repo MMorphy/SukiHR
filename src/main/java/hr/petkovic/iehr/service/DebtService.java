@@ -19,11 +19,11 @@ public class DebtService {
 	}
 
 	public List<Debt> findAllDebts() {
-		return this.debtRepo.findAll();
+		return this.debtRepo.findAllNonZeroDebts();
 	}
 
 	public List<Debt> findAllDebtsForUsername(String username) {
-		return this.debtRepo.findAllByTransaction_CreatedBy_Username(username);
+		return this.debtRepo.findAllNonZeroDebtsForUsername(username);
 	}
 
 	public Float getDebtsForLoggedInUser() {

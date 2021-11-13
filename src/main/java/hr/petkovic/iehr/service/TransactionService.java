@@ -3,6 +3,7 @@ package hr.petkovic.iehr.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
+import hr.petkovic.iehr.DTO.UserWithSum;
 import hr.petkovic.iehr.DTO.UserWithTotalDebtDTO;
 import hr.petkovic.iehr.entity.Debt;
 import hr.petkovic.iehr.entity.Site;
@@ -47,7 +49,7 @@ public class TransactionService {
 	public List<Transaction> findNonNullTransactions() {
 		return transRepo.findAllWithValues();
 	}
-	
+
 	public List<Transaction> findAllTransactionsForUsername(String username) {
 		return transRepo.findAllByCreatedBy_Username(username);
 	}
@@ -209,7 +211,54 @@ public class TransactionService {
 		return transRepo.findAllDebtForUser();
 	}
 
-	public List<Transaction> findAllBankTransactions(){
+	public List<Transaction> findAllBankTransactions() {
 		return transRepo.findAllByCreatedBy_Roles_NameOrType_SubType("ROLE_ADMIN", "Razduzenje");
+	}
+
+	public List<UserWithSum> updateSaldoForUserDTOs(List<UserWithTotalDebtDTO> users) {
+		List<UserWithSum> rList = new ArrayList<>();
+		for (UserWithTotalDebtDTO user : users) {
+			rList.add(new UserWithSum(user, getSaldoForUser(user.getUser())));
+		}
+		return rList;
+	}
+
+	private Double getSaldoForUser(User user) {
+		int userRole = getUserRole(user);
+		// Normal user
+		if (userRole == 1) {
+			return getTransactionDifference(user);
+		} else {
+			// Summary saldo
+			return getSummarySaldo();
+		}
+	}
+
+	private int getUserRole(User user) {
+		return user.getRoles().size();
+	}
+
+	private Double getTransactionDifference(User user) {
+		Optional<Double> incomes = Optional
+				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername(user.getUsername(), "Ulaz"));
+		Optional<Double> expenses = Optional
+				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername(user.getUsername(), "Izlaz"));
+		return incomes.orElse(0d) - expenses.orElse(0d);
+	}
+
+	public Double getSaldoForLoggedInUser() {
+		User user = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		return getSaldoForUser(user);
+	}
+
+	public Double getSummarySaldo() {
+		Double sum = 0d;
+		List<User> users = userSer.findAllEnabledUsers();
+		for (User u : users) {
+			if (getUserRole(u) == 1) {
+				sum += getTransactionDifference(u);
+			}
+		}
+		return sum;
 	}
 }
