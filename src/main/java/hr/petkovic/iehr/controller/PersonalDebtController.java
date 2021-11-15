@@ -30,13 +30,12 @@ public class PersonalDebtController {
 		model.addAttribute("in", in);
 		model.addAttribute("inTotal", debtServ.getTotalAgreed(in));
 		model.addAttribute("inPaid", debtServ.getTotalPaid(in));
-		model.addAttribute("inDiff", debtServ.getTotalOutstanding(in));
 
 		List<PersonalDebtUIDTO> out = debtServ.getMyActivePersonalDebts();
 		model.addAttribute("out", out);
 		model.addAttribute("outTotal", debtServ.getTotalAgreed(out));
 		model.addAttribute("outPaid", debtServ.getTotalPaid(out));
-		model.addAttribute("outDiff", debtServ.getTotalOutstanding(out));
+		
 		model.addAttribute("debts", debtServ.getAllPersonalDebts());
 		return "personalDebt/list";
 	}

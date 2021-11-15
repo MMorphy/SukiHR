@@ -82,14 +82,17 @@
 			</table>
 		</div>
 	</div>
-	<form th:action="@{/personal_debt/add/}" method="get">
-		<button>Dodaj novu posudbu</button>
-	</form>
+	<div class="col-md-12">
+		<form th:action="@{/personal_debt/add/}" method="get">
+			<button>Dodaj novu posudbu</button>
+		</form>
+	</div>
 	<div class="col-md-12">
 		<h2 class="col-md-12">OUT Total:</h2>
 		<h4 class="col-md-4" th:text="@{'Dogovoreno: '+ ${outTotal}}+ ' HRK'"></h4>
 		<h4 class="col-md-4" th:text="@{'Plaćeno: '+ ${outPaid}} + ' HRK'"></h4>
-		<h4 class="col-md-4" th:text="@{'Razlika: '+ ${outDiff}}+ ' HRK'"></h4>
+		<h4 class="col-md-4"
+			th:text="@{'Razlika: '+ ${outTotal-outPaid}}+ ' HRK'"></h4>
 	</div>
 
 	<div class="col-md-12">
@@ -148,14 +151,17 @@
 			</table>
 		</div>
 	</div>
-	<form th:action="@{/personal_debt/add/}" method="get">
-		<button>Dodaj novu posudbu</button>
-	</form>
+	<div class="col-md-12">
+		<form th:action="@{/personal_debt/add/}" method="get">
+			<button>Dodaj novu posudbu</button>
+		</form>
+	</div>
 	<div class="col-md-12">
 		<h2 class="col-md-12">IN total:</h2>
 		<h4 class="col-md-4" th:text="@{'Dogovoreno: '+ ${inTotal}}+ ' HRK'"></h4>
 		<h4 class="col-md-4" th:text="@{'Plaćeno: '+ ${inPaid}} + ' HRK'"></h4>
-		<h4 class="col-md-4" th:text="@{'Razlika: '+ ${inDiff}}+ ' HRK'"></h4>
+		<h4 class="col-md-4"
+			th:text="@{'Razlika: '+ ${inTotal-inPaid}}+ ' HRK'"></h4>
 	</div>
 	<div class="col-md-12">
 		<div class="col-md-12">
