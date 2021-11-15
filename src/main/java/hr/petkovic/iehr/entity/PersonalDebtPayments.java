@@ -29,7 +29,9 @@ public class PersonalDebtPayments {
 
 	@Column(nullable = false, precision = 2)
 	private Float amount = 0F;
-	
+
+	private String description = "";
+
 	@ManyToOne(targetEntity = PersonalDebt.class)
 	@JoinColumn(name = "fk_personal_debt")
 	private PersonalDebt debt;
@@ -37,11 +39,12 @@ public class PersonalDebtPayments {
 	public PersonalDebtPayments() {
 	}
 
-	public PersonalDebtPayments(Date paymentDate, Float amount, PersonalDebt debt) {
+	public PersonalDebtPayments(Date paymentDate, Float amount, PersonalDebt debt, String description) {
 		super();
 		this.paymentDate = paymentDate;
 		this.amount = amount;
 		this.debt = debt;
+		this.description = description;
 	}
 
 	public Long getId() {
@@ -74,5 +77,13 @@ public class PersonalDebtPayments {
 
 	public void setDebt(PersonalDebt debt) {
 		this.debt = debt;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

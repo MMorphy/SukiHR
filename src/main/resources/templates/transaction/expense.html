@@ -11,7 +11,8 @@
 	<div class="col-md-12">
 		<h1 class="col-md-3">Izlaz</h1>
 	</div>
-	<form method="POST" th:object="${addTrans}" th:action="@{/transaction/expense/add/}">
+	<form method="POST" th:object="${addTrans}"
+		th:action="@{/transaction/expense/add/}">
 		<div class="container-fluid">
 			<div class="row">
 
@@ -21,10 +22,17 @@
 						th:field="*{amount}" required="required" step="0.01">
 				</div>
 				<div class="form-group col-lg-5">
-					<label>Tip:</label> <select th:field="*{type}"
-						class="form-control" required="required">
-						<option th:each="type : ${types}" th:value="${type.id}"
-							th:text="${type.subType}"></option>
+					<label>Tip:</label> <select th:field="*{type}" class="form-control"
+						required="required">
+						<optgroup sec:authorize="hasRole('ROLE_ADMIN')"
+							label="Privatni Troškovi">
+							<option th:each="type : ${private}" th:value="${type.id}"
+								th:text="${type.subType}"></option>
+						</optgroup>
+						<optgroup label="Poslovni Troškovi">
+							<option th:each="type : ${types}" th:value="${type.id}"
+								th:text="${type.subType}"></option>
+						</optgroup>
 					</select>
 				</div>
 			</div>

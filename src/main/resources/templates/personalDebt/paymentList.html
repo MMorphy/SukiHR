@@ -29,6 +29,7 @@
 					<tr>
 						<th>Datum</th>
 						<th>Iznos</th>
+						<th>Opis</th>
 						<th>Izmjeni</th>
 						<th>Briši</th>
 
@@ -38,6 +39,7 @@
 					<tr th:each="pay : ${payments}">
 						<td th:text="${pay.paymentDate}"></td>
 						<td th:text="${pay.amount}"></td>
+						<td th:text="${pay.description}"></td>
 						<td>
 							<form th:action="@{'/personal_debt/payment/edit/' + ${pay.id}}"
 								method="get">

@@ -57,8 +57,11 @@ public class TransactionController {
 
 	@GetMapping("/expense/add")
 	public String getExpenseAdding(Model model) {
+		if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			model.addAttribute("private", typeSer.getPrivateExpenseTypes());
+		}
 		model.addAttribute("addTrans", new Transaction());
-		List<TransactionType> types = typeSer.getAllExpenseTypes();
+		List<TransactionType> types = typeSer.getBusinessExpenseTypes();
 		if (types.isEmpty()) {
 			logger.error("No expense types when adding expenses. Redirect to home page!");
 			return "redirect:/";

@@ -14,7 +14,10 @@
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 	<script>
 		$(document).ready(function() {
-			$('#debtTable').dataTable({
+			$('#myDebtTable').dataTable({
+				"order" : [ 1, 'desc' ]
+			});
+			$('#debtToMeTable').dataTable({
 				"order" : [ 1, 'desc' ]
 			});
 			$('#allDebtTable').dataTable({
@@ -25,16 +28,17 @@
 
 	<div class="col-md-12">
 		<div class="col-md-12">
-			<h1 class="col-md-3">Aktivne posudbe</h1>
+			<h1 class="col-md-6">Moja dugovanja (OUT)</h1>
 		</div>
 		<div class="col-md-12">
-			<table class="table" id="debtTable">
+			<table class="table" id="myDebtTable">
 				<thead>
 					<tr>
 						<th>Datum</th>
 						<th>Korisnik</th>
 						<th>Ugovoreno dugovanje</th>
 						<th>Preostalo dugovanje</th>
+						<th>Opis</th>
 						<th>Prethodne otplate</th>
 						<th>Otplata</th>
 						<th>Izmjeni</th>
@@ -43,11 +47,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="debt : ${active}">
+					<tr th:each="debt : ${out}">
 						<td th:text="${debt.debt.createDate}"></td>
 						<td th:text="${debt.debt.user}"></td>
 						<td th:text="${debt.debt.amount}"></td>
 						<td th:text="${debt.debt.amount - debt.outstandingAmount}"></td>
+						<td th:text="${debt.debt.description}"></td>
 						<td><a th:if="${debt.debt.payments != null}"
 							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
 								Otplate</a> <span th:if="${debt.debt.payments == null}"> Nema
@@ -81,6 +86,78 @@
 		<button>Dodaj novu posudbu</button>
 	</form>
 	<div class="col-md-12">
+		<h2 class="col-md-12">OUT Total:</h2>
+		<h4 class="col-md-4" th:text="@{'Dogovoreno: '+ ${outTotal}}+ ' HRK'"></h4>
+		<h4 class="col-md-4" th:text="@{'Plaćeno: '+ ${outPaid}} + ' HRK'"></h4>
+		<h4 class="col-md-4" th:text="@{'Razlika: '+ ${outDiff}}+ ' HRK'"></h4>
+	</div>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-6">Dugovanja Prema Meni (IN)</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="debtToMeTable">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Korisnik</th>
+						<th>Ugovoreno dugovanje</th>
+						<th>Preostalo dugovanje</th>
+						<th>Opis</th>
+						<th>Prethodne otplate</th>
+						<th>Otplata</th>
+						<th>Izmjeni</th>
+						<th>Briši</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="debt : ${in}">
+						<td th:text="${debt.debt.createDate}"></td>
+						<td th:text="${debt.debt.user}"></td>
+						<td th:text="${debt.debt.amount}"></td>
+						<td th:text="${debt.debt.amount - debt.outstandingAmount}"></td>
+						<td th:text="${debt.debt.description}"></td>
+						<td><a th:if="${debt.debt.payments != null}"
+							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
+								Otplate</a> <span th:if="${debt.debt.payments == null}"> Nema
+								otplata </span></td>
+						<td>
+							<form
+								th:action="@{'/personal_debt/payment/add/' + ${debt.debt.id}}"
+								method="get">
+								<button>Otplata</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/personal_debt/edit/' + ${debt.debt.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/personal_debt/delete/' + ${debt.debt.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<form th:action="@{/personal_debt/add/}" method="get">
+		<button>Dodaj novu posudbu</button>
+	</form>
+	<div class="col-md-12">
+		<h2 class="col-md-12">IN total:</h2>
+		<h4 class="col-md-4" th:text="@{'Dogovoreno: '+ ${inTotal}}+ ' HRK'"></h4>
+		<h4 class="col-md-4" th:text="@{'Plaćeno: '+ ${inPaid}} + ' HRK'"></h4>
+		<h4 class="col-md-4" th:text="@{'Razlika: '+ ${inDiff}}+ ' HRK'"></h4>
+	</div>
+	<div class="col-md-12">
 		<div class="col-md-12">
 			<h1 class="col-md-3">Sve posudbe</h1>
 		</div>
@@ -91,6 +168,8 @@
 						<th>Datum</th>
 						<th>Korisnik</th>
 						<th>Ugovoreno dugovanje</th>
+						<th>Tip</th>
+						<th>Opis</th>
 						<th>Otplate</th>
 					</tr>
 				</thead>
@@ -99,6 +178,8 @@
 						<td th:text="${debt.createDate}"></td>
 						<td th:text="${debt.user}"></td>
 						<td th:text="${debt.amount}"></td>
+						<td th:text="${debt.type.type}"></td>
+						<td th:text="${debt.description}"></td>
 						<td><a th:if="${debt.payments != null}"
 							th:href="@{'/personal_debt/payment/' + ${debt.id}}"> Otplate</a>
 							<span th:if="${debt.payments == null}"> Nema otplata </span></td>

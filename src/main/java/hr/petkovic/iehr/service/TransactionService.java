@@ -261,4 +261,15 @@ public class TransactionService {
 		}
 		return sum;
 	}
+
+	public boolean isAdmin(String username) {
+		User u = userSer.findUserByUsername(username);
+		if (u == null) {
+			return false;
+		} else if (getUserRole(u) == 3) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

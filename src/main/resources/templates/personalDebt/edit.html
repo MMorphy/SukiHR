@@ -15,13 +15,18 @@
 			<div class="row">
 				<div class="form-group col-lg-4">
 					<label for="name">Korisnik:</label> <input type="text"
-						class="form-control" id="user" th:field="*{user}" th:value="*{user}"
-						required="required">
+						class="form-control" id="user" th:field="*{user}"
+						th:value="*{user}" required="required">
 				</div>
 				<div class="form-group col-lg-4">
 					<label for="subtype">Iznos:</label> <input type="number"
-						class="form-control" id="amount" th:field="*{amount}" th:value="*{amount}"
-						required="required" step="1">
+						class="form-control" id="amount" th:field="*{amount}"
+						th:value="*{amount}" required="required" step="1">
+				</div>
+				<div class="form-group col-lg-4">
+					<label for="name">Opis:</label> <input type="text"
+						class="form-control" id="user" th:field="*{description}"
+						th:value="*{description}" >
 				</div>
 			</div>
 		</div>

@@ -1,5 +1,9 @@
 package hr.petkovic.iehr.controller;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -8,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import hr.petkovic.iehr.entity.Transaction;
+import hr.petkovic.iehr.service.BankService;
 import hr.petkovic.iehr.service.DebtService;
 import hr.petkovic.iehr.service.TransactionService;
 
@@ -19,14 +25,19 @@ public class HomeController {
 
 	TransactionService tServ;
 	DebtService debtSer;
+	BankService bankServ;
 
-	public HomeController(TransactionService transService, DebtService debtService) {
+	public HomeController(TransactionService transService, DebtService debtService, BankService bankService) {
 		debtSer = debtService;
 		tServ = transService;
+		bankServ = bankService;
 	}
 
 	@GetMapping
 	public String getIndex(HttpSession session) {
+		List<Transaction> list = bankServ.findAllBankTransactions();
+		Set<Transaction> set = new HashSet<>(list);
+		session.setAttribute("sum", bankServ.getSum(set));
 		session.setAttribute("saldo", tServ.getSaldoForLoggedInUser());
 		session.setAttribute("dugovanja", debtSer.getDebtsForLoggedInUser());
 		return "index";

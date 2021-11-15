@@ -37,10 +37,13 @@
 								th:text="@{'Ukupni saldo kod korisnika: ' + ${session.saldo} + ' HRK'}"></a></li>
 							<li sec:authorize="!hasRole('ROLE_ADMIN')"><a
 								th:href="@{'/transaction/' + ${#authentication.name} }"
-								th:text="@{'Ukupna doguvanja mojih lokala: ' + ${session.dugovanja} + ' HRK'}"></a></li>
+								th:text="@{'Ukupna dugovanja mojih lokala: ' + ${session.dugovanja} + ' HRK'}"></a></li>
 							<li sec:authorize="hasRole('ROLE_ADMIN')"><a
 								th:href="@{/debt/}"
-								th:text="@{'Ukupna dugovanja: ' + ${session.dugovanja} + ' HRK'}"></a></li>
+								th:text="@{'Ukupna dugovanja lokala: ' + ${session.dugovanja} + ' HRK'}"></a></li>
+							<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+								th:href="@{/bank/}"
+								th:text="@{'Stanje banke: ' + ${session.sum} + ' HRK'}"></a></li>
 
 						</ul>
 

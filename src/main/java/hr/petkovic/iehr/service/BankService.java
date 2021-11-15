@@ -11,25 +11,28 @@ import hr.petkovic.iehr.entity.Transaction;
 public class BankService {
 
 	private TransactionService transServ;
+	private PersonalDebtService debtServ;
 
-	public BankService(TransactionService tService) {
+	public BankService(TransactionService tService, PersonalDebtService dService) {
 		transServ = tService;
+		debtServ = dService;
 	}
 
-	public List<Transaction> findAllBankTransactions(){
+	public List<Transaction> findAllBankTransactions() {
 		return transServ.findAllBankTransactions();
 	}
 
-	public Float getSum(Set<Transaction> set) {
-		Float sum = 0F;
+	public Double getSum(Set<Transaction> set) {
+		Double sum = 0d;
 		for (Transaction t : set) {
 			if (t.getType().getSubType().equals("Razduzenje")) {
-				sum+=t.getAmount();
-			}
-			else {
-				sum-=t.getAmount();
+				sum += t.getAmount();
+			} else {
+				sum -= t.getAmount();
 			}
 		}
+		sum -= debtServ.getOutPaymentsSum();
+		sum += debtServ.getInPaymentsSum();
 		return sum;
 	}
 }

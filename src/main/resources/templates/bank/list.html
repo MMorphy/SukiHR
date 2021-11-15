@@ -13,10 +13,13 @@
 
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
-<script>
+	<script>
 		$(document).ready(function() {
-			$('#transTable').dataTable( {
-				"order": [1, 'desc']
+			$('#transTable').dataTable({
+				"order" : [ 1, 'desc' ]
+			});
+			$('#allDebtTable').dataTable({
+				"order" : [ 0, 'desc' ]
 			});
 		});
 	</script>
@@ -53,9 +56,42 @@
 					</tr>
 				</tbody>
 			</table>
-
 		</div>
-
+		<div class="col-md-12">
+			<div class="col-md-12">
+				<h1 class="col-md-3">Sve posudbe</h1>
+			</div>
+			<div class="col-md-12">
+				<table class="table" id="allDebtTable">
+					<thead>
+						<tr>
+							<th>Datum</th>
+							<th>Korisnik</th>
+							<th>Ugovoreno dugovanje</th>
+							<th>Preostalo dugovanje</th>
+							<th>Tip</th>
+							<th>Opis</th>
+							<th>Otplate</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="debt : ${debts}">
+							<td th:text="${debt.debt.createDate}"></td>
+							<td th:text="${debt.debt.user}"></td>
+							<td th:text="${debt.debt.amount}"></td>
+							<td th:text="${debt.debt.amount - debt.outstandingAmount}"></td>
+							<td th:text="${debt.debt.type.type}"></td>
+							<td th:text="${debt.debt.description}"></td>
+							<td><a th:if="${debt.debt.payments != null}"
+								th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
+									Otplate</a> <span th:if="${debt.debt.payments == null}">
+									Nema otplata </span></td>
+							<td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 
 

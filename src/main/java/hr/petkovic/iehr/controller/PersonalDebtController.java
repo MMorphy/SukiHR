@@ -1,5 +1,7 @@
 package hr.petkovic.iehr.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import hr.petkovic.iehr.DTO.PersonalDebtUIDTO;
 import hr.petkovic.iehr.entity.PersonalDebt;
 import hr.petkovic.iehr.entity.PersonalDebtPayments;
 import hr.petkovic.iehr.service.PersonalDebtService;
@@ -23,7 +26,17 @@ public class PersonalDebtController {
 
 	@GetMapping("/")
 	public String getPersonalDebtHome(Model model) {
-		model.addAttribute("active", debtServ.getActivePersonalDebts());
+		List<PersonalDebtUIDTO> in = debtServ.getActivePersonalDebtsToMe();
+		model.addAttribute("in", in);
+		model.addAttribute("inTotal", debtServ.getTotalAgreed(in));
+		model.addAttribute("inPaid", debtServ.getTotalPaid(in));
+		model.addAttribute("inDiff", debtServ.getTotalOutstanding(in));
+
+		List<PersonalDebtUIDTO> out = debtServ.getMyActivePersonalDebts();
+		model.addAttribute("out", out);
+		model.addAttribute("outTotal", debtServ.getTotalAgreed(out));
+		model.addAttribute("outPaid", debtServ.getTotalPaid(out));
+		model.addAttribute("outDiff", debtServ.getTotalOutstanding(out));
 		model.addAttribute("debts", debtServ.getAllPersonalDebts());
 		return "personalDebt/list";
 	}
@@ -31,6 +44,7 @@ public class PersonalDebtController {
 	@GetMapping("/add")
 	public String getPersonalDebtAdding(Model model) {
 		model.addAttribute("addDebt", debtServ.getNewPersonalDebt());
+		model.addAttribute("types", debtServ.getPersonalDebtTypes());
 		return "personalDebt/add";
 	}
 
@@ -73,7 +87,7 @@ public class PersonalDebtController {
 		model.addAttribute("id", id);
 		return "personalDebt/paymentAdd";
 	}
-	
+
 	@PostMapping("/payment/add/{id}")
 	public String addPayment(@PathVariable("id") Long id, PersonalDebtPayments addPayment) {
 		debtServ.addPayment(id, addPayment);
