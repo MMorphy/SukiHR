@@ -212,7 +212,7 @@ public class TransactionService {
 	}
 
 	public List<Transaction> findAllBankTransactions() {
-		return transRepo.findAllByCreatedBy_Roles_NameOrType_SubType("ROLE_ADMIN", "Razduzenje");
+		return transRepo.findAllByCreatedBy_Roles_NameOrType_SubType("ROLE_ADMIN", "RAZDUŽENJE");
 	}
 
 	public List<UserWithSum> updateSaldoForUserDTOs(List<UserWithTotalDebtDTO> users) {

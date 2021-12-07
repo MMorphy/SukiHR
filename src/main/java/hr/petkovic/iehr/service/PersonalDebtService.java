@@ -212,6 +212,15 @@ public class PersonalDebtService {
 		return sum;
 	}
 
+	public Double getInAgreedSum() {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllDebtsToMe();
+		for (PersonalDebt d : debts) {
+			sum += d.getAmount();
+		}
+		return sum;
+	}
+
 	public Double getOutPaymentsSum() {
 		Double sum = 0d;
 		List<PersonalDebt> debts = getAllMyDebts();
@@ -219,6 +228,15 @@ public class PersonalDebtService {
 			for (PersonalDebtPayments p : d.getPayments()) {
 				sum += p.getAmount();
 			}
+		}
+		return sum;
+	}
+
+	public Double getOutAgreedSum() {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllMyDebts();
+		for (PersonalDebt d : debts) {
+			sum += d.getAmount();
 		}
 		return sum;
 	}

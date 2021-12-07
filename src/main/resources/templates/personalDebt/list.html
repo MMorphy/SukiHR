@@ -51,7 +51,8 @@
 						<td th:text="${debt.debt.createDate}"></td>
 						<td th:text="${debt.debt.user}"></td>
 						<td th:text="${debt.debt.amount}"></td>
-						<td th:text="${debt.debt.amount - debt.outstandingAmount}"></td>
+						<td><span th:if="${debt.debt.amount != null} "
+							th:text="${debt.debt.amount - debt.outstandingAmount}"></span><span>0</span></td>
 						<td th:text="${debt.debt.description}"></td>
 						<td><a th:if="${debt.debt.payments != null}"
 							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">

@@ -33,7 +33,7 @@ public class TransactionTypeUtil {
 		returnList.add("Kesh plaća S");
 		returnList.add("Kesh M");
 		returnList.add("Ostalo");
-		returnList.add("Razduzenje");
+		returnList.add("RAZDUŽENJE");
 		return returnList;
 	}
 }

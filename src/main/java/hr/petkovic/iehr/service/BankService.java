@@ -25,13 +25,15 @@ public class BankService {
 	public Double getSum(Set<Transaction> set) {
 		Double sum = 0d;
 		for (Transaction t : set) {
-			if (t.getType().getSubType().equals("Razduzenje")) {
+			if (t.getType().getSubType().equals("RAZDUŽENJE")) {
 				sum += t.getAmount();
 			} else {
 				sum -= t.getAmount();
 			}
 		}
+		sum += debtServ.getOutAgreedSum();
 		sum -= debtServ.getOutPaymentsSum();
+		sum -= debtServ.getInAgreedSum();
 		sum += debtServ.getInPaymentsSum();
 		return sum;
 	}
