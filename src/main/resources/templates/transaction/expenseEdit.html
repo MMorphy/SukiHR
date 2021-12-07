@@ -25,8 +25,15 @@
 				<div class="form-group col-lg-5">
 					<label>Tip:</label> <select th:field="*{type}" class="form-control"
 						required="required">
-						<option th:each="type : ${types}" th:value="${type.id}"
-							th:text="${type.subType}"></option>
+						<optgroup sec:authorize="hasRole('ROLE_ADMIN')"
+							label="Privatni Troškovi">
+							<option th:each="type : ${private}" th:value="${type.id}"
+								th:text="${type.subType}"></option>
+						</optgroup>
+						<optgroup label="Poslovni Troškovi">
+							<option th:each="type : ${types}" th:value="${type.id}"
+								th:text="${type.subType}"></option>
+						</optgroup>
 					</select>
 				</div>
 			</div>

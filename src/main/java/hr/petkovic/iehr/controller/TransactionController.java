@@ -89,7 +89,10 @@ public class TransactionController {
 		model.addAttribute("editTrans", trans);
 		// Expenses
 		if (trans.getSite() == null) {
-			List<TransactionType> types = typeSer.getAllExpenseTypes();
+			if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
+				model.addAttribute("private", typeSer.getPrivateExpenseTypes());
+			}
+			List<TransactionType> types = typeSer.getBusinessExpenseTypes();
 			if (types.isEmpty()) {
 				logger.error("No expense types when adding expenses. Redirect to home page!");
 				return "redirect:/";
