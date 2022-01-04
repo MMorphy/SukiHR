@@ -60,14 +60,12 @@ public class TransactionController {
 		if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			model.addAttribute("private", typeSer.getPrivateExpenseTypes());
 		}
-		model.addAttribute("addTrans", new Transaction());
-		List<TransactionType> types = typeSer.getBusinessExpenseTypes();
-		if (types.isEmpty()) {
-			logger.error("No expense types when adding expenses. Redirect to home page!");
-			return "redirect:/";
-		} else {
-			model.addAttribute("types", types);
+		if (transSer.isPrivileged(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			model.addAttribute("business", typeSer.getBusinessExpenseTypes());
 		}
+		model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
+		model.addAttribute("addTrans", new Transaction());
+
 		return "transaction/expense";
 	}
 
@@ -84,7 +82,7 @@ public class TransactionController {
 	}
 
 	@GetMapping("/edit/{id}")
-	public String getExpenseEditing(@PathVariable Long id, Model model) {
+	public String getTransactionEditing(@PathVariable Long id, Model model) {
 		Transaction trans = transSer.findTransactionById(id);
 		model.addAttribute("editTrans", trans);
 		// Expenses
@@ -92,13 +90,10 @@ public class TransactionController {
 			if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 				model.addAttribute("private", typeSer.getPrivateExpenseTypes());
 			}
-			List<TransactionType> types = typeSer.getBusinessExpenseTypes();
-			if (types.isEmpty()) {
-				logger.error("No expense types when adding expenses. Redirect to home page!");
-				return "redirect:/";
-			} else {
-				model.addAttribute("types", types);
+			if (transSer.isPrivileged(SecurityContextHolder.getContext().getAuthentication().getName())) {
+				model.addAttribute("business", typeSer.getBusinessExpenseTypes());
 			}
+			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 			return "transaction/expenseEdit";
 			// Incomes
 		} else {
@@ -122,6 +117,32 @@ public class TransactionController {
 	@PostMapping("/delete/{id}")
 	public String deleteTransaction(@PathVariable("id") Long id) {
 		transSer.deleteTransById(id);
+		return "redirect:/";
+	}
+
+	@GetMapping("/bank/income/add")
+	public String getBankIncomeAdding(Model model) {
+		model.addAttribute("addTrans", new Transaction());
+		return "transaction/bankIncome";
+	}
+
+	@PostMapping("/bank/income/add")
+	public String addBankIncome(Transaction addTrans) {
+		transSer.addBankIncome(addTrans);
+		return "redirect:/";
+	}
+
+	@GetMapping("/bank/edit/{id}")
+	public String getBankIncomeEdit(@PathVariable Long id, Model model) {
+		Transaction trans = transSer.findTransactionById(id);
+		model.addAttribute("editTrans", trans);
+		return "transaction/bankIncomeEdit";
+
+	}
+
+	@PostMapping("/bank/income/edit/{id}")
+	public String editBankIncome(@PathVariable Long id, Transaction editTrans) {
+		transSer.editBankIncome(id, editTrans);
 		return "redirect:/";
 	}
 }

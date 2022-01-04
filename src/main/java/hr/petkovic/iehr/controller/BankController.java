@@ -28,6 +28,7 @@ public class BankController {
 	@GetMapping("/")
 	public String getBankHome(Model model) {
 		List<Transaction> list = bankServ.findAllBankTransactions();
+		list.addAll(bankServ.findBankUserTransacations());
 		Set<Transaction> set = new HashSet<>(list);
 		model.addAttribute("transactions", set);
 		model.addAttribute("sum", bankServ.getSum(set));

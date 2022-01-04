@@ -15,8 +15,8 @@
 
 	<script>
 		$(document).ready(function() {
-			$('#transTable').dataTable( {
-				"order": [1, 'desc']
+			$('#transTable').dataTable({
+				"order" : [ 1, 'desc' ]
 			});
 		});
 	</script>
@@ -44,7 +44,8 @@
 					<tr th:each="trans : ${transactions}">
 						<td th:text="${trans.createdBy.username}"></td>
 						<td th:text="${trans.createDate}"></td>
-						<td th:text="${trans.site !=null ? trans.site.name : 'Izlaz'}"></td>
+						<td
+							th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : 'Banka'}"></td>
 						<td
 							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td th:if="${trans.type != null}" th:text="${trans.type.subType}"></td>
@@ -59,11 +60,14 @@
 							</form>
 						</td>
 						<td>
-							<form th:action="@{'/transaction/edit/' + ${trans.id}}"
+							<form th:if="${trans.type.subType == 'Banka'}" th:action="@{'/transaction/bank/edit/' + ${trans.id}}"
 								method="get">
 								<button>Izmjeni</button>
 							</form>
-
+							<form th:if="${trans.type.subType != 'Banka'}" th:action="@{'/transaction/edit/' + ${trans.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
 						</td>
 					</tr>
 				</tbody>

@@ -32,8 +32,27 @@ public class TransactionTypeUtil {
 		returnList.add("Jarebica lov d.o.o.");
 		returnList.add("Kesh plaća S");
 		returnList.add("Kesh M");
-		returnList.add("Ostalo");
-		returnList.add("RAZDUŽENJE");
+		returnList.add("Poslovno - Ostalo");
 		return returnList;
+	}
+
+	public List<String> getOperativeExpenses(){
+		List<String> returnList = new ArrayList<String>();
+		returnList.add("Placa");
+		returnList.add("Bonus na placu 5%");
+		returnList.add("Bonus na placu 10%");
+		returnList.add("Gorivo");
+		returnList.add("Cestarina");
+		returnList.add("Pice");
+		returnList.add("Bonus Konobari");
+		returnList.add("Rezervni dijelovi aparati");
+		returnList.add("Novi aparati");
+		returnList.add("Auto: servis, osiguranje, registracija");
+		returnList.add("Telefon i bon");
+		returnList.add("Odvjetnik");
+		returnList.add("Operativno - Ostalo");
+		returnList.add("RAZDUZENJE");
+		return returnList;
+
 	}
 }

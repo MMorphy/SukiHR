@@ -272,4 +272,41 @@ public class TransactionService {
 			return false;
 		}
 	}
+
+	public boolean isPrivileged(String username) {
+		if (isAdmin(username)) {
+			return true;
+		}
+		User u = userSer.findUserByUsername(username);
+		if (u == null) {
+			return false;
+		} else if (getUserRole(u) == 2 || u.getUsername().equals("boriss")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public Transaction addBankIncome(Transaction addBankTrans) {
+		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		addBankTrans.setCreatedBy(u);
+		addBankTrans.setType(typeSer.getDefaultBankIncomeType());
+		return saveTransaction(addBankTrans);
+	}
+
+	public Transaction editBankIncome(Long id,Transaction editBankTrans) {
+		Transaction oldTrans = findTransactionById(id);
+		oldTrans.setAmount(editBankTrans.getAmount());
+		oldTrans.setDescription(editBankTrans.getDescription());
+		return saveTransaction(oldTrans);
+		
+	}
+
+	public Double findBankUserIncomesSum(){
+		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Ulaz");
+	}
+
+	public Double findBankUserExpensesSum() {
+		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Izlaz");
+	}
 }

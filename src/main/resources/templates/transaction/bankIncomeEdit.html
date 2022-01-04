@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="ISO-8859-1">
-<title>Income edit</title>
+<title>Bank Income Edit</title>
 <th:block th:include="fragments/generalFragments.html :: headerfiles">
 </head>
 <body>
@@ -12,7 +12,7 @@
 		<h1 class="col-md-3">Ulaz</h1>
 	</div>
 	<form method="POST" th:object="${editTrans}"
-		th:action="@{'/transaction/income/edit/' + *{id}}">
+		th:action="@{'/transaction/bank/income/edit/' + *{id}}">
 		<div class="container-fluid">
 			<div class="row">
 
@@ -22,22 +22,8 @@
 						th:field="*{amount}" required="required" step="0.01">
 				</div>
 				<div class="form-group col-lg-6">
-					<label>Lokal i dugovanje:</label> <select th:field="*{site}"
-						class="form-control" required="required">
-						<option th:each="site : ${sites}" th:value="${site.site.id}"
-							th:text="${site.site.name} + '-Dug: ' + ${site.debtTotal}"></option>
-					</select>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-lg-6">
-					<label for="amount" class="control-label">Povrat duga (+ ako vraća / - ako se zadužuje)</label> <input
-						type="number" class="form-control" id="amount"
-						th:field="*{debt.amount}" required="required" step="0.01">
-				</div>
-				<div class="form-group col-lg-6">
-					<label for="description" class="control-label">Opis:</label>
-					<input type="text" class="form-control" id="description"
+					<label for="description" class="control-label">Opis:</label> <input
+						type="text" class="form-control" id="description"
 						th:field="*{description}">
 				</div>
 			</div>

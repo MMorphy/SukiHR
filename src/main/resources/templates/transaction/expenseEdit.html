@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="ISO-8859-1">
-<title>Income adding</title>
+<title>Expense Edit</title>
 <th:block th:include="fragments/generalFragments.html :: headerfiles">
 </head>
 <body>
@@ -25,13 +25,19 @@
 				<div class="form-group col-lg-5">
 					<label>Tip:</label> <select th:field="*{type}" class="form-control"
 						required="required">
+						<optgroup label="Operativni Troškovi">
+							<option th:each="type : ${operative}" th:value="${type.id}"
+								th:text="${type.subType}"></option>
+						</optgroup>
 						<optgroup sec:authorize="hasRole('ROLE_ADMIN')"
 							label="Privatni Troškovi">
 							<option th:each="type : ${private}" th:value="${type.id}"
 								th:text="${type.subType}"></option>
 						</optgroup>
-						<optgroup label="Poslovni Troškovi">
-							<option th:each="type : ${types}" th:value="${type.id}"
+						<optgroup
+							th:if="${#authentication.getPrincipal().getUsername() == 'boriss' or #authentication.getPrincipal().getUsername() == 'banka' or #authentication.getPrincipal().getUsername() == 'ivans'}"
+							label="Poslovni Troškovi">
+							<option th:each="type : ${business}" th:value="${type.id}"
 								th:text="${type.subType}"></option>
 						</optgroup>
 					</select>
@@ -39,8 +45,8 @@
 			</div>
 			<div class="row">
 				<div class="form-group col-lg-12">
-					<label for="description" class="control-label">Opis:</label>
-					<input type="text" class="form-control" id="description"
+					<label for="description" class="control-label">Opis:</label> <input
+						type="text" class="form-control" id="description"
 						th:field="*{description}" th:value="*{description}">
 				</div>
 			</div>

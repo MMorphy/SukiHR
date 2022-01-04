@@ -26,6 +26,10 @@ public class TransactionTypeService {
 		return typeRepo.findByMainTypeAndSubType("Ulaz", "Lokal").get();
 	}
 
+	public TransactionType getDefaultBankIncomeType() {
+		return typeRepo.findByMainTypeAndSubType("Ulaz", "Banka").get();
+	}
+
 	public List<TransactionType> getAllExpenseTypes() {
 		return typeRepo.findAllByMainType("Izlaz");
 	}
@@ -36,5 +40,9 @@ public class TransactionTypeService {
 
 	public List<TransactionType> getBusinessExpenseTypes() {
 		return typeRepo.findBySubTypeIn(tUtil.getBusinessExpenses());
+	}
+
+	public List<TransactionType> getOperativeExpenseTypes() {
+		return typeRepo.findBySubTypeIn(tUtil.getOperativeExpenses());
 	}
 }
