@@ -28,7 +28,7 @@
 
 	<div class="col-md-12">
 		<div class="col-md-12">
-			<h1 class="col-md-6">Moja dugovanja (OUT)</h1>
+			<h1 class="col-md-6">Moji dugovi</h1>
 		</div>
 		<div class="col-md-12">
 			<table class="table" id="myDebtTable">
@@ -89,16 +89,16 @@
 		</form>
 	</div>
 	<div class="col-md-12">
-		<h2 class="col-md-12">OUT Total:</h2>
+		<h2 class="col-md-12">Total:</h2>
 		<h4 class="col-md-4" th:text="@{'Dogovoreno: '+ ${outTotal}}+ ' HRK'"></h4>
 		<h4 class="col-md-4" th:text="@{'Plaćeno: '+ ${outPaid}} + ' HRK'"></h4>
-		<h4 class="col-md-4"
-			th:text="@{'Razlika: '+ ${outTotal-outPaid}}+ ' HRK'"></h4>
+		<h3 class="col-md-4 text-danger font-weight-bold"
+			th:text="@{'Ostatak duga: '+ ${outTotal-outPaid}}+ ' HRK'"></h4>
 	</div>
 
 	<div class="col-md-12">
 		<div class="col-md-12">
-			<h1 class="col-md-6">Dugovanja Prema Meni (IN)</h1>
+			<h1 class="col-md-6">Dugovanja Prema Meni</h1>
 		</div>
 		<div class="col-md-12">
 			<table class="table" id="debtToMeTable">
@@ -158,43 +158,11 @@
 		</form>
 	</div>
 	<div class="col-md-12">
-		<h2 class="col-md-12">IN total:</h2>
+		<h2 class="col-md-12">Total:</h2>
 		<h4 class="col-md-4" th:text="@{'Dogovoreno: '+ ${inTotal}}+ ' HRK'"></h4>
 		<h4 class="col-md-4" th:text="@{'Plaćeno: '+ ${inPaid}} + ' HRK'"></h4>
-		<h4 class="col-md-4"
-			th:text="@{'Razlika: '+ ${inTotal-inPaid}}+ ' HRK'"></h4>
-	</div>
-	<div class="col-md-12">
-		<div class="col-md-12">
-			<h1 class="col-md-3">Sve posudbe</h1>
-		</div>
-		<div class="col-md-12">
-			<table class="table" id="allDebtTable">
-				<thead>
-					<tr>
-						<th>Datum</th>
-						<th>Korisnik</th>
-						<th>Ugovoreno dugovanje</th>
-						<th>Tip</th>
-						<th>Opis</th>
-						<th>Otplate</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="debt : ${debts}">
-						<td th:text="${debt.createDate}"></td>
-						<td th:text="${debt.user}"></td>
-						<td th:text="${debt.amount}"></td>
-						<td th:text="${debt.type.type}"></td>
-						<td th:text="${debt.description}"></td>
-						<td><a th:if="${debt.payments != null}"
-							th:href="@{'/personal_debt/payment/' + ${debt.id}}"> Otplate</a>
-							<span th:if="${debt.payments == null}"> Nema otplata </span></td>
-						<td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<h3 class="col-md-4 text-success font-weight-bold"
+			th:text="@{'Ostatak duga: '+ ${inTotal-inPaid}}+ ' HRK'"></h4>
 	</div>
 </body>
 </html>
