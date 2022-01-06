@@ -40,7 +40,7 @@ public class DeviceController {
 
 	@GetMapping("/{id}")
 	public String getDevicesFromSite(@PathVariable(required = true) Long id, Model model) {
-		model.addAttribute("sites", siteSer.findSiteById(id));
+		model.addAttribute("sites", siteSer.findSiteByIdAndRemoveEmptySiteDevices(id));
 		model.addAttribute("devices", deviceSer.findAllDevices());
 		return "device/list";
 	}

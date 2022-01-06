@@ -49,6 +49,23 @@ public class SiteService {
 		}
 	}
 
+	public Site findSiteByIdAndRemoveEmptySiteDevices(Long id) {
+		Site site = findSiteById(id);
+		if (site == null) {
+			logger.error("Searching for non existing site! Site id=" + id);
+			return null;
+		}
+		Set<SiteDevices> set = new HashSet<>();
+		for (SiteDevices d : site.getDevices()) {
+			// TODO makni null ako radi nakon testa
+			if (d.getAmount() != null && !d.getAmount().equals(0)) {
+				set.add(d);
+			}
+		}
+		site.setDevices(set);
+		return site;
+	}
+
 	public List<Site> findAllSites() {
 		return siteRepo.findAll();
 	}

@@ -7,7 +7,7 @@
 <th:block th:include="fragments/generalFragments.html :: headerfiles">
 </th:block>
 <script type="text/javascript"
-	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+	src="https://cdn.datatables.net/v/bs/dt-1.11.3/datatables.min.js"></script>
 </head>
 <body>
 
@@ -15,8 +15,30 @@
 
 	<script>
 		$(document).ready(function() {
-			$('#transTable').dataTable({
-				"order" : [ 1, 'desc' ]
+			$('#transTable').DataTable({
+				"order" : [ 1, 'desc' ],
+				"footerCallback": function ( row, data, start, end, display ) {
+		            var api = this.api(), data;
+		 
+		            // Remove the formatting to get integer data for summation
+		            var intVal = function ( i ) {
+		                return typeof i === 'string' ?
+		                    i.replace(/[\HRK,]/g, '')*1 :
+		                    typeof i === 'number' ?
+		                        i : 0;
+		            };
+		            pageTotal = api
+	                .column( 3, { page: 'current'} )
+	                .data()
+	                .reduce( function (a, b) {
+	                    return intVal(a) + intVal(b);
+	                }, 0 );
+	 
+	            // Update footer
+	            $( api.column( 7 ).footer() ).html(
+	                pageTotal + ' HRK'
+	            );
+	            }
 			});
 		});
 	</script>
@@ -45,7 +67,7 @@
 						<td th:text="${trans.createdBy.username}"></td>
 						<td th:text="${trans.createDate}"></td>
 						<td
-							th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : 'Banka'}"></td>
+							th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : 'Banka Ulaz'}"></td>
 						<td
 							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td th:if="${trans.type != null}" th:text="${trans.type.subType}"></td>
@@ -71,6 +93,12 @@
 						</td>
 					</tr>
 				</tbody>
+				<tfoot>
+		            <tr>
+		                <th colspan="7" style="text-align:right">Total:</th>
+		                <th ></th><th></th>
+		            </tr>
+		        </tfoot>
 			</table>
 
 		</div>

@@ -27,4 +27,10 @@ public class DebtController {
 		}
 		return "debt/list";
 	}
+
+	@GetMapping("/site/{siteId}")
+	public String getAllDebtsForSite(@PathVariable(required = true) Long siteId, Model model) {
+		model.addAttribute("debts", debtSer.findAllDebtsForSiteId(siteId));
+		return "debt/list";
+	}
 }

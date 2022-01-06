@@ -12,6 +12,9 @@ public interface DebtRepo extends JpaRepository<Debt, Long> {
 
 	public List<Debt> findAllByTransaction_CreatedBy_Username(String username);
 
+	@Query("SELECT d FROM Debt d WHERE d.amount <> 0 AND d.transaction.site.id = :id")
+	public List<Debt> findAllNonZeroDebtsForSiteId(@Param("id") Long id);
+
 	@Query("SELECT d FROM Debt d WHERE d.amount <> 0")
 	public List<Debt> findAllNonZeroDebts();
 

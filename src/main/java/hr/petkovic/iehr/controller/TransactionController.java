@@ -38,8 +38,13 @@ public class TransactionController {
 	public String getIncomeAdding(Model model) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		model.addAttribute("addTrans", new Transaction());
-		model.addAttribute("sites", transSer.makeFullSiteListActive(siteSer.findAllSitesByUsernameRole(username),
-				transSer.findAllSitesWithDebtForUsername(username)));
+		if (transSer.isAdmin(username)) {
+			model.addAttribute("sites", transSer.makeFullSiteListActive(siteSer.findAllSitesByUsernameRole(username),
+					transSer.findAllSitesWithDebt()));
+		} else {
+			model.addAttribute("sites", transSer.makeFullSiteListActive(siteSer.findAllSitesByUsernameRole(username),
+					transSer.findAllSitesWithDebtForUsername(username)));
+		}
 		return "transaction/income";
 	}
 

@@ -26,6 +26,9 @@ public class DebtService {
 		return this.debtRepo.findAllNonZeroDebtsForUsername(username);
 	}
 
+	public List<Debt> findAllDebtsForSiteId(Long id){
+		return this.debtRepo.findAllNonZeroDebtsForSiteId(id);
+	}
 	public Float getDebtsForLoggedInUser() {
 		for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 			if (ga.toString().equals("ROLE_ADMIN")) {
