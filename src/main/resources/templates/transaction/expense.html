@@ -24,7 +24,7 @@
 				<div class="form-group col-lg-4">
 					<label>Tip:</label> <select th:field="*{type}" class="form-control"
 						required="required">
-						<optgroup label="Operativni Troškovi">
+						<optgroup th:unless="${#authentication.getPrincipal().getUsername() == 'banka'}" label="Operativni Troškovi">
 							<option th:each="type : ${operative}" th:value="${type.id}"
 								th:text="${type.subType}"></option>
 						</optgroup>

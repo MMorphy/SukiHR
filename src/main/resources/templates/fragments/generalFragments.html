@@ -3,6 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="headerfiles">
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css"
@@ -32,16 +33,16 @@
 							<li sec:authorize="!hasRole('ROLE_BANK')"><a
 								th:href="@{'/transaction/' + ${#authentication.name} }"
 								th:text="@{'Saldo: ' + ${session.saldo} + ' HRK'}"></a></li>
-							<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							<li sec:authorize="hasRole('ROLE_BANK')"><a
 								th:href="@{/user/}"
 								th:text="@{'Ukupni saldo kod korisnika: ' + ${session.saldo} + ' HRK'}"></a></li>
 							<li sec:authorize="!hasRole('ROLE_BANK')"><a
 								th:href="@{'/transaction/' + ${#authentication.name} }"
 								th:text="@{'Ukupna dugovanja mojih lokala: ' + ${session.dugovanja} + ' HRK'}"></a></li>
-							<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							<li sec:authorize="hasRole('ROLE_BANK')"><a
 								th:href="@{/debt/}"
 								th:text="@{'Ukupna dugovanja lokala: ' + ${session.dugovanja} + ' HRK'}"></a></li>
-							<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							<li sec:authorize="hasRole('ROLE_BANK')"><a
 								th:href="@{/bank/}"
 								th:text="@{'Stanje banke: ' + ${session.sum} + ' HRK'}"></a></li>
 

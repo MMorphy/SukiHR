@@ -16,9 +16,11 @@
 	<script>
 		$(document).ready(function() {
 			$('#siteTable').dataTable({
-				"order" : [ 3, 'desc' ]
+				"order" : [ [ 3, 'desc' ], [ 0, 'desc'] ]
 			});
-			$('#inactiveTable').DataTable();
+			$('#inactiveTable').dataTable({
+				"order" : [ [ 3, 'desc' ], [ 0, 'desc'] ]
+			});
 		});
 	</script>
 
@@ -49,10 +51,10 @@
 						<td th:text="${site.site.createDate}"></td>
 						<td th:text="${site.site.lastVisit}"></td>
 						<td><a th:if="${site.debtTotal != 0}"
-							th:text="${#numbers.formatDecimal(site.debtTotal, 0, 'COMMA', 2, 'POINT')} + ' HRK'"
-							th:href="@{'/debt/' + ${site.site.id}}"></a> <a
+							th:text="${#numbers.formatDecimal(site.debtTotal, 1, 'COMMA', 2, 'POINT')} + ' HRK'"
+							th:href="@{'/debt/site/' + ${site.site.id}}"></a> <a
 							th:if="${site.debtTotal == 0}"
-							th:href="@{'/debt/' + ${site.site.id}}">0.00 HRK</a>
+							th:href="@{'/debt/site/' + ${site.site.id}}">0.00 HRK</a>
 						<td><a th:if="${site.site.devices != null}"
 							th:href="@{'/device/' + ${site.site.id}}"> Aparati</a> <span
 							th:if="${site.site.devices == null}"> Nema aparata </span></td>

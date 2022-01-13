@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import hr.petkovic.iehr.entity.TransactionType;
+
 @Component
 public class TransactionTypeUtil {
 
-	public List<String> getPrivateExpenses(){
+	public List<String> getPrivateExpenses() {
 		List<String> returnList = new ArrayList<String>();
 		returnList.add("Auto");
 		returnList.add("Taxy");
@@ -17,27 +19,28 @@ public class TransactionTypeUtil {
 		returnList.add("Izlasci");
 		returnList.add("Sport");
 		returnList.add("Kredit");
-		returnList.add("Kuca SN");
-		returnList.add("Kuca DS");
 		returnList.add("Doktor");
 		returnList.add("Pokloni");
 		returnList.add("Putovanja");
+		returnList.add("Investicije");
 		returnList.add("Privatno - Ostalo");
 		return returnList;
 	}
 
-	public List<String> getBusinessExpenses(){
+	public List<String> getBusinessExpenses() {
 		List<String> returnList = new ArrayList<String>();
 		returnList.add("Zabava j.d.o.o.");
 		returnList.add("IBS Idea d.o.o.");
 		returnList.add("Jarebica lov d.o.o.");
-		returnList.add("Kesh plaća S");
+		returnList.add("Kesh I");
+		returnList.add("Kesh B");
+		returnList.add("Kesh S");
 		returnList.add("Kesh M");
 		returnList.add("Poslovno - Ostalo");
 		return returnList;
 	}
 
-	public List<String> getOperativeExpenses(){
+	public List<String> getOperativeExpenses() {
 		List<String> returnList = new ArrayList<String>();
 		returnList.add("Placa");
 		returnList.add("Bonus na placu 5%");
@@ -57,10 +60,26 @@ public class TransactionTypeUtil {
 
 	}
 
-	public List<String> addBorisExpenses(List<String> operative){
+	public List<String> addBorisExpenses(List<String> operative) {
 		operative.add("Bonus na prihod 50%");
 		operative.add("Bonus na prihod 25%");
 		return operative;
 
+	}
+
+	public boolean isPrivate(TransactionType type) {
+		for (String t : getPrivateExpenses()) {
+			if (type.getSubType().equals(t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isIncome(TransactionType type) {
+		if (type.getMainType().equals("Ulaz"))
+			return true;
+		else
+			return false;
 	}
 }

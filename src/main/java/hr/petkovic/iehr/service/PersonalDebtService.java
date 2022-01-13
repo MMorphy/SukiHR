@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import hr.petkovic.iehr.DTO.PersonalDebtDatabaseDTO;
 import hr.petkovic.iehr.DTO.PersonalDebtUIDTO;
@@ -112,7 +113,9 @@ public class PersonalDebtService {
 		return dRepo.save(addDebt);
 	}
 
+	@Transactional
 	public void deletePersonalDebtById(Long id) {
+		pRepo.deleteAllByDebt_Id(id);
 		dRepo.deleteById(id);
 	}
 

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Investicije</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#investTable').DataTable();
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Otplate</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="investTable">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Iznos</th>
+						<th>Opis</th>
+						<th>Izmjeni</th>
+						<th>Briši</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="inv : ${investments}">
+						<td th:text="${inv.paymentDate}"></td>
+						<td th:text="${inv.amount}"></td>
+						<td th:text="${inv.description}"></td>
+						<td>
+							<form th:action="@{'/project/investment/edit/' + ${inv.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/project/investment/delete/' + ${inv.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

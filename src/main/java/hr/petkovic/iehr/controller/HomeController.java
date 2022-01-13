@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,15 @@ public class HomeController {
 	@GetMapping
 	public String getIndex(HttpSession session) {
 		List<Transaction> list = bankServ.findAllBankTransactions();
+		list.addAll(bankServ.findBankUserTransacations());
 		Set<Transaction> set = new HashSet<>(list);
-		session.setAttribute("sum", bankServ.getSum(set));
+
+		if (!bankServ.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			set = bankServ.filterOutOldYear(set);
+			session.setAttribute("sum", bankServ.getSumFiltered(set));
+		} else {
+			session.setAttribute("sum", bankServ.getSumUnfiltered(set));
+		}
 		session.setAttribute("saldo", tServ.getSaldoForLoggedInUser());
 		session.setAttribute("dugovanja", debtSer.getDebtsForLoggedInUser());
 		return "index";

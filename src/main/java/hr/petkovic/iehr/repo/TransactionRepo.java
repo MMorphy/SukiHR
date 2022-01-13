@@ -14,7 +14,7 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
 	public List<Transaction> findAllByCreatedBy_Username(String username);
 
-	public List<Transaction> findAllByCreatedBy_Roles_NameOrType_SubType(String roleName, String subtype);
+	public List<Transaction> findAllByCreatedBy_Roles_NameInOrType_SubType(List<String> roleNames, String subtype);
 
 	@Query("SELECT t FROM Transaction t WHERE t.amount <> 0")
 	public List<Transaction> findAllWithValues();
@@ -36,4 +36,7 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
 	@Query("SELECT sum(t.amount) FROM Transaction t WHERE t.createdBy.username = :username AND t.type.mainType = :mainType")
 	public Double findAllTransactionsOfMainTypeForUsername(@Param("username") String username, @Param("mainType") String mainType);
+	
+	@Query("SELECT sum(t.amount) FROM Transaction t WHERE t.createdBy.username = :username AND t.type.subType = :subType")
+	public Double findAllTransactionsOfSubTypeForUsername(@Param("username") String username, @Param("subType") String subType);
 }

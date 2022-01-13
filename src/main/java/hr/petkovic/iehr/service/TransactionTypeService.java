@@ -45,4 +45,10 @@ public class TransactionTypeService {
 	public List<TransactionType> getOperativeExpenseTypes() {
 		return typeRepo.findBySubTypeIn(tUtil.getOperativeExpenses());
 	}
+
+	public List<TransactionType> getBorisExpenseTypes() {
+		List<String> subtypes = tUtil.getOperativeExpenses();
+		subtypes = tUtil.addBorisExpenses(subtypes);
+		return typeRepo.findBySubTypeIn(subtypes);
+	}
 }

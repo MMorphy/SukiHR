@@ -10,4 +10,6 @@ public interface PersonalDebtPaymentsRepo extends JpaRepository<PersonalDebtPaym
 
 	public List<PersonalDebtPayments> findAllByDebt_Id(Long id);
 
+	void deleteAllByDebt_Id(Long id);
+
 }

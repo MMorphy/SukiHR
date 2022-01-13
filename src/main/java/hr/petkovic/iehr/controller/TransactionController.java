@@ -1,7 +1,5 @@
 package hr.petkovic.iehr.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import hr.petkovic.iehr.entity.Transaction;
-import hr.petkovic.iehr.entity.TransactionType;
 import hr.petkovic.iehr.service.SiteService;
 import hr.petkovic.iehr.service.TransactionService;
 import hr.petkovic.iehr.service.TransactionTypeService;
@@ -69,7 +66,14 @@ public class TransactionController {
 		if (transSer.isPrivileged(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			model.addAttribute("business", typeSer.getBusinessExpenseTypes());
 		}
-		model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
+		if (!transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			if (transSer.isBoris(SecurityContextHolder.getContext().getAuthentication().getName())) {
+				model.addAttribute("operative", typeSer.getBorisExpenseTypes());
+			} else {
+				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
+			}
+
+		}
 		model.addAttribute("addTrans", new Transaction());
 
 		return "transaction/expense";

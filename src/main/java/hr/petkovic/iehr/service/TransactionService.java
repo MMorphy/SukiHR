@@ -1,6 +1,7 @@
 package hr.petkovic.iehr.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import hr.petkovic.iehr.entity.Site;
 import hr.petkovic.iehr.entity.Transaction;
 import hr.petkovic.iehr.entity.User;
 import hr.petkovic.iehr.repo.TransactionRepo;
+import hr.petkovic.iehr.util.TimeUtil;
 
 @Service
 public class TransactionService {
@@ -26,11 +28,14 @@ public class TransactionService {
 	private TransactionRepo transRepo;
 	private UserService userSer;
 	private TransactionTypeService typeSer;
+	private TimeUtil timeUtil;
 
-	public TransactionService(TransactionRepo transR, UserService userService, TransactionTypeService typeService) {
+	public TransactionService(TransactionRepo transR, UserService userService, TransactionTypeService typeService,
+			TimeUtil tUtil) {
 		transRepo = transR;
 		userSer = userService;
 		typeSer = typeService;
+		timeUtil = tUtil;
 	}
 
 	public Transaction findTransactionById(Long id) {
@@ -55,7 +60,7 @@ public class TransactionService {
 	}
 
 	public List<Transaction> findNonNullTransactionsForUsername(String username) {
-		return transRepo.findAllWithValuesForUser(username);
+		return filterTransactionsForCurrentYear(transRepo.findAllWithValuesForUser(username));
 	}
 
 	public Transaction saveTransaction(Transaction trans) {
@@ -208,11 +213,25 @@ public class TransactionService {
 	}
 
 	public List<UserWithTotalDebtDTO> findAllUsersAndDebt() {
-		return transRepo.findAllDebtForUser();
+		List<UserWithTotalDebtDTO> returnList = new ArrayList<>();
+		List<UserWithTotalDebtDTO> usersWithDebt = transRepo.findAllDebtForUser();
+		List<User> allUsers = userSer.findAllEnabledUsers();
+		for (User u : allUsers) {
+			returnList.add(new UserWithTotalDebtDTO(u, 0d));
+		}
+		for (UserWithTotalDebtDTO debt : usersWithDebt) {
+			for (UserWithTotalDebtDTO returnU : returnList) {
+				if (debt.getUser().getUsername().equals(returnU.getUser().getUsername())) {
+					returnU.setTotalDebt(debt.getTotalDebt());
+				}
+			}
+		}
+		return returnList;
 	}
 
 	public List<Transaction> findAllBankTransactions() {
-		return transRepo.findAllByCreatedBy_Roles_NameOrType_SubType("ROLE_ADMIN", "RAZDUŽENJE");
+		return transRepo.findAllByCreatedBy_Roles_NameInOrType_SubType(Arrays.asList("ROLE_ADMIN", "ROLE_BANK"),
+				"RAZDUŽENJE");
 	}
 
 	public List<UserWithSum> updateSaldoForUserDTOs(List<UserWithTotalDebtDTO> users) {
@@ -228,6 +247,8 @@ public class TransactionService {
 		// Normal user
 		if (userRole == 1) {
 			return getTransactionDifference(user);
+		} else if (userRole == 2) {
+			return 0d;
 		} else {
 			// Summary saldo
 			return getSummarySaldo();
@@ -257,9 +278,19 @@ public class TransactionService {
 		for (User u : users) {
 			if (getUserRole(u) == 1) {
 				sum += getTransactionDifference(u);
+			} else if (getUserRole(u) == 3) {
+				sum += getAdminDifference(u);
 			}
 		}
 		return sum;
+	}
+
+	public Double getAdminDifference(User user) {
+		Optional<Double> incomes = Optional
+				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername(user.getUsername(), "Ulaz"));
+		Optional<Double> expenses = Optional
+				.ofNullable(transRepo.findAllTransactionsOfSubTypeForUsername(user.getUsername(), "RAZDUZENJE"));
+		return incomes.orElse(0d) - expenses.orElse(0d);
 	}
 
 	public boolean isAdmin(String username) {
@@ -287,6 +318,28 @@ public class TransactionService {
 		}
 	}
 
+	public boolean isOnlyBank(String username) {
+		if (isAdmin(username)) {
+			return false;
+		}
+		User u = userSer.findUserByUsername(username);
+		if (u == null) {
+			return false;
+		} else if (u.getUsername().equals("banka")) {
+			return true;
+		} else
+			return false;
+
+	}
+
+	public boolean isBoris(String username) {
+		if (username.equals("boriss")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public Transaction addBankIncome(Transaction addBankTrans) {
 		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		addBankTrans.setCreatedBy(u);
@@ -294,19 +347,29 @@ public class TransactionService {
 		return saveTransaction(addBankTrans);
 	}
 
-	public Transaction editBankIncome(Long id,Transaction editBankTrans) {
+	public Transaction editBankIncome(Long id, Transaction editBankTrans) {
 		Transaction oldTrans = findTransactionById(id);
 		oldTrans.setAmount(editBankTrans.getAmount());
 		oldTrans.setDescription(editBankTrans.getDescription());
 		return saveTransaction(oldTrans);
-		
+
 	}
 
-	public Double findBankUserIncomesSum(){
+	public Double findBankUserIncomesSum() {
 		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Ulaz");
 	}
 
 	public Double findBankUserExpensesSum() {
 		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Izlaz");
+	}
+
+	public List<Transaction> filterTransactionsForCurrentYear(List<Transaction> list) {
+		List<Transaction> rList = new ArrayList<>();
+		for (Transaction t : list) {
+			if (t.getCreateDate().after(timeUtil.getCurrentYearBreakpointDate())) {
+				rList.add(t);
+			}
+		}
+		return rList;
 	}
 }

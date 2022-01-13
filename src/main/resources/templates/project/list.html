@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Projekti</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+	<script>
+		$(document).ready(function() {
+			$('#projects').dataTable({
+				"order" : [ 1, 'desc' ]
+			});
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-6">Projekti</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="projects">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Naziv</th>
+						<th>Ukupna investicija</th>
+						<th>Opis</th>
+						<th>Nova Investicija</th>
+						<th>Izmjeni</th>
+						<th>Briši</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="pr : ${projects}">
+						<td th:text="${pr.project.createDate}"></td>
+						<td th:text="${pr.project.name}"></td>
+						<td><a th:if="${pr.total != null}"
+							th:href="@{'/project/investment/' + ${pr.project.id}}"
+							th:text="${#numbers.formatDecimal(pr.total, 1, 'COMMA', 2, 'POINT')} + ' HRK'">
+						</a> <a th:if="${pr.total == null}"
+							th:href="@{'/project/investment/' + ${pr.project.id}}">0.00
+								HRK</a></td>
+						<td th:text="${pr.project.description}"></td>
+
+						<td>
+							<form
+								th:action="@{'/project/investment/add/' + ${pr.project.id}}"
+								method="get">
+								<button>Dodaj investiciju</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/project/edit/' + ${pr.project.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/project/delete/' + ${pr.project.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<form th:action="@{/project/add/}" method="get">
+			<button>Dodaj novi projekt</button>
+		</form>
+	</div>
+</body>
+</html>

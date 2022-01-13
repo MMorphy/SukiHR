@@ -16,7 +16,7 @@
 	<script>
 		$(document).ready(function() {
 			$('#transTable').DataTable({
-				"order" : [ 1, 'desc' ],
+				"order" : [ [ 1, 'desc' ], [2, 'desc' ] ],
 				"footerCallback": function ( row, data, start, end, display ) {
 		            var api = this.api(), data;
 		 

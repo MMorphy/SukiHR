@@ -15,11 +15,15 @@
 
 	<script>
 		$(document).ready(function() {
-			$('#deviceTable').dataTable({
+			$('#siteTable').dataTable({
 				"order" : [ 1, 'desc' ]
 			});
-			$('#siteTable').DataTable();
-			$('#historyTable').DataTable();
+			$('#deviceTable').dataTable({
+				"order" : [ 0, 'asc' ]
+			});
+			$('#historyTable').dataTable({
+				"order" : [ 2, 'desc' ]
+			});
 		});
 	</script>
 
