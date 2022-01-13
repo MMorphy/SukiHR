@@ -17,7 +17,8 @@ public class TransactionTypeUtil {
 		returnList.add("Izlasci");
 		returnList.add("Sport");
 		returnList.add("Kredit");
-		returnList.add("Vikendica");
+		returnList.add("Kuca SN");
+		returnList.add("Kuca DS");
 		returnList.add("Doktor");
 		returnList.add("Pokloni");
 		returnList.add("Putovanja");
@@ -40,7 +41,7 @@ public class TransactionTypeUtil {
 		List<String> returnList = new ArrayList<String>();
 		returnList.add("Placa");
 		returnList.add("Bonus na placu 5%");
-		returnList.add("Bonus na placu 10%");
+		returnList.add("Bonus na prihod 15% ");
 		returnList.add("Gorivo");
 		returnList.add("Cestarina");
 		returnList.add("Pice");
@@ -53,6 +54,13 @@ public class TransactionTypeUtil {
 		returnList.add("Operativno - Ostalo");
 		returnList.add("RAZDUZENJE");
 		return returnList;
+
+	}
+
+	public List<String> addBorisExpenses(List<String> operative){
+		operative.add("Bonus na prihod 50%");
+		operative.add("Bonus na prihod 25%");
+		return operative;
 
 	}
 }

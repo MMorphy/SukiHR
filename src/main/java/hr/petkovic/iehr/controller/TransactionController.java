@@ -18,6 +18,7 @@ import hr.petkovic.iehr.service.SiteService;
 import hr.petkovic.iehr.service.TransactionService;
 import hr.petkovic.iehr.service.TransactionTypeService;
 
+// Dodati Boris specificne troskove
 @Controller
 @RequestMapping("/transaction")
 public class TransactionController {
