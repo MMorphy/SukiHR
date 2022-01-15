@@ -24,9 +24,9 @@ public class HomeController {
 
 	Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-	TransactionService tServ;
-	DebtService debtSer;
-	BankService bankServ;
+	private TransactionService tServ;
+	private DebtService debtSer;
+	private BankService bankServ;
 
 	public HomeController(TransactionService transService, DebtService debtService, BankService bankService) {
 		debtSer = debtService;
@@ -43,7 +43,8 @@ public class HomeController {
 		if (!bankServ.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			set = bankServ.filterOutOldYear(set);
 			session.setAttribute("sum", bankServ.getSumFiltered(set));
-		} else {
+		} else if (bankServ.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())
+				|| bankServ.isBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			session.setAttribute("sum", bankServ.getSumUnfiltered(set));
 		}
 		session.setAttribute("saldo", tServ.getSaldoForLoggedInUser());

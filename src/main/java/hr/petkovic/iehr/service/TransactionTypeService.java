@@ -49,6 +49,7 @@ public class TransactionTypeService {
 	public List<TransactionType> getBorisExpenseTypes() {
 		List<String> subtypes = tUtil.getOperativeExpenses();
 		subtypes = tUtil.addBorisExpenses(subtypes);
+		subtypes = tUtil.removeTinoBonus(subtypes);
 		return typeRepo.findBySubTypeIn(subtypes);
 	}
 }

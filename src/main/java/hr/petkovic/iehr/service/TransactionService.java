@@ -20,6 +20,7 @@ import hr.petkovic.iehr.entity.Transaction;
 import hr.petkovic.iehr.entity.User;
 import hr.petkovic.iehr.repo.TransactionRepo;
 import hr.petkovic.iehr.util.TimeUtil;
+import hr.petkovic.iehr.util.TransactionTypeUtil;
 
 @Service
 public class TransactionService {
@@ -29,13 +30,15 @@ public class TransactionService {
 	private UserService userSer;
 	private TransactionTypeService typeSer;
 	private TimeUtil timeUtil;
+	private TransactionTypeUtil typeUtil;
 
 	public TransactionService(TransactionRepo transR, UserService userService, TransactionTypeService typeService,
-			TimeUtil tUtil) {
+			TimeUtil tUtil, TransactionTypeUtil tyUtil) {
 		transRepo = transR;
 		userSer = userService;
 		typeSer = typeService;
 		timeUtil = tUtil;
+		typeUtil = tyUtil;
 	}
 
 	public Transaction findTransactionById(Long id) {
@@ -230,14 +233,13 @@ public class TransactionService {
 	}
 
 	public List<Transaction> findAllBankTransactions() {
-		return transRepo.findAllByCreatedBy_Roles_NameInOrType_SubType(Arrays.asList("ROLE_ADMIN", "ROLE_BANK"),
-				"RAZDUŽENJE");
+		return transRepo.findAllByCreatedBy_Roles_NameInOrType_SubType(Arrays.asList("ROLE_BANK"), "RAZDUŽENJE");
 	}
 
 	public List<UserWithSum> updateSaldoForUserDTOs(List<UserWithTotalDebtDTO> users) {
 		List<UserWithSum> rList = new ArrayList<>();
 		for (UserWithTotalDebtDTO user : users) {
-			rList.add(new UserWithSum(user, getSaldoForUser(user.getUser())));
+			rList.add(new UserWithSum(user, getSaldoForUserSite(user.getUser())));
 		}
 		return rList;
 	}
@@ -248,11 +250,34 @@ public class TransactionService {
 		if (userRole == 1) {
 			return getTransactionDifference(user);
 		} else if (userRole == 2) {
-			return 0d;
+			return getSummarySaldo();
 		} else {
 			// Summary saldo
 			return getSummarySaldo();
 		}
+	}
+
+	private Double getSaldoForUserSite(User user) {
+		int userRole = getUserRole(user);
+		// Normal user
+		if (userRole == 1) {
+			return getTransactionDifference(user);
+		} else if (userRole == 2) {
+			return 0d;
+		} else {
+			// Summary saldo
+			return getAdminSaldo(user);
+		}
+	}
+
+	private Double getAdminSaldo(User user) {
+		Optional<Double> incomes = Optional
+				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername(user.getUsername(), "Ulaz"));
+		Optional<Double> businiessExpenses = Optional.ofNullable(
+				transRepo.findAllTransactionsForUserOfSubtypes(user.getUsername(), typeUtil.getBusinessExpenses()));
+		Optional<Double> operativeExpenses = Optional.ofNullable(
+				transRepo.findAllTransactionsForUserOfSubtypes(user.getUsername(), typeUtil.getOperativeExpenses()));
+		return incomes.orElse(0d) - businiessExpenses.orElse(0d) - operativeExpenses.orElse(0d);
 	}
 
 	private int getUserRole(User user) {
@@ -279,7 +304,7 @@ public class TransactionService {
 			if (getUserRole(u) == 1) {
 				sum += getTransactionDifference(u);
 			} else if (getUserRole(u) == 3) {
-				sum += getAdminDifference(u);
+				sum += getAdminSaldo(u);
 			}
 		}
 		return sum;

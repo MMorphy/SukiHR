@@ -34,7 +34,8 @@ public class BankController {
 		if (!bankServ.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			set = bankServ.filterOutOldYear(set);
 			model.addAttribute("sum", bankServ.getSumFiltered(set));
-		} else {
+		} else if (bankServ.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())
+				|| bankServ.isBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			model.addAttribute("sum", bankServ.getSumUnfiltered(set));
 		}
 		model.addAttribute("transactions", set);

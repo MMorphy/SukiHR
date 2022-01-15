@@ -34,6 +34,8 @@ public class BankService {
 		List<Transaction> rList = transServ.findAllBankTransactions();
 		rList = filterOutAdminPrivate(rList);
 		rList = filterOutAdminIncome(rList);
+		rList = filterOutAdminBusiness(rList);
+		rList = filterOutAdminOperative(rList);
 		return rList;
 	}
 
@@ -121,6 +123,29 @@ public class BankService {
 		return rList;
 	}
 
+	public List<Transaction> filterOutAdminBusiness(List<Transaction> bankTransactions) {
+		List<Transaction> rList = new ArrayList<Transaction>();
+		for (Transaction t : bankTransactions) {
+			if (!util.isBusiness(t.getType())) {
+				rList.add(t);
+			}
+		}
+		return rList;
+	}
+
+	public List<Transaction> filterOutAdminOperative(List<Transaction> bankTransactions) {
+		List<Transaction> rList = new ArrayList<Transaction>();
+		for (Transaction t : bankTransactions) {
+			if (util.isRazduzenje(t.getType())) {
+				rList.add(t);
+			}
+			if (!util.isOperative(t.getType())) {
+				rList.add(t);
+			}
+		}
+		return rList;
+	}
+
 	public Set<Transaction> filterOutOldYear(Set<Transaction> set) {
 		Set<Transaction> rSet = new HashSet<>();
 		for (Transaction t : set) {
@@ -133,5 +158,9 @@ public class BankService {
 
 	public boolean isAdmin(String username) {
 		return transServ.isAdmin(username);
+	}
+
+	public boolean isBank(String username) {
+		return transServ.isOnlyBank(username);
 	}
 }

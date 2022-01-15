@@ -32,19 +32,19 @@
 							<li><a th:href="@{/}">Home</a></li>
 							<li sec:authorize="!hasRole('ROLE_BANK')"><a
 								th:href="@{'/transaction/' + ${#authentication.name} }"
-								th:text="@{'Saldo: ' + ${session.saldo} + ' HRK'}"></a></li>
+								th:text="@{'Saldo: ' + ${#numbers.formatDecimal(session.saldo, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li sec:authorize="hasRole('ROLE_BANK')"><a
 								th:href="@{/user/}"
-								th:text="@{'Ukupni saldo kod korisnika: ' + ${session.saldo} + ' HRK'}"></a></li>
+								th:text="@{'Ukupni saldo kod korisnika: ' + ${#numbers.formatDecimal(session.saldo, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li sec:authorize="!hasRole('ROLE_BANK')"><a
 								th:href="@{'/transaction/' + ${#authentication.name} }"
-								th:text="@{'Ukupna dugovanja mojih lokala: ' + ${session.dugovanja} + ' HRK'}"></a></li>
+								th:text="@{'Ukupna dugovanja mojih lokala: ' + ${#numbers.formatDecimal(session.dugovanja, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li sec:authorize="hasRole('ROLE_BANK')"><a
 								th:href="@{/debt/}"
-								th:text="@{'Ukupna dugovanja lokala: ' + ${session.dugovanja} + ' HRK'}"></a></li>
+								th:text="@{'Ukupna dugovanja lokala: ' + ${#numbers.formatDecimal(session.dugovanja, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li sec:authorize="hasRole('ROLE_BANK')"><a
 								th:href="@{/bank/}"
-								th:text="@{'Stanje banke: ' + ${session.sum} + ' HRK'}"></a></li>
+								th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(session.sum, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 
 						</ul>
 

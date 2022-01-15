@@ -14,36 +14,52 @@
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
 	<script>
-		$(document).ready(function() {
-			$('#transTable').DataTable({
-				"order" : [ 1, 'desc' ],
-				"footerCallback": function ( row, data, start, end, display ) {
-		            var api = this.api(), data;
-		 
-		            // Remove the formatting to get integer data for summation
-		            var intVal = function ( i ) {
-		                return typeof i === 'string' ?
-		                    i.replace(/[\HRK,]/g, '')*1 :
-		                    typeof i === 'number' ?
-		                        i : 0;
-		            };
-		            pageTotal = api
-	                .column( 3, { page: 'current'} )
-	                .data()
-	                .reduce( function (a, b) {
-	                    return intVal(a) + intVal(b);
-	                }, 0 );
-	 
-	            // Update footer
-	            $( api.column( 5 ).footer() ).html(
-	                pageTotal + ' HRK'
-	            );
-	            }
-			});
-			$('#allDebtTable').dataTable({
-				"order" : [ 0, 'desc' ]
-			});
-		});
+		$(document)
+				.ready(
+						function() {
+							$('#transTable')
+									.DataTable(
+											{
+												"order" : [ 1, 'desc' ],
+												"footerCallback" : function(
+														row, data, start, end,
+														display) {
+													var api = this.api(), data;
+
+													// Remove the formatting to get integer data for summation
+													var intVal = function(i) {
+														return typeof i === 'string' ? i
+																.replace(
+																		/[\HRK,]/g,
+																		'') * 1
+																: typeof i === 'number' ? i
+																		: 0;
+													};
+													pageTotal = api
+															.column(
+																	3,
+																	{
+																		page : 'current'
+																	})
+															.data()
+															.reduce(
+																	function(a,
+																			b) {
+																		return intVal(a)
+																				+ intVal(b);
+																	}, 0);
+
+													// Update footer
+													$(api.column(3).footer())
+															.html(
+																	pageTotal
+																			+ ' HRK');
+												}
+											});
+							$('#allDebtTable').dataTable({
+								"order" : [ 0, 'desc' ]
+							});
+						});
 	</script>
 
 	<div class="col-md-12">
@@ -51,7 +67,9 @@
 			<h1 class="col-md-3">Banka</h1>
 		</div>
 		<div class="col-md-12">
-			<h2 th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(sum,3,2)}}" class="col-md-3"></h2>
+			<h2
+				th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(sum,3,2)} + ' HRK'}"
+				class="col-md-3"></h2>
 		</div>
 		<div class="col-md-12">
 			<table class="table" id="transTable">
@@ -70,7 +88,8 @@
 					<tr th:each="trans : ${transactions}">
 						<td th:text="${trans.createdBy.username}"></td>
 						<td th:text="${trans.createDate}"></td>
-						<td th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : 'Banka Ulaz'}"></td>
+						<td
+							th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : 'Banka Ulaz'}"></td>
 						<td
 							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td th:if="${trans.type != null}" th:text="${trans.type.subType}"></td>
@@ -78,11 +97,13 @@
 					</tr>
 				</tbody>
 				<tfoot>
-		            <tr>
-		                <th colspan="4" style="text-align:right">Total:</th>
-		                <th></th><th></th>
-		            </tr>
-		        </tfoot>
+					<tr>
+						<th colspan="3" style="text-align: right">Total:</th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 		<div class="col-md-12">
@@ -106,8 +127,10 @@
 						<tr th:each="debt : ${debts}">
 							<td th:text="${debt.debt.createDate}"></td>
 							<td th:text="${debt.debt.user}"></td>
-							<td th:text="${debt.debt.amount}"></td>
-							<td th:text="${debt.debt.amount - debt.outstandingAmount}"></td>
+							<td
+								th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							<td
+								th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 							<td th:text="${debt.debt.type.type}"></td>
 							<td th:text="${debt.debt.description}"></td>
 							<td><a th:if="${debt.debt.payments != null}"
