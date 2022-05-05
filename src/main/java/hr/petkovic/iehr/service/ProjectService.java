@@ -36,6 +36,9 @@ public class ProjectService {
 		List<ProjectDatabaseDTO> DBlist = pRepo.findAllProjects();
 		List<ProjectUIDTO> returnList = new ArrayList<ProjectUIDTO>();
 		for (ProjectDatabaseDTO DBDTO : DBlist) {
+			if (DBDTO.getTotal() == null) {
+				DBDTO.setTotal(new Double(0d));
+			}
 			returnList.add(new ProjectUIDTO(findById(DBDTO.getId()), DBDTO.getTotal()));
 		}
 		return returnList;

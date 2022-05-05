@@ -155,4 +155,30 @@ public class TransactionController {
 		transSer.editBankIncome(id, editTrans);
 		return "redirect:/";
 	}
+
+	@GetMapping("/admin/income/add")
+	public String getAdminIncomeAdding(Model model) {
+		model.addAttribute("addTrans", new Transaction());
+		return "transaction/adminIncome";
+	}
+
+	@PostMapping("/admin/income/add")
+	public String addAdminIncome(Transaction addTrans) {
+		transSer.addAdminIncome(addTrans);
+		return "redirect:/";
+	}
+
+	@GetMapping("/admin/edit/{id}")
+	public String getAdminIncomeEdit(@PathVariable Long id, Model model) {
+		Transaction trans = transSer.findTransactionById(id);
+		model.addAttribute("editTrans", trans);
+		return "transaction/adminIncomeEdit";
+
+	}
+
+	@PostMapping("/admin/income/edit/{id}")
+	public String editAdminIncome(@PathVariable Long id, Transaction editTrans) {
+		transSer.editAdminIncome(id, editTrans);
+		return "redirect:/";
+	}
 }

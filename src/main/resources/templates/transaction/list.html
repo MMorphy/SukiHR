@@ -22,6 +22,8 @@
 		 
 		            // Remove the formatting to get integer data for summation
 		            var intVal = function ( i ) {
+		            	console.log (i)
+		            	console.log (typeof i)
 		                return typeof i === 'string' ?
 		                    i.replace(/[\HRK,]/g, '')*1 :
 		                    typeof i === 'number' ?
@@ -67,7 +69,7 @@
 						<td th:text="${trans.createdBy.username}"></td>
 						<td th:text="${trans.createDate}"></td>
 						<td
-							th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : 'Banka Ulaz'}"></td>
+							th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : trans.type.subType == 'Admin' ? 'Admin Ulaz' : 'Banka Ulaz'}"></td>
 						<td
 							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td th:if="${trans.type != null}" th:text="${trans.type.subType}"></td>
@@ -86,7 +88,11 @@
 								method="get">
 								<button>Izmjeni</button>
 							</form>
-							<form th:if="${trans.type.subType != 'Banka'}" th:action="@{'/transaction/edit/' + ${trans.id}}"
+							<form th:if="${trans.type.subType == 'Admin'}" th:action="@{'/transaction/admin/edit/' + ${trans.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+							<form th:if="${trans.type.subType != 'Banka' and trans.type.subType != 'Admin'}" th:action="@{'/transaction/edit/' + ${trans.id}}"
 								method="get">
 								<button>Izmjeni</button>
 							</form>

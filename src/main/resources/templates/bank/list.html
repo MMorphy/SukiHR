@@ -20,7 +20,7 @@
 							$('#transTable')
 									.DataTable(
 											{
-												"order" : [ 1, 'desc' ],
+												"order" : [ [ 1, 'desc' ], [ 0, 'asc'] ],
 												"footerCallback" : function(
 														row, data, start, end,
 														display) {
@@ -61,14 +61,13 @@
 							});
 						});
 	</script>
-
 	<div class="col-md-12">
 		<div class="col-md-12">
 			<h1 class="col-md-3">Banka</h1>
 		</div>
 		<div class="col-md-12">
 			<h2
-				th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(sum,3,2)} + ' HRK'}"
+				th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(sum,3,'COMMA', 2, 'POINT')} + ' HRK'}"
 				class="col-md-3"></h2>
 		</div>
 		<div class="col-md-12">
@@ -106,44 +105,6 @@
 				</tfoot>
 			</table>
 		</div>
-		<div class="col-md-12">
-			<div class="col-md-12">
-				<h1 class="col-md-3">Sve posudbe</h1>
-			</div>
-			<div class="col-md-12">
-				<table class="table" id="allDebtTable">
-					<thead>
-						<tr>
-							<th>Datum</th>
-							<th>Korisnik</th>
-							<th>Ugovoreno dugovanje</th>
-							<th>Preostalo dugovanje</th>
-							<th>Tip</th>
-							<th>Opis</th>
-							<th>Otplate</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="debt : ${debts}">
-							<td th:text="${debt.debt.createDate}"></td>
-							<td th:text="${debt.debt.user}"></td>
-							<td
-								th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-							<td
-								th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-							<td th:text="${debt.debt.type.type}"></td>
-							<td th:text="${debt.debt.description}"></td>
-							<td><a th:if="${debt.debt.payments != null}"
-								th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
-									Otplate</a> <span th:if="${debt.debt.payments == null}">
-									Nema otplata </span></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
 	</div>
-
-
 </body>
 </html>

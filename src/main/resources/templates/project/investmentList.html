@@ -62,7 +62,7 @@
 				<tbody>
 					<tr th:each="inv : ${investments}">
 						<td th:text="${inv.paymentDate}"></td>
-						<td th:text="${inv.amount}"></td>
+						<td th:text="${#numbers.formatDecimal(inv.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td th:text="${inv.description}"></td>
 						<td>
 							<form th:action="@{'/project/investment/edit/' + ${inv.id}}"

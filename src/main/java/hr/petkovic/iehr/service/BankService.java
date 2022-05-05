@@ -16,15 +16,13 @@ import hr.petkovic.iehr.util.TransactionTypeUtil;
 public class BankService {
 
 	private TransactionService transServ;
-	private PersonalDebtService debtServ;
 	private TransactionTypeUtil util;
 	private TimeUtil timeUtil;
 	private BankUtilRepo bankUtilRepo;
 
-	public BankService(TransactionService tService, PersonalDebtService dService, TransactionTypeUtil u, TimeUtil time,
+	public BankService(TransactionService tService, TransactionTypeUtil u, TimeUtil time,
 			BankUtilRepo bRepo) {
 		transServ = tService;
-		debtServ = dService;
 		util = u;
 		timeUtil = time;
 		bankUtilRepo = bRepo;
@@ -73,11 +71,6 @@ public class BankService {
 				}
 			}
 		}
-		sum += debtServ.getOutAgreedSum();
-		sum -= debtServ.getOutPaymentsSum();
-		sum -= debtServ.getInAgreedSum();
-		sum += debtServ.getInPaymentsSum();
-
 		return sum;
 	}
 
@@ -95,11 +88,6 @@ public class BankService {
 				}
 			}
 		}
-		sum += debtServ.getOutAgreedSum();
-		sum -= debtServ.getOutPaymentsSum();
-		sum -= debtServ.getInAgreedSum();
-		sum += debtServ.getInPaymentsSum();
-
 		return sum;
 	}
 

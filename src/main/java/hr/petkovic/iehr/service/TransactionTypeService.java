@@ -30,6 +30,10 @@ public class TransactionTypeService {
 		return typeRepo.findByMainTypeAndSubType("Ulaz", "Banka").get();
 	}
 
+	public TransactionType getDefaultAdminIncomeType() {
+		return typeRepo.findByMainTypeAndSubType("Ulaz", "Admin").get();
+	}
+
 	public List<TransactionType> getAllExpenseTypes() {
 		return typeRepo.findAllByMainType("Izlaz");
 	}

@@ -49,6 +49,7 @@ public class HomeController {
 		}
 		session.setAttribute("saldo", tServ.getSaldoForLoggedInUser());
 		session.setAttribute("dugovanja", debtSer.getDebtsForLoggedInUser());
+		session.setAttribute("wallet", tServ.getAdminWallet());
 		return "index";
 	}
 

@@ -233,7 +233,7 @@ public class TransactionService {
 	}
 
 	public List<Transaction> findAllBankTransactions() {
-		return transRepo.findAllByCreatedBy_Roles_NameInOrType_SubType(Arrays.asList("ROLE_BANK"), "RAZDUŽENJE");
+		return transRepo.findAllByCreatedBy_Roles_NameInOrType_SubType(Arrays.asList("ROLE_BANK"), "RAZDUZENJE");
 	}
 
 	public List<UserWithSum> updateSaldoForUserDTOs(List<UserWithTotalDebtDTO> users) {
@@ -384,6 +384,10 @@ public class TransactionService {
 		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Ulaz");
 	}
 
+	public Double findAdminUserIncomesSum() {
+		return transRepo.findAllTransactionsOfMainTypeForUsername("ivans", "Ulaz");
+	}
+
 	public Double findBankUserExpensesSum() {
 		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Izlaz");
 	}
@@ -396,5 +400,25 @@ public class TransactionService {
 			}
 		}
 		return rList;
+	}
+
+	public Transaction addAdminIncome(Transaction addTrans) {
+		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		addTrans.setCreatedBy(u);
+		addTrans.setType(typeSer.getDefaultAdminIncomeType());
+		return saveTransaction(addTrans);		
+	}
+
+	public Transaction editAdminIncome(Long id, Transaction editTrans) {
+		Transaction oldTrans = findTransactionById(id);
+		oldTrans.setAmount(editTrans.getAmount());
+		oldTrans.setDescription(editTrans.getDescription());
+		return saveTransaction(oldTrans);		
+	}
+
+	public Double getAdminWallet() {
+		Double sum = 0.d;
+		sum += getAdminDifference(userSer.findUserByUsername("ivans"));
+		return sum;
 	}
 }

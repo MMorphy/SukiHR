@@ -28,7 +28,7 @@ public class Investment {
 	private Date paymentDate;
 
 	@Column(nullable = false, precision = 2)
-	private Float amount = 0F;
+	private Float amount;
 
 	private String description = "";
 
