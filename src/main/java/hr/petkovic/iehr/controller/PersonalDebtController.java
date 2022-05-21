@@ -1,6 +1,8 @@
 package hr.petkovic.iehr.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,16 +29,9 @@ public class PersonalDebtController {
 	@GetMapping("/")
 	public String getPersonalDebtHome(Model model) {
 		List<PersonalDebtUIDTO> in = debtServ.getActivePersonalDebtsToMe();
-		model.addAttribute("in", in);
-		model.addAttribute("inTotal", debtServ.getTotalAgreed(in));
-		model.addAttribute("inPaid", debtServ.getTotalPaid(in));
-
 		List<PersonalDebtUIDTO> out = debtServ.getMyActivePersonalDebts();
-		model.addAttribute("out", out);
-		model.addAttribute("outTotal", debtServ.getTotalAgreed(out));
-		model.addAttribute("outPaid", debtServ.getTotalPaid(out));
-		
-		model.addAttribute("debts", debtServ.getAllPersonalDebts());
+		List<PersonalDebtUIDTO> debts = Stream.concat(in.stream(), out.stream()).collect(Collectors.toList());
+		model.addAttribute("debts", debts);
 		return "personalDebt/list";
 	}
 

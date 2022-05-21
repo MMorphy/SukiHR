@@ -36,6 +36,9 @@ public class Debt {
 	public Debt() {
 	}
 
+	public Debt(Float amount) {
+		this.amount = amount;
+	}
 	public Debt(Long id, Date createDate, Float amount, Transaction transaction) {
 		super();
 		this.id = id;

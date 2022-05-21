@@ -15,13 +15,7 @@
 	<script>
 		$(document).ready(function() {
 			$('#myDebtTable').dataTable({
-				"order" : [ 1, 'desc' ]
-			});
-			$('#debtToMeTable').dataTable({
-				"order" : [ 1, 'desc' ]
-			});
-			$('#allDebtTable').dataTable({
-				"order" : [ 1, 'desc' ]
+				"order" : [ [ 0, 'desc' ], [1, 'asc'] ]
 			});
 		});
 	</script>
@@ -36,10 +30,10 @@
 					<tr>
 						<th>Datum</th>
 						<th>Korisnik</th>
-						<th>Ugovoreno dugovanje</th>
+						<th>Dogovoreno dugovanje</th>
 						<th>Preostalo dugovanje</th>
+						<th>Tip</th>
 						<th>Opis</th>
-						<th>Prethodne otplate</th>
 						<th>Otplata</th>
 						<th>Izmjeni</th>
 						<th>Briši</th>
@@ -47,19 +41,17 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="debt : ${out}">
+					<tr th:each="debt : ${debts}">
 						<td th:text="${debt.debt.createDate}"></td>
 						<td th:text="${debt.debt.user}"></td>
 						<td
 							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-						<td><span th:if="${debt.debt.amount != null}"
-							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></span><span
-							th:if="${debt.debt.amount == null}">0</span></td>
+						<td><a th:if="${debt.debt.amount != null}"
+							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}"
+							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><a
+							th:if="${debt.debt.amount == null}">0</a></td>
+						<td th:text="${debt.debt.type.type}"></td>
 						<td th:text="${debt.debt.description}"></td>
-						<td><a th:if="${debt.debt.payments != null}"
-							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
-								Otplate</a> <span th:if="${debt.debt.payments == null}"> Nema
-								otplata </span></td>
 						<td>
 							<form
 								th:action="@{'/personal_debt/payment/add/' + ${debt.debt.id}}"
@@ -89,89 +81,6 @@
 		<form th:action="@{/personal_debt/add/}" method="get">
 			<button>Dodaj novu posudbu</button>
 		</form>
-	</div>
-	<div class="col-md-12">
-		<h2 class="col-md-12">Total:</h2>
-		<h4 class="col-md-4"
-			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(outTotal, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
-		<h4 class="col-md-4"
-			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
-		<h3 class="col-md-4 text-danger font-weight-bold"
-			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(outTotal-outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h3>
-	</div>
-
-	<div class="col-md-12">
-		<div class="col-md-12">
-			<h1 class="col-md-6">Dugovanja Prema Meni</h1>
-		</div>
-		<div class="col-md-12">
-			<table class="table" id="debtToMeTable">
-				<thead>
-					<tr>
-						<th>Datum</th>
-						<th>Korisnik</th>
-						<th>Ugovoreno dugovanje</th>
-						<th>Preostalo dugovanje</th>
-						<th>Opis</th>
-						<th>Prethodne otplate</th>
-						<th>Otplata</th>
-						<th>Izmjeni</th>
-						<th>Briši</th>
-
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="debt : ${in}">
-						<td th:text="${debt.debt.createDate}"></td>
-						<td th:text="${debt.debt.user}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-						<td><span th:if="${debt.debt.amount != null}"
-							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></span><span
-							th:if="${debt.debt.amount == null}">0</span></td>
-						<td th:text="${debt.debt.description}"></td>
-						<td><a th:if="${debt.debt.payments != null}"
-							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
-								Otplate</a> <span th:if="${debt.debt.payments == null}"> Nema
-								otplata </span></td>
-						<td>
-							<form
-								th:action="@{'/personal_debt/payment/add/' + ${debt.debt.id}}"
-								method="get">
-								<button>Otplata</button>
-							</form>
-						</td>
-						<td>
-							<form th:action="@{'/personal_debt/edit/' + ${debt.debt.id}}"
-								method="get">
-								<button>Izmjeni</button>
-							</form>
-						</td>
-						<td>
-							<form th:action="@{'/personal_debt/delete/' + ${debt.debt.id}}"
-								method="post">
-								<button>Briši</button>
-							</form>
-
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="col-md-12">
-		<form th:action="@{/personal_debt/add/}" method="get">
-			<button>Dodaj novu posudbu</button>
-		</form>
-	</div>
-<div class="col-md-12">
-		<h2 class="col-md-12">Total:</h2>
-		<h4 class="col-md-4"
-			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(inTotal, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
-		<h4 class="col-md-4"
-			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
-		<h3 class="col-md-4 text-danger font-weight-bold"
-			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(inTotal-inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h3>
 	</div>
 </body>
 </html>

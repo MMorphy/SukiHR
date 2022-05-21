@@ -45,4 +45,6 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 	@Query("SELECT sum(t.amount) FROM Transaction t WHERE t.createdBy.username = :username AND t.type.subType IN (:subtypes)")
 	public Double findAllTransactionsForUserOfSubtypes(@Param("username") String username,
 			@Param("subtypes") List<String> subtypes);
+
+	public Transaction findByDebtId(Long id);
 }

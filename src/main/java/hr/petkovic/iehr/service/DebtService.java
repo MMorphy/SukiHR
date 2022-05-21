@@ -13,9 +13,11 @@ import hr.petkovic.iehr.repo.DebtRepo;
 public class DebtService {
 
 	private DebtRepo debtRepo;
+	private TransactionService tServ;
 
-	public DebtService(DebtRepo debtRepo) {
+	public DebtService(DebtRepo debtRepo, TransactionService transService) {
 		this.debtRepo = debtRepo;
+		this.tServ = transService;
 	}
 
 	public List<Debt> findAllDebts() {
@@ -54,5 +56,20 @@ public class DebtService {
 			sum += d.getAmount();
 		}
 		return sum;
+	}
+
+	public Debt findById(Long id) {
+		return debtRepo.findById(id).get();
+	}
+
+	public Debt editDebt(Long id, Debt editDebt) {
+		Debt oldDebt = findById(id);
+		oldDebt.setAmount(editDebt.getAmount());
+		return debtRepo.save(oldDebt);
+	}
+
+	public void deleteDebt(Long id) {
+		tServ.detachDebtByDebtId(id);
+		debtRepo.deleteById(id);
 	}
 }

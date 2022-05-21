@@ -16,7 +16,42 @@
 	<script>
 		$(document).ready(function() {
 			$('#siteTable').dataTable({
-				"order" : [ [ 1, 'asc' ], [ 3, 'desc'] ]
+				"order" : [ [ 1, 'asc' ], [ 3, 'desc'] ],
+				"footerCallback": function ( row, data, start, end, display ) {
+		            var api = this.api(), data;
+		 
+		            function extractContent(html) {
+		                return new DOMParser()
+		                    .parseFromString(html, "text/html")
+		                    .documentElement.textContent;
+		            }
+		            // Remove the formatting to get integer data for summation
+		            var intVal = function ( i ) {
+		            	if (typeof i === 'string'){
+		            		i = extractContent(i)
+		            		i = i.replace(/[\HRK,]/g, '') * 1
+		            		console.log('Current ' + i)
+		            		return i
+		            	} else if (typeof i === 'number') {
+		            		if (isNaN(i)){
+		            			return 0;
+		            		} else {
+		            			return i;
+		            		}
+		            	}
+		            };
+		            pageTotal = api
+	                .column( 5, { page: 'current'} )
+	                .data()
+	                .reduce( function (a, b) {
+	                    return intVal(a) + intVal(b);
+	                }, 0 );
+		            
+	            // Update footer
+	            $( api.column( 5 ).footer() ).html(
+	                pageTotal + ' HRK'
+	            );
+	            }
 			});
 			$('#inactiveTable').dataTable({
 				"order" : [ [ 4, 'desc' ], [ 1, 'desc'] ]
@@ -73,6 +108,12 @@
 
 					</tr>
 				</tbody>
+				<tfoot>
+		            <tr>
+		                <th colspan="5" style="text-align:right">Total:</th>
+		                <th></th><th></th><th></th><th></th>
+		            </tr>
+		        </tfoot>
 			</table>
 		</div>
 		<form th:action="@{/site/add/}" method="get">

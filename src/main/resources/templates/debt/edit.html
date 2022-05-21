@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Izmjeni dug lokala</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</head>
+<body>
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<form method="POST" th:object="${editDebt}"
+		th:action="@{'/debt/edit/' + *{id}}">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="form-group col-lg-6">
+					<label for="name">Povrat duga (+ ako vraća / - ako se zadužuje)</label> <input type="text"
+						class="form-control" id="user" th:field="*{amount}"
+						th:value="*{amount}" required="required">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group col-lg-4">
+				<input type="submit" th:value="Submit" name="action"> <input
+					type="button" onclick="history.go(-1);" value="Back">
+			</div>
+		</div>
+	</form>
+
+
+</body>
+</html>

@@ -421,4 +421,14 @@ public class TransactionService {
 		sum += getAdminDifference(userSer.findUserByUsername("ivans"));
 		return sum;
 	}
+
+	public void detachDebtByDebtId(Long id) {
+		Transaction trans = findTransactionByDebtId(id);
+		trans.setDebt(new Debt(0f));
+		editTransaction(trans.getId(), trans);
+	}
+
+	private Transaction findTransactionByDebtId(Long id) {
+		return transRepo.findByDebtId(id);
+	}
 }
