@@ -121,7 +121,7 @@
 						<td>Posudba</td>
 						<td th:text="${debt.debt.type.type}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td th:text="${debt.debt.description}"></td>
 
 					</tr>

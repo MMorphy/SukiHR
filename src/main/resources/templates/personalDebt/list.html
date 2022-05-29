@@ -103,7 +103,6 @@
 						<th>Korisnik</th>
 						<th>Dogovoreno dugovanje</th>
 						<th>Preostalo dugovanje</th>
-						<th>Tip</th>
 						<th>Opis</th>
 						<th>Otplata</th>
 						<th>Izmjeni</th>
@@ -121,7 +120,6 @@
 							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}"
 							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><a
 							th:if="${debt.debt.amount == null}">0</a></td>
-						<td th:text="${debt.debt.type.type}"></td>
 						<td th:text="${debt.debt.description}"></td>
 						<td>
 							<form
@@ -179,10 +177,9 @@
 					<tr>
 						<th>Datum</th>
 						<th>Korisnik</th>
-						<th>Ugovoreno dugovanje</th>
+						<th>Dogovoreno dugovanje</th>
 						<th>Preostalo dugovanje</th>
 						<th>Opis</th>
-						<th>Prethodne otplate</th>
 						<th>Otplata</th>
 						<th>Izmjeni</th>
 						<th>Briši</th>
@@ -200,10 +197,6 @@
 							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><a
 							th:if="${debt.debt.amount == null}">0</a></td>
 						<td th:text="${debt.debt.description}"></td>
-						<td><a th:if="${debt.debt.payments != null}"
-							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}">
-								Otplate</a> <span th:if="${debt.debt.payments == null}"> Nema
-								otplata </span></td>
 						<td>
 							<form
 								th:action="@{'/personal_debt/payment/add/' + ${debt.debt.id}}"
@@ -220,7 +213,7 @@
 						<td>
 							<form th:action="@{'/personal_debt/delete/' + ${debt.debt.id}}"
 								method="post">
-								<button>Briši</button>
+								<button>BriÅ¡i</button>
 							</form>
 						</td>
 					</tr>
