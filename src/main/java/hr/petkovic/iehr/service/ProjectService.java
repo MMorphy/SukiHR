@@ -99,4 +99,19 @@ public class ProjectService {
 		return pRepo.save(proj);
 	}
 
+	public Double findBankSum() {
+		Double sum = 0d;
+		List<Project> projects = findAllProjects();
+		for (Project p : projects) {
+			for (Investment i : p.getInvestments()) {
+				sum += i.getAmount();
+			}
+		}
+		return sum;
+	}
+
+	private List<Project> findAllProjects(){
+		return pRepo.findAll();
+	}
+
 }

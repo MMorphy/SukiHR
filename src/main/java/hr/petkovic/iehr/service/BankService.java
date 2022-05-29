@@ -1,154 +1,60 @@
 package hr.petkovic.iehr.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
 import hr.petkovic.iehr.entity.Transaction;
 import hr.petkovic.iehr.repo.BankUtilRepo;
-import hr.petkovic.iehr.util.TimeUtil;
-import hr.petkovic.iehr.util.TransactionTypeUtil;
 
 @Service
 public class BankService {
 
 	private TransactionService transServ;
-	private TransactionTypeUtil util;
-	private TimeUtil timeUtil;
 	private BankUtilRepo bankUtilRepo;
+	private PersonalDebtService pdServ;
+	private SavingsService saveServ;
+	private ProjectService projServ;
 
-	public BankService(TransactionService tService, TransactionTypeUtil u, TimeUtil time,
-			BankUtilRepo bRepo) {
+	public BankService(TransactionService tService, BankUtilRepo bRepo, PersonalDebtService personalDebtService,
+			SavingsService savingsService, ProjectService projectService) {
 		transServ = tService;
-		util = u;
-		timeUtil = time;
-		bankUtilRepo = bRepo;
-	}
 
-	public List<Transaction> findAllBankTransactions() {
-		List<Transaction> rList = transServ.findAllBankTransactions();
-		rList = filterOutAdminPrivate(rList);
-		rList = filterOutAdminIncome(rList);
-		rList = filterOutAdminBusiness(rList);
-		rList = filterOutAdminOperative(rList);
-		return rList;
+		bankUtilRepo = bRepo;
+		pdServ = personalDebtService;
+		saveServ = savingsService;
+		projServ = projectService;
 	}
 
 	public List<Transaction> findBankUserTransacations() {
 		return transServ.findAllTransactionsForUsername("banka");
 	}
 
-	public Double findBankUserIncomeSum() {
-		Double d = transServ.findBankUserIncomesSum();
-		if (d == null)
-			return 0d;
-		else
-			return d;
-	}
-
-	public Double findBankUserExpenseSum() {
-		Double d = transServ.findBankUserExpensesSum();
-		if (d == null)
-			return 0d;
-		else
-			return d;
-	}
-
-	public Double getSumFiltered(Set<Transaction> set) {
+	public Double getSum() {
 		Float f = bankUtilRepo.findById(1L).get().getAmount();
 		Double sum = f.doubleValue();
-		for (Transaction t : set) {
-			if (t.getCreateDate().after(timeUtil.getCurrentYearBreakpointDate())) {
-				if (t.getType().getSubType().equals("RAZDUZENJE")) {
-					sum += t.getAmount();
-				} else if (t.getType().getSubType().equals("Banka")) {
-					sum += t.getAmount();
-				} else {
-					sum -= t.getAmount();
-				}
-			}
-		}
+		// Bank special income
+		sum += transServ.findBankUserIncomesSum();
+		// User razduzenje
+		sum += transServ.findBankIncomeSum();
+		// Personal Debt income
+		sum += pdServ.getAllBankIncome();
+		// Personal Debt expense
+		sum -= pdServ.getAllBankExpense();
+		// Savings
+		sum -= saveServ.findBankSum();
+		// Projects
+		sum -= projServ.findBankSum();
+		// Bank expenses
+		sum -= transServ.findBankExpenseSum();
 		return sum;
 	}
 
-	public Double getSumUnfiltered(Set<Transaction> set) {
-		Float f = bankUtilRepo.findById(1L).get().getAmount();
-		Double sum = f.doubleValue();
-		for (Transaction t : set) {
-			if (t.getCreateDate().after(timeUtil.getStartPointYearBreakpointDate())) {
-				if (t.getType().getSubType().equals("RAZDUZENJE")) {
-					sum += t.getAmount();
-				} else if (t.getType().getSubType().equals("Banka")) {
-					sum += t.getAmount();
-				} else {
-					sum -= t.getAmount();
-				}
-			}
-		}
-		return sum;
-	}
-
-	public List<Transaction> filterOutAdminPrivate(List<Transaction> bankTransactions) {
-		List<Transaction> rList = new ArrayList<Transaction>();
-		for (Transaction t : bankTransactions) {
-			if (!util.isPrivate(t.getType())) {
-				rList.add(t);
-			}
-		}
-		return rList;
-	}
-
-	public List<Transaction> filterOutAdminIncome(List<Transaction> bankTransactions) {
-		List<Transaction> rList = new ArrayList<Transaction>();
-		for (Transaction t : bankTransactions) {
-			if (!util.isIncome(t.getType())) {
-				rList.add(t);
-			}
-		}
-		return rList;
-	}
-
-	public List<Transaction> filterOutAdminBusiness(List<Transaction> bankTransactions) {
-		List<Transaction> rList = new ArrayList<Transaction>();
-		for (Transaction t : bankTransactions) {
-			if (!util.isBusiness(t.getType())) {
-				rList.add(t);
-			}
-		}
-		return rList;
-	}
-
-	public List<Transaction> filterOutAdminOperative(List<Transaction> bankTransactions) {
-		List<Transaction> rList = new ArrayList<Transaction>();
-		for (Transaction t : bankTransactions) {
-			if (util.isRazduzenje(t.getType())) {
-				rList.add(t);
-			}
-			if (!util.isOperative(t.getType())) {
-				rList.add(t);
-			}
-		}
-		return rList;
-	}
-
-	public Set<Transaction> filterOutOldYear(Set<Transaction> set) {
-		Set<Transaction> rSet = new HashSet<>();
-		for (Transaction t : set) {
-			if (t.getCreateDate().after(timeUtil.getCurrentYearBreakpointDate())) {
-				rSet.add(t);
-			}
-		}
-		return rSet;
-	}
-
-	public boolean isAdmin(String username) {
-		return transServ.isAdmin(username);
-	}
-
-	public boolean isBank(String username) {
-		return transServ.isOnlyBank(username);
+	public List<Transaction> getAllBankTransactions() {
+		List<Transaction> transactions = new ArrayList<>();
+		transactions.addAll(findBankUserTransacations());
+		transactions.addAll(transServ.findAllBankIncomeTransactions());
+		return transactions;
 	}
 }

@@ -2,7 +2,6 @@ package hr.petkovic.iehr.service;
 
 import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +31,15 @@ public class DebtService {
 		return this.debtRepo.findAllNonZeroDebtsForSiteId(id);
 	}
 	public Float getDebtsForLoggedInUser() {
-		for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+		if (SecurityContextHolder.getContext().getAuthentication().getName().equals("Banka")) {
+			return sumOfAllDebts();
+		}
+/*		for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 			if (ga.toString().equals("ROLE_ADMIN")) {
 				return sumOfAllDebts();
 			}
 		}
-		return sumOfUserDebts(SecurityContextHolder.getContext().getAuthentication().getName());
+*/		return sumOfUserDebts(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 
 	private Float sumOfAllDebts() {

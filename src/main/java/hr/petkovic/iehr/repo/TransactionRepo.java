@@ -16,6 +16,8 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
 	public List<Transaction> findAllByCreatedBy_Roles_NameInOrType_SubType(List<String> roleNames, String subtype);
 
+	public List<Transaction> findAllByType_SubType(String subtype);
+
 	@Query("SELECT t FROM Transaction t WHERE t.amount <> 0")
 	public List<Transaction> findAllWithValues();
 
@@ -43,8 +45,18 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 			@Param("subType") String subType);
 
 	@Query("SELECT sum(t.amount) FROM Transaction t WHERE t.createdBy.username = :username AND t.type.subType IN (:subtypes)")
-	public Double findAllTransactionsForUserOfSubtypes(@Param("username") String username,
+	public Double findSumOfAllTransactionsForUserOfSubtypes(@Param("username") String username,
 			@Param("subtypes") List<String> subtypes);
 
 	public Transaction findByDebtId(Long id);
+
+	@Query("SELECT sum(t.amount) FROM Transaction t WHERE t.type.subType = :subType")
+	public Double findSumOfAllTransactionsOfSubtype(@Param("subType") String subType);
+	
+	@Query("SELECT sum(t.amount) FROM Transaction t WHERE t.type.subType IN (:subtypes)")
+	public Double findSumOfTransactionsWithSubtypes(@Param("subtypes") List<String> subtypes);
+
+	@Query("SELECT t FROM Transaction t WHERE t.createdBy.username = :username AND t.type.subType IN (:subtypes)")
+	public List<Transaction> findAllTransactionsForUserWithSubtype(@Param("username") String username,
+			@Param("subtypes") List<String> subtypes);
 }

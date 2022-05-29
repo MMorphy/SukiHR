@@ -243,4 +243,18 @@ public class PersonalDebtService {
 		}
 		return sum;
 	}
+
+	public Double getAllBankIncome() {
+		Double sum = 0d;
+		sum += getOutAgreedSum();
+		sum += getInPaymentsSum();
+		return sum;
+	}
+
+	public Double getAllBankExpense() {
+		Double sum = 0d;
+		sum += getInAgreedSum();
+		sum += getOutPaymentsSum();
+		return sum;
+	}
 }

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Štednja</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#savingsTable').DataTable({
+				"order" : [ [ 0, 'desc' ], [1, 'asc' ] ],
+				"footerCallback": function ( row, data, start, end, display ) {
+		            var api = this.api(), data;
+		 
+		            // Remove the formatting to get integer data for summation
+		            var intVal = function ( i ) {
+		            	console.log (i)
+		            	console.log (typeof i)
+		                return typeof i === 'string' ?
+		                    i.replace(/[\HRK,]/g, '')*1 :
+		                    typeof i === 'number' ?
+		                        i : 0;
+		            };
+		            pageTotal = api
+	                .column( 1, { page: 'current'} )
+	                .data()
+	                .reduce( function (a, b) {
+	                    return intVal(a) + intVal(b);
+	                }, 0 );
+	 
+	            // Update footer
+	            $( api.column( 1 ).footer() ).html(
+	                pageTotal + ' HRK'
+	            );
+	            }
+			});
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Štednja</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="savingsTable">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Iznos</th>
+						<th>Izmjeni</th>
+						<th>Briši</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="sav : ${savings}">
+						<td th:text="${sav.createDate}"></td>
+						<td th:text="${#numbers.formatDecimal(sav.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td>
+							<form th:action="@{'/savings/edit/' + ${sav.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/savings/delete/' + ${sav.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+		            <tr>
+		                <th colspan="1" style="text-align:right">Total:</th>
+		                <th colspan="2"></th><th></th>
+		            </tr>
+		        </tfoot>
+			</table>
+	<div class="col-md-12">
+		<form th:action="@{/savings/add/}" method="get">
+			<button>Dodaj novu štednju</button>
+		</form>
+	</div>
+		</div>
+	</div>
+</body>
+</html>

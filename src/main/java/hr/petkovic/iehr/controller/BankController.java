@@ -1,18 +1,14 @@
 package hr.petkovic.iehr.controller;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import hr.petkovic.iehr.entity.Transaction;
 import hr.petkovic.iehr.service.BankService;
 import hr.petkovic.iehr.service.PersonalDebtService;
+import hr.petkovic.iehr.service.ProjectService;
+import hr.petkovic.iehr.service.SavingsService;
 
 @Controller
 @RequestMapping("/bank")
@@ -20,26 +16,25 @@ public class BankController {
 
 	BankService bankServ;
 	PersonalDebtService debtServ;
+	SavingsService saveServ;
+	ProjectService projServ;
 
-	public BankController(BankService bService, PersonalDebtService dService) {
+	public BankController(BankService bService, PersonalDebtService dService, SavingsService savingsService,
+			ProjectService projectService) {
 		bankServ = bService;
 		debtServ = dService;
+		saveServ = savingsService;
+		projServ = projectService;
 	}
 
 	@GetMapping("/")
 	public String getBankHome(Model model) {
-		List<Transaction> list = bankServ.findAllBankTransactions();
-		list.addAll(bankServ.findBankUserTransacations());
-		Set<Transaction> set = new HashSet<>(list);
-		if (!bankServ.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
-			set = bankServ.filterOutOldYear(set);
-			model.addAttribute("sum", bankServ.getSumFiltered(set));
-		} else if (bankServ.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())
-				|| bankServ.isBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
-			model.addAttribute("sum", bankServ.getSumUnfiltered(set));
-		}
-		model.addAttribute("transactions", set);
+		model.addAttribute("sum", bankServ.getSum());
+		model.addAttribute("transactions", bankServ.getAllBankTransactions());
+		model.addAttribute("projects", projServ.getAllProjects());
+		model.addAttribute("savings", saveServ.findAllSavings());
 		model.addAttribute("debts", debtServ.getActivePersonalDebts());
+
 		return "bank/list";
 	}
 }

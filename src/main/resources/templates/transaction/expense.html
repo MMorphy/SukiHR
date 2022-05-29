@@ -30,13 +30,12 @@
 								th:text="${type.subType}"></option>
 						</optgroup>
 						<optgroup
-							th:unless="${#authentication.getPrincipal().getUsername() == 'banka'}"
 							label="Operativni Troškovi">
 							<option th:each="type : ${operative}" th:value="${type.id}"
 								th:text="${type.subType}"></option>
 						</optgroup>
 						<optgroup
-							th:if="${#authentication.getPrincipal().getUsername() == 'boriss' or #authentication.getPrincipal().getUsername() == 'banka' or #authentication.getPrincipal().getUsername() == 'ivans'}"
+							th:if="${#authentication.getPrincipal().getUsername() == 'banka'}"
 							label="Poslovni Troškovi">
 							<option th:each="type : ${business}" th:value="${type.id}"
 								th:text="${type.subType}"></option>

@@ -15,7 +15,6 @@ import hr.petkovic.iehr.service.SiteService;
 import hr.petkovic.iehr.service.TransactionService;
 import hr.petkovic.iehr.service.TransactionTypeService;
 
-// Dodati Boris specificne troskove
 @Controller
 @RequestMapping("/transaction")
 public class TransactionController {
@@ -60,22 +59,21 @@ public class TransactionController {
 
 	@GetMapping("/expense/add")
 	public String getExpenseAdding(Model model) {
+		//Admin user ivans
 		if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			model.addAttribute("private", typeSer.getPrivateExpenseTypes());
+			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 		}
-		if (transSer.isPrivileged(SecurityContextHolder.getContext().getAuthentication().getName())) {
+		//Bank user banka
+		else if(transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 			model.addAttribute("business", typeSer.getBusinessExpenseTypes());
-		}
-		if (!transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
-			if (transSer.isBoris(SecurityContextHolder.getContext().getAuthentication().getName())) {
-				model.addAttribute("operative", typeSer.getBorisExpenseTypes());
-			} else {
-				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
-			}
-
+		} 
+		//Operative users
+		else {
+			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 		}
 		model.addAttribute("addTrans", new Transaction());
-
 		return "transaction/expense";
 	}
 
@@ -97,13 +95,20 @@ public class TransactionController {
 		model.addAttribute("editTrans", trans);
 		// Expenses
 		if (trans.getSite() == null) {
+			//Admin user ivans
 			if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 				model.addAttribute("private", typeSer.getPrivateExpenseTypes());
+				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 			}
-			if (transSer.isPrivileged(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			//Bank user banka
+			else if(transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
+				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 				model.addAttribute("business", typeSer.getBusinessExpenseTypes());
+			} 
+			//Operative users
+			else {
+				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 			}
-			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 			return "transaction/expenseEdit";
 			// Incomes
 		} else {

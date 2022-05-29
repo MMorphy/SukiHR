@@ -1,7 +1,6 @@
 package hr.petkovic.iehr.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -232,10 +231,6 @@ public class TransactionService {
 		return returnList;
 	}
 
-	public List<Transaction> findAllBankTransactions() {
-		return transRepo.findAllByCreatedBy_Roles_NameInOrType_SubType(Arrays.asList("ROLE_BANK"), "RAZDUZENJE");
-	}
-
 	public List<UserWithSum> updateSaldoForUserDTOs(List<UserWithTotalDebtDTO> users) {
 		List<UserWithSum> rList = new ArrayList<>();
 		for (UserWithTotalDebtDTO user : users) {
@@ -249,11 +244,14 @@ public class TransactionService {
 		// Normal user
 		if (userRole == 1) {
 			return getTransactionDifference(user);
-		} else if (userRole == 2) {
+		}
+		// Bank user
+		else if (userRole == 2) {
 			return getSummarySaldo();
-		} else {
-			// Summary saldo
-			return getSummarySaldo();
+		}
+		// Admin user
+		else {
+			return getAdminSaldo(user);
 		}
 	}
 
@@ -273,11 +271,9 @@ public class TransactionService {
 	private Double getAdminSaldo(User user) {
 		Optional<Double> incomes = Optional
 				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername(user.getUsername(), "Ulaz"));
-		Optional<Double> businiessExpenses = Optional.ofNullable(
-				transRepo.findAllTransactionsForUserOfSubtypes(user.getUsername(), typeUtil.getBusinessExpenses()));
 		Optional<Double> operativeExpenses = Optional.ofNullable(
-				transRepo.findAllTransactionsForUserOfSubtypes(user.getUsername(), typeUtil.getOperativeExpenses()));
-		return incomes.orElse(0d) - businiessExpenses.orElse(0d) - operativeExpenses.orElse(0d);
+				transRepo.findSumOfAllTransactionsForUserOfSubtypes(user.getUsername(), typeUtil.getOperativeExpenses()));
+		return incomes.orElse(0d) - operativeExpenses.orElse(0d);
 	}
 
 	private int getUserRole(User user) {
@@ -310,11 +306,10 @@ public class TransactionService {
 		return sum;
 	}
 
-	public Double getAdminDifference(User user) {
-		Optional<Double> incomes = Optional
-				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername(user.getUsername(), "Ulaz"));
+	public Double getAdminWalletDifference(User user) {
+		Optional<Double> incomes = Optional.ofNullable(transRepo.findSumOfAllTransactionsOfSubtype("Kesh I"));
 		Optional<Double> expenses = Optional
-				.ofNullable(transRepo.findAllTransactionsOfSubTypeForUsername(user.getUsername(), "RAZDUZENJE"));
+				.ofNullable(transRepo.findSumOfAllTransactionsForUserOfSubtypes("ivans", typeUtil.getPrivateExpenses()));
 		return incomes.orElse(0d) - expenses.orElse(0d);
 	}
 
@@ -323,20 +318,6 @@ public class TransactionService {
 		if (u == null) {
 			return false;
 		} else if (getUserRole(u) == 3) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public boolean isPrivileged(String username) {
-		if (isAdmin(username)) {
-			return true;
-		}
-		User u = userSer.findUserByUsername(username);
-		if (u == null) {
-			return false;
-		} else if (getUserRole(u) == 2 || u.getUsername().equals("boriss")) {
 			return true;
 		} else {
 			return false;
@@ -357,14 +338,6 @@ public class TransactionService {
 
 	}
 
-	public boolean isBoris(String username) {
-		if (username.equals("boriss")) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	public Transaction addBankIncome(Transaction addBankTrans) {
 		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		addBankTrans.setCreatedBy(u);
@@ -381,15 +354,9 @@ public class TransactionService {
 	}
 
 	public Double findBankUserIncomesSum() {
-		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Ulaz");
-	}
-
-	public Double findAdminUserIncomesSum() {
-		return transRepo.findAllTransactionsOfMainTypeForUsername("ivans", "Ulaz");
-	}
-
-	public Double findBankUserExpensesSum() {
-		return transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Izlaz");
+		Optional<Double> incomes = Optional
+				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername("banka", "Ulaz"));
+		return incomes.orElse(0d);
 	}
 
 	public List<Transaction> filterTransactionsForCurrentYear(List<Transaction> list) {
@@ -406,19 +373,19 @@ public class TransactionService {
 		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		addTrans.setCreatedBy(u);
 		addTrans.setType(typeSer.getDefaultAdminIncomeType());
-		return saveTransaction(addTrans);		
+		return saveTransaction(addTrans);
 	}
 
 	public Transaction editAdminIncome(Long id, Transaction editTrans) {
 		Transaction oldTrans = findTransactionById(id);
 		oldTrans.setAmount(editTrans.getAmount());
 		oldTrans.setDescription(editTrans.getDescription());
-		return saveTransaction(oldTrans);		
+		return saveTransaction(oldTrans);
 	}
 
 	public Double getAdminWallet() {
 		Double sum = 0.d;
-		sum += getAdminDifference(userSer.findUserByUsername("ivans"));
+		sum += getAdminWalletDifference(userSer.findUserByUsername("ivans"));
 		return sum;
 	}
 
@@ -430,5 +397,29 @@ public class TransactionService {
 
 	private Transaction findTransactionByDebtId(Long id) {
 		return transRepo.findByDebtId(id);
+	}
+
+	public Double findBankIncomeSum() {
+		Optional<Double> incomes = Optional.ofNullable(transRepo.findSumOfAllTransactionsOfSubtype("RAZDUZENJE"));
+		return incomes.orElse(0d);
+	}
+
+	public List<Transaction> findAllBankIncomeTransactions() {
+		return transRepo.findAllByType_SubType("RAZDUZENJE");
+	}
+
+	public Double findBankExpenseSum() {
+		Optional<Double> business = Optional
+				.ofNullable(transRepo.findSumOfTransactionsWithSubtypes(typeUtil.getBusinessExpenses()));
+		Optional<Double> bankOperative = Optional
+				.ofNullable(transRepo.findSumOfAllTransactionsForUserOfSubtypes("banka", typeUtil.getOperativeExpenses()));
+		return business.orElse(0d) + bankOperative.orElse(0d);
+	}
+
+	public List<Transaction> getWalletTransactions() {
+		List<Transaction> retList = new ArrayList<>();
+		retList.addAll(transRepo.findAllByType_SubType("Kesh I"));
+		retList.addAll(transRepo.findAllTransactionsForUserWithSubtype("ivans", typeUtil.getPrivateExpenses()));
+		return retList;
 	}
 }
