@@ -22,7 +22,6 @@ public class TransactionTypeUtil {
 		returnList.add("Doktor");
 		returnList.add("Pokloni");
 		returnList.add("Putovanja");
-		returnList.add("Investicije");
 		returnList.add("Privatno - Ostalo");
 		return returnList;
 	}
@@ -43,8 +42,6 @@ public class TransactionTypeUtil {
 	public List<String> getOperativeExpenses() {
 		List<String> returnList = new ArrayList<String>();
 		returnList.add("Placa");
-		returnList.add("Bonus na placu 5%");
-		returnList.add("Bonus na prihod 15%");
 		returnList.add("Gorivo");
 		returnList.add("Cestarina");
 		returnList.add("Pice");
@@ -58,17 +55,6 @@ public class TransactionTypeUtil {
 		returnList.add("RAZDUZENJE");
 		return returnList;
 
-	}
-
-	public List<String> addBorisExpenses(List<String> operative) {
-		operative.add("Bonus na prihod 50%");
-		operative.add("Bonus na prihod 25%");
-		return operative;
-	}
-
-	public List<String> removeTinoBonus(List<String> operative) {
-		operative.remove("Bonus na prihod 15%");
-		return operative;
 	}
 
 	public boolean isPrivate(TransactionType type) {
@@ -98,7 +84,6 @@ public class TransactionTypeUtil {
 
 	public boolean isOperative(TransactionType type) {
 		List<String> operative = getOperativeExpenses();
-		operative = addBorisExpenses(operative);
 		for (String t : operative) {
 			if (type.getSubType().equals(t)) {
 				return true;

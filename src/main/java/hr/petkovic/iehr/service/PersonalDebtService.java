@@ -105,6 +105,18 @@ public class PersonalDebtService {
 		return new PersonalDebt();
 	}
 
+	public PersonalDebt getNewPersonalDebtToMe() {
+		PersonalDebt pd = new PersonalDebt();
+		pd.setType(tRepo.findByType("Dugovi prema meni").get());
+		return pd;
+	}
+
+	public PersonalDebt getNewMyPersonalDebt() {
+		PersonalDebt pd = new PersonalDebt();
+		pd.setType(tRepo.findByType("Moji Dugovi").get());
+		return pd;
+	}
+
 	public PersonalDebtPayments getNewPayment() {
 		return new PersonalDebtPayments();
 	}
@@ -257,4 +269,34 @@ public class PersonalDebtService {
 		sum += getOutPaymentsSum();
 		return sum;
 	}
+
+	public PersonalDebt setMyDebt(PersonalDebt addDebt) {
+		addDebt.setType(tRepo.findByType("Moji Dugovi").get());
+		return addDebt;
+	}
+
+	public PersonalDebt setDebtTome(PersonalDebt addDebt) {
+		addDebt.setType(tRepo.findByType("Dugovi prema meni").get());
+		return addDebt;
+	}
+	
+	
+	/*
+	 * 	public PersonalDebt getNewPersonalDebtToMe() {
+		PersonalDebt pd = new PersonalDebt();
+		pd.setType(tRepo.findByType("Dugovi prema meni").get());
+		return pd;
+	}
+
+	public PersonalDebt getNewMyPersonalDebt() {
+		PersonalDebt pd = new PersonalDebt();
+		pd.setType(tRepo.findByType("Moji Dugovi").get());
+		return pd;
+	}
+
+	 * 
+	 * 
+	 * 
+	 * 
+	 * */
 }

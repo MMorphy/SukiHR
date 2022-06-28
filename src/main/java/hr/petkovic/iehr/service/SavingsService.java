@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import hr.petkovic.iehr.DTO.SavingsDTO;
 import hr.petkovic.iehr.entity.Saving;
 import hr.petkovic.iehr.repo.SavingsRepo;
 
@@ -41,15 +42,6 @@ public class SavingsService {
 		return savRepo.save(addSaving);
 	}
 
-	public Saving editSaving(Long id, Saving editSaving) {
-		Saving oldSaving = findSavingById(id);
-		if (oldSaving != null) {
-			oldSaving.setAmount(editSaving.getAmount());
-			return savRepo.save(oldSaving);
-		}
-		return null;
-	}
-
 	public void deleteSavingById(Long id) {
 		savRepo.deleteById(id);
 	}
@@ -58,8 +50,21 @@ public class SavingsService {
 		Double sum = 0d;
 		List<Saving> allSavings = findAllSavings();
 		for (Saving s : allSavings) {
-			sum += s.getAmount();
+			sum += s.getAmountInHRK();
 		}
 		return sum;
 	}
+
+	public Saving increaseSaving(Saving sav, SavingsDTO addSaving) {
+		sav.setAmountInCurrency(sav.getAmountInCurrency() + addSaving.getAmountInCurrency());
+		sav.setAmountInHRK(sav.getAmountInHRK() + addSaving.getAmountInHRK());
+		return saveSaving(sav);
+	}
+
+	public Saving decreaseSaving(Saving sav, SavingsDTO addSaving) {
+		sav.setAmountInCurrency(sav.getAmountInCurrency() - addSaving.getAmountInCurrency());
+		sav.setAmountInHRK(sav.getAmountInHRK() - addSaving.getAmountInHRK());
+		return saveSaving(sav);
+	}
+
 }

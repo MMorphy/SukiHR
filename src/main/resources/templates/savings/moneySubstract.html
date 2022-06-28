@@ -3,29 +3,25 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="ISO-8859-1">
-<title>Dodaj štednju</title>
+<title>Dodaj na štednju</title>
 <th:block th:include="fragments/generalFragments.html :: headerfiles">
 </head>
 <body>
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
 	<form method="POST" th:object="${addSaving}"
-		th:action="@{'/savings/add/'}">
+		th:action="@{'/savings/substract/' + ${id}}">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="form-group col-lg-4">
-					<label for="subtype">Valuta:</label> <input type="text"
-						class="form-control" id="amount" th:field="*{name}"
-						required="required">
+					<label for="subtype">Iznos u kunama:</label> <input type="number"
+						class="form-control" id="amount" th:field="*{amountInHRK}"
+						required="required" step="1">
 				</div>
-			</div>
-		</div>
-		<div class="container-fluid">
-			<div class="row">
 				<div class="form-group col-lg-4">
-					<label for="subtype">Skraćenica:</label> <input type="text"
-						class="form-control" id="amount" th:field="*{sign}"
-						required="required">
+					<label for="subtype">Iznos u devizi:</label> <input type="number"
+						class="form-control" id="amount" th:field="*{amountInCurrency}"
+						required="required" step="1">
 				</div>
 			</div>
 		</div>

@@ -14,35 +14,52 @@
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
 	<script>
-		$(document).ready(function() {
-			$('#savingsTable').DataTable({
-				"order" : [ [ 0, 'desc' ], [1, 'asc' ] ],
-				"footerCallback": function ( row, data, start, end, display ) {
-		            var api = this.api(), data;
-		 
-		            // Remove the formatting to get integer data for summation
-		            var intVal = function ( i ) {
-		            	console.log (i)
-		            	console.log (typeof i)
-		                return typeof i === 'string' ?
-		                    i.replace(/[\HRK,]/g, '')*1 :
-		                    typeof i === 'number' ?
-		                        i : 0;
-		            };
-		            pageTotal = api
-	                .column( 1, { page: 'current'} )
-	                .data()
-	                .reduce( function (a, b) {
-	                    return intVal(a) + intVal(b);
-	                }, 0 );
-	 
-	            // Update footer
-	            $( api.column( 1 ).footer() ).html(
-	                pageTotal + ' HRK'
-	            );
-	            }
-			});
-		});
+		$(document)
+				.ready(
+						function() {
+							$('#savingsTable')
+									.DataTable(
+											{
+												"order" : [ [ 0, 'desc' ],
+														[ 1, 'asc' ] ],
+												"footerCallback" : function(
+														row, data, start, end,
+														display) {
+													var api = this.api(), data;
+
+													// Remove the formatting to get integer data for summation
+													var intVal = function(i) {
+														console.log(i)
+														console.log(typeof i)
+														return typeof i === 'string' ? i
+																.replace(
+																		/[\HRK,]/g,
+																		'') * 1
+																: typeof i === 'number' ? i
+																		: 0;
+													};
+													pageTotal = api
+															.column(
+																	0,
+																	{
+																		page : 'current'
+																	})
+															.data()
+															.reduce(
+																	function(a,
+																			b) {
+																		return intVal(a)
+																				+ intVal(b);
+																	}, 0);
+
+													// Update footer
+													$(api.column(1).footer())
+															.html(
+																	pageTotal
+																			+ ' HRK');
+												}
+											});
+						});
 	</script>
 
 	<div class="col-md-12">
@@ -53,43 +70,44 @@
 			<table class="table" id="savingsTable">
 				<thead>
 					<tr>
-						<th>Datum</th>
-						<th>Iznos</th>
-						<th>Izmjeni</th>
-						<th>Briši</th>
-
+						<th>Iznos u Kunama</th>
+						<th>Iznos u Devizi</th>
+						<th>Dodaj</th>
+						<th>Povuci</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="sav : ${savings}">
-						<td th:text="${sav.createDate}"></td>
-						<td th:text="${#numbers.formatDecimal(sav.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td
+							th:text="${#numbers.formatDecimal(sav.amountInHRK, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td
+							th:text="${#numbers.formatDecimal(sav.amountInCurrency, 1, 'COMMA', 2, 'POINT')} + ' ' +  ${sav.getSign()}"></td>
+
 						<td>
-							<form th:action="@{'/savings/edit/' + ${sav.id}}"
-								method="get">
-								<button>Izmjeni</button>
+							<form th:action="@{'/savings/add/' + ${sav.id}}" method="get">
+								<button>Dodaj</button>
 							</form>
 						</td>
 						<td>
-							<form th:action="@{'/savings/delete/' + ${sav.id}}"
-								method="post">
-								<button>Briši</button>
+							<form th:action="@{'/savings/substract/' + ${sav.id}}" method="get">
+								<button>Oduzmi</button>
 							</form>
 						</td>
 					</tr>
 				</tbody>
 				<tfoot>
-		            <tr>
-		                <th colspan="1" style="text-align:right">Total:</th>
-		                <th colspan="2"></th><th></th>
-		            </tr>
-		        </tfoot>
+					<tr>
+						<th colspan="1" style="text-align: right">Total:</th>
+						<th colspan="2"></th>
+						<th></th>
+					</tr>
+				</tfoot>
 			</table>
-	<div class="col-md-12">
-		<form th:action="@{/savings/add/}" method="get">
-			<button>Dodaj novu štednju</button>
-		</form>
-	</div>
+			<div class="col-md-12">
+				<form th:action="@{/savings/add/}" method="get">
+					<button>Dodaj novu štednju</button>
+				</form>
+			</div>
 		</div>
 	</div>
 </body>

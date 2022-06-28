@@ -12,7 +12,8 @@
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
 	<div class="row">
-		<div class="col-sm-6" th:if="${#authentication.getPrincipal().getUsername() != 'banka'}">
+		<div class="col-sm-6"
+			th:if="${#authentication.getPrincipal().getUsername() != 'banka'}">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -26,7 +27,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">
+		<div class="col-sm-6"
+			th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -58,7 +60,8 @@
 		</div>
 	</div>
 	<div class="row" sec:authorize="hasRole('ROLE_USER')">
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -72,7 +75,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -88,7 +92,8 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-6" sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -104,7 +109,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -122,7 +128,8 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -136,7 +143,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -145,14 +153,15 @@
 							width="100" /></a>
 					</div>
 					<h3 id="thumbnail-label">
-						<a th:href="@{/user/}">SVI KORISNICI</a>
+						<a th:href="@{/user/}">KORISNICI I OBAVEZE</a>
 					</h3>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -166,23 +175,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')" >
-			<div class="thumbnail">
-				<div class="caption text-center">
-					<div class="position-relative">
-						<a th:href="@{/bank/}" title="BANKA"><img
-							src="data:image/svg+xml;base64,PHN2ZyBpZD0iQ2FwYV8xIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHdpZHRoPSI1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtNDEuMjI3IDE1NC42OTJ2MTIxLjY4OWg0MjkuNTcxdi0xMjEuNjg5bC0yMTQuOC0xMjQuMDE0eiIgZmlsbD0iI2VjZWFlYyIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjxnPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibTEwLjEzMiAxNjkuOTEzYzUuNDE0IDkuMzgyIDE3LjQ4OSAxMi42MTQgMjYuODcxIDcuMmw0LjIyMy0yLjQzOCAyMTQuNzcyLTEyNC4wMTMgMjE0LjggMTI0LjAxMyA0LjIyMyAyLjQzOGM5LjM1NCA1LjQxNCAyMS40NTcgMi4xODMgMjYuODQzLTcuMiA1LjQxNC05LjM1NCAyLjE4My0yMS40NTgtNy4yLTI2Ljg3MmwtMjI3Ljg2Ni0xMzEuNTUzYy0zLjExOC0xLjgxNC02Ljk0NS0yLjY5My0xMC44LTIuNjkzLTMuODI3IDAtNy42ODIuODc5LTEwLjc5OSAyLjY5M2wtMjI3Ljg2NyAxMzEuNTUzYy05LjM1NCA1LjQxNS0xMi42MTQgMTcuNTE4LTcuMiAyNi44NzJ6IiBmaWxsPSIjOWZkNGZlIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtMzUuMzMxIDMxMy4wMDRoMTA3Ljk2NyA1OC43MDMgMTA3Ljk5NSA1OC43MDMgMTA3Ljk5NSAyMy4yMTVjMi41MjMgMCA0LjU5Mi0yLjA2OSA0LjU5Mi00LjU5MnYtMjcuNDM5YzAtMi41MjMtMi4wNjktNC41OTItNC41OTItNC41OTJoLTI5LjExLTQyOS41NzItMjkuMTFjLTIuNTIzIDAtNC41OTIgMi4wNjktNC41OTIgNC41OTJ2MjcuNDM5YzAgMi41MjMgMi4wNjkgNC41OTIgNC41OTIgNC41OTJ6IiBmaWxsPSIjOWZkNGZlIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtNTYuMzA2IDM0NS43MTVoNjYuMDE2IDE2LjUyNWMyLjQzOCAwIDQuNDUtMi4wMTMgNC40NS00LjQ1di0yOC4yNjFoLTEwNy45NjZ2MjguMjYxYzAgMi40MzggMi4wMTMgNC40NSA0LjQ1IDQuNDV6IiBmaWxsPSIjZWNlYWVjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtMjIzLjAwNCAzNDUuNzE1aDY1Ljk4OCAxNi41MjVjMi40NjYgMCA0LjQ3OS0yLjAxMyA0LjQ3OS00LjQ1di0yOC4yNjFoLTEwNy45OTV2MjguMjYxYzAgMi40MzggMi4wMTMgNC40NSA0LjQ3OSA0LjQ1eiIgZmlsbD0iI2VjZWFlYyIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjxnPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibTM3My4xNzcgMzQ1LjcxNWgxNi41MjUgNjUuOTg4IDE2LjUyNWMyLjQ2NiAwIDQuNDc5LTIuMDEzIDQuNDc5LTQuNDV2LTI4LjI2MWgtMTA3Ljk5NnYyOC4yNjFjMCAyLjQzNyAyLjAxMyA0LjQ1IDQuNDc5IDQuNDV6IiBmaWxsPSIjZWNlYWVjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtMzg5LjcwMiAzNDUuNzE1aDY1Ljk4OHY4OC4xNTZoLTY1Ljk4OHoiIGZpbGw9IiNmZmUwN2QiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0yMjMuMDA0IDM0NS43MTVoNjUuOTg4djg4LjE1NmgtNjUuOTg4eiIgZmlsbD0iI2ZmZTA3ZCIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjxnPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibTU2LjMwNiAzNDUuNzE1aDY2LjAxNnY4OC4xNTZoLTY2LjAxNnoiIGZpbGw9IiNmZmUwN2QiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0zNS4zMzEgNDY2LjU4MmgxMDcuOTY3di0yOC4yMzNjMC0yLjQ2Ni0yLjAxMy00LjQ3OS00LjQ1LTQuNDc5aC0xNi41MjUtNjYuMDE3LTE2LjUyNWMtMi40MzggMC00LjQ1IDIuMDEzLTQuNDUgNC40Nzl6IiBmaWxsPSIjZWNlYWVjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtMzY4LjY5OCA0NjYuNTgyaDEwNy45OTV2LTI4LjIzM2MwLTIuNDY2LTIuMDEzLTQuNDc5LTQuNDc5LTQuNDc5aC0xNi41MjQtNjUuOTg4LTE2LjUyNWMtMi40NjYgMC00LjQ3OSAyLjAxMy00LjQ3OSA0LjQ3OXoiIGZpbGw9IiNlY2VhZWMiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0yMDIuMDAxIDQ2Ni41ODJoMTA3Ljk5NXYtMjguMjMzYzAtMi40NjYtMi4wMTMtNC40NzktNC40NzktNC40NzloLTE2LjUyNS02NS45ODgtMTYuNTI1Yy0yLjQ2NiAwLTQuNDc5IDIuMDEzLTQuNDc5IDQuNDc5djI4LjIzM3oiIGZpbGw9IiNlY2VhZWMiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0xMi4xMTYgNTAzLjIwNWg0ODcuNzkyYzIuNTIzIDAgNC41OTItMi4wNjkgNC41OTItNC41OTJ2LTI3LjQzOWMwLTIuNTIzLTIuMDY5LTQuNTkyLTQuNTkyLTQuNTkyaC0yMy4yMTUtMTA3Ljk5NS01OC43MDMtMTA3Ljk5NC01OC43MDMtMTA3Ljk2Ny0yMy4yMTVjLTIuNTIzIDAtNC41OTIgMi4wNjktNC41OTIgNC41OTJ2MjcuNDM5YzAgMi41MjMgMi4wNyA0LjU5MiA0LjU5MiA0LjU5MnoiIGZpbGw9IiM5ZmQ0ZmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0yMzMuMDk1IDExOS4wMDRjMCAxMy4yNjYgMTAuNzQzIDI0LjAwOSAyNC4wMDggMjQuMDA5IDEzLjIzNyAwIDI0LjAwOC0xMC43NDMgMjQuMDA4LTI0LjAwOXMtMTAuNzcxLTI0LjAwOS0yNC4wMDgtMjQuMDA5Yy0xMy4yNjUgMC0yNC4wMDggMTAuNzQzLTI0LjAwOCAyNC4wMDl6IiBmaWxsPSIjZmZlMDdkIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtMTIyLjMyMiAzNDUuNzE1djg4LjE1NmgxNi41MjVjMi40MzggMCA0LjQ1IDIuMDEzIDQuNDUgNC40Nzl2MjguMjMzaDU4LjcwM3YtMjguMjMzYzAtMi40NjYgMi4wMTMtNC40NzkgNC40NzktNC40NzloMTYuNTI1di04OC4xNTZoLTE2LjUyNWMtMi40NjYgMC00LjQ3OS0yLjAxMy00LjQ3OS00LjQ1di0yOC4yNjFoLTU4LjcwM3YyOC4yNjFjMCAyLjQzOC0yLjAxMyA0LjQ1LTQuNDUgNC40NXoiIGZpbGw9IiNiNmIxYjciIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0yODguOTkyIDM0NS43MTV2ODguMTU2aDE2LjUyNWMyLjQ2NiAwIDQuNDc5IDIuMDEzIDQuNDc5IDQuNDc5djI4LjIzM2g1OC43MDN2LTI4LjIzM2MwLTIuNDY2IDIuMDEzLTQuNDc5IDQuNDc5LTQuNDc5aDE2LjUyNXYtODguMTU2aC0xNi41MjVjLTIuNDY2IDAtNC40NzktMi4wMTMtNC40NzktNC40NXYtMjguMjYxaC01OC43MDN2MjguMjYxYzAgMi40MzgtMi4wMTMgNC40NS00LjQ3OSA0LjQ1eiIgZmlsbD0iI2I2YjFiNyIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjxnPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibTI1NS45OTggNTAuNjYyLTIxNC43NzEgMTI0LjAxM3YyNy44OTNsMjE0Ljc3MS0xMjQuMDE0IDIxNC44IDEyNC4wMTR2LTI3Ljg5M3oiIGZpbGw9IiNkYWQ4ZGIiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0yNTcuMTA0IDk0Ljk5NWMtMTMuMjY2IDAtMjQuMDA4IDEwLjc0My0yNC4wMDggMjQuMDA5IDAgMi43NS40NTQgNS4zNTcgMS4zMDQgNy44MjMgMy41NDMtOC44MTYgMTIuMTg4LTE1LjAyMyAyMi4yNTEtMTUuMDIzIDEwLjUxNiAwIDE5LjQ3MyA2Ljc3NSAyMi43MDQgMTYuMTg2IDEuMTM0LTIuNzc4IDEuNzU3LTUuODExIDEuNzU3LTguOTg2IDAtMTMuMjY2LTEwLjc3MS0yNC4wMDktMjQuMDA4LTI0LjAwOXoiIGZpbGw9IiNmZmMyNjkiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im01Ni4zMDYgMzQ1LjcxNWg2Ni4wMTZ2MjMuOTgxaC02Ni4wMTZ6IiBmaWxsPSIjZmZjMjY5IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJtMjIzLjAwNCAzNDUuNzE1aDY1Ljk4OHYyMy45ODFoLTY1Ljk4OHoiIGZpbGw9IiNmZmMyNjkiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0zODkuNzAyIDM0NS43MTVoNjUuOTg4djIzLjk4MWgtNjUuOTg4eiIgZmlsbD0iI2ZmYzI2OSIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjxnPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibTM1LjMzMSAzMTMuMDA0aDEwNy45Njd2MTcuNTQ2aC0xMDcuOTY3eiIgZmlsbD0iI2RhZDhkYiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjxnPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibTIwMi4wMDEgMzEzLjAwNGgxMDcuOTk1djE3LjU0NmgtMTA3Ljk5NXoiIGZpbGw9IiNkYWQ4ZGIiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48Zz48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Im0zNjguNjk4IDMxMy4wMDRoMTA3Ljk5NXYxNy41NDZoLTEwNy45OTV6IiBmaWxsPSIjZGFkOGRiIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L2c+PGc+PHBhdGggZD0ibTQ3Mi4yMTUgMzUzLjIxNWM2LjYwNCAwIDExLjk3OC01LjM2MSAxMS45NzgtMTEuOTV2LTIwLjc2MWgxNS43MTVjNi42NjcgMCAxMi4wOTEtNS40MjUgMTIuMDkxLTEyLjA5MnYtMjcuNDM5YzAtNi42NjctNS40MjUtMTIuMDkyLTEyLjA5MS0xMi4wOTJoLTIxLjYxMXYtODIuNDM4YzIuMTE2LjUyNyA0LjI4NS44MDUgNi40NzEuODA1IDIuMzc0IDAgNC43NjYtLjMxMyA3LjEyNC0uOTQ3IDcuMDI0LTEuODg3IDEyLjg3Ni02LjM4MSAxNi40NjItMTIuNjMxIDMuNjIzLTYuMjYgNC41ODMtMTMuNTc4IDIuNzAzLTIwLjYwNi0xLjg4MS03LjAzMi02LjM3Mi0xMi44OTgtMTIuNjQ0LTE2LjUxN2wtMjI3Ljg0NC0xMzEuNTQyYy00LjE3Mi0yLjQyNy05LjIxMS0zLjcxLTE0LjU3MS0zLjcxcy0xMC4zOTkgMS4yODMtMTQuNTQ5IDMuNjk4bC0yMjcuODc0IDEzMS41NTdjLTEyLjk3MyA3LjUwOS0xNy40MjkgMjQuMTU2LTkuOTM4IDM3LjExMSAzLjYyIDYuMjczIDkuNDggMTAuNzY0IDE2LjUwMyAxMi42NDUgNC41MjYgMS4yMTIgOS4xNzQgMS4yMzggMTMuNTg4LjEzOHY4Mi40MzZoLTIxLjYxMWMtNi42NjggMC0xMi4wOTIgNS40MjUtMTIuMDkyIDEyLjA5MnYyNy40MzljMCA2LjY2NyA1LjQyNSAxMi4wOTIgMTIuMDkyIDEyLjA5MmgxNS43MTR2MjAuNzYxYzAgNi41OSA1LjM2MSAxMS45NSAxMS45NSAxMS45NWg5LjAyNnY3My4xNTZoLTkuMDI2Yy02LjU4OSAwLTExLjk1IDUuMzczLTExLjk1IDExLjk3OHYyMC43MzNoLTE1LjcxNGMtNi42NjggMC0xMi4wOTIgNS40MjUtMTIuMDkyIDEyLjA5MnYyNy40MzljMCA2LjY2NyA1LjQyNSAxMi4wOTIgMTIuMDkyIDEyLjA5MmgyMjguMjM1YzQuMTQyIDAgNy41LTMuMzU4IDcuNS03LjVzLTMuMzU3LTcuNS03LjUtNy41aC0yMjUuMzI4di0yMS42MjNoNDgxLjk3NnYyMS42MjNoLTIyMi4wMzljLTQuMTQyIDAtNy41IDMuMzU4LTcuNSA3LjVzMy4zNTcgNy41IDcuNSA3LjVoMjI0Ljk0N2M2LjY2NyAwIDEyLjA5MS01LjQyNSAxMi4wOTEtMTIuMDkydi0yNy40MzljMC02LjY2Ny01LjQyNS0xMi4wOTItMTIuMDkxLTEyLjA5MmgtMTUuNzE1di0yMC43MzNjMC02LjYwNS01LjM3NC0xMS45NzgtMTEuOTc4LTExLjk3OGgtOS4wMjV2LTczLjE1Nmg5LjAyNXptLTQzOC45NTktMTgyLjU5OGMtMi44MDYgMS42MTgtNi4wODQgMi4wNDQtOS4yMzYgMS4yLTMuMTQ5LS44NDQtNS43NzUtMi44NTEtNy4zOTEtNS42NTMtLjAwMi0uMDAzLS4wMDMtLjAwNS0uMDA1LS4wMDgtMy4zNTYtNS43OTktMS4zNTMtMTMuMjU3IDQuNDU4LTE2LjYybDIyNy44ODgtMTMxLjU2NWMxLjgzLTEuMDY1IDQuMzkyLTEuNjc2IDcuMDI4LTEuNjc2IDIuNjc1IDAgNS4xNzEuNTk1IDcuMDUgMS42ODhsMjI3Ljg2OSAxMzEuNTU1YzIuOCAxLjYxNiA0LjgwNyA0LjI0NSA1LjY1MiA3LjQwMy44NDQgMy4xNTQuNDE5IDYuNDI3LTEuMjA5IDkuMjQtMS42MDEgMi43ODktNC4yMTQgNC43OS03LjM1OSA1LjYzNi0zLjE1My44NDctNi40MjkuNDI0LTkuMjI5LTEuMTk3bC0yMTkuMDI0LTEyNi40NTNjLTEuMTYtLjY3LTIuNDU1LTEuMDA1LTMuNzUtMS4wMDVzLTIuNTkuMzM1LTMuNzUgMS4wMDV6bS0xOC4yMzIgMTEzLjI2NGgyMjUuMzI4YzQuMTQyIDAgNy41LTMuMzU4IDcuNS03LjVzLTMuMzU3LTcuNS03LjUtNy41aC0xOTEuNjI1di04OS44NzdsMjA3LjI3MS0xMTkuNjgyIDIwNy4zIDExOS42ODN2ODkuODc2aC0xODkuNTg0Yy00LjE0MiAwLTcuNSAzLjM1OC03LjUgNy41czMuMzU3IDcuNSA3LjUgNy41aDIyMy4yODZ2MjEuNjIzaC00ODEuOTc2em0xOTQuNDc2IDU0LjMzNHYtMTcuNzExaDkyLjk5NnYxNy43MTF6bTcxLjk5MiAxNXY3My4xNTZoLTUwLjk4OHYtNzMuMTU2em0tMjM4LjY2MS0xNXYtMTcuNzExaDkyLjk2N3YxNy43MTF6bTcxLjk5MiAxNXY3My4xNTZoLTUxLjAxNnYtNzMuMTU2em0yMC45NzUgMTA1Ljg2N2gtOTIuOTY3di0xNy43MTFoOTIuOTY3em01OC43MDItMjAuNzMzdjIwLjczM2gtNDMuNzAzdi0yMC43MzNjMC02LjYwNS01LjM2LTExLjk3OC0xMS45NS0xMS45NzhoLTkuMDI1di03My4xNTZoOS4wMjVjNi41OSAwIDExLjk1LTUuMzYxIDExLjk1LTExLjk1di0yMC43NjFoNDMuNzAzdjIwLjc2MWMwIDYuNTkgNS4zNzQgMTEuOTUgMTEuOTc4IDExLjk1aDkuMDI2djczLjE1NmgtOS4wMjZjLTYuNjA0IDAtMTEuOTc4IDUuMzczLTExLjk3OCAxMS45Nzh6bTEwNy45OTYgMjAuNzMzaC05Mi45OTZ2LTE3LjcxMWg5Mi45OTZ6bTU4LjcwMi0yMC43MzN2MjAuNzMzaC00My43MDN2LTIwLjczM2MwLTYuNjA1LTUuMzc0LTExLjk3OC0xMS45NzgtMTEuOTc4aC05LjAyNXYtNzMuMTU2aDkuMDI1YzYuNjA0IDAgMTEuOTc4LTUuMzYxIDExLjk3OC0xMS45NXYtMjAuNzYxaDQzLjcwM3YyMC43NjFjMCA2LjU5IDUuMzc0IDExLjk1IDExLjk3OSAxMS45NWg5LjAyNXY3My4xNTZoLTkuMDI1Yy02LjYwNSAwLTExLjk3OSA1LjM3My0xMS45NzkgMTEuOTc4em0xMDcuOTk2IDMuMDIydjE3LjcxMWgtOTIuOTk2di0xNy43MTF6bS03MS45OTItMTV2LTczLjE1Nmg1MC45ODh2NzMuMTU2em0tMjEuMDA0LTg4LjE1NnYtMTcuNzExaDkyLjk5NnYxNy43MTF6Ii8+PHBhdGggZD0ibTI4OC42MTEgMTE5LjAwNGMwLTE3LjM3NC0xNC4xMzQtMzEuNTA5LTMxLjUwOC0zMS41MDlzLTMxLjUwOCAxNC4xMzUtMzEuNTA4IDMxLjUwOSAxNC4xMzQgMzEuNTA5IDMxLjUwOCAzMS41MDkgMzEuNTA4LTE0LjEzNSAzMS41MDgtMzEuNTA5em0tNDguMDE2IDBjMC05LjEwMyA3LjQwNi0xNi41MDkgMTYuNTA4LTE2LjUwOXMxNi41MDggNy40MDYgMTYuNTA4IDE2LjUwOS03LjQwNiAxNi41MDktMTYuNTA4IDE2LjUwOS0xNi41MDgtNy40MDYtMTYuNTA4LTE2LjUwOXoiLz48Zz48cGF0aCBkPSJtMTY1LjUzNSAyMDUuMjU0YzIuMDU4LTMuMjM2IDMuMjY4LTcuMDYzIDMuMjY4LTExLjE3NCAwLTExLjUyNS05LjM3Ny0yMC45MDItMjAuOTAyLTIwLjkwMmgtMTYuOTE4Yy00LjE0MyAwLTcuNSAzLjM1OC03LjUgNy41djI2LjgxOS4wNDMgMzEuMzgxYzAgMS45OTUuNzk1IDMuOTA4IDIuMjA5IDUuMzE1IDEuNDA1IDEuNCAzLjMwOCAyLjE4NSA1LjI5MSAyLjE4NWguMDMzczE1LjU1My0uMDY5IDE5Ljg0LS4wNjljMTIuNzc5IDAgMjMuMTc3LTEwLjM5NyAyMy4xNzctMjMuMTc3LS4wMDEtNy4yMTMtMy4zMTUtMTMuNjY2LTguNDk4LTE3LjkyMXptLTE3LjYzNS0xNy4wNzVjMy4yNTUgMCA1LjkwMiAyLjY0NyA1LjkwMiA1LjkwMnMtMi42NDcgNS45MDItNS45MDIgNS45MDJjLTEuMjM3IDAtOS40MTguMDE2LTkuNDE4LjAxNnYtMTEuODE5aDkuNDE4em0yLjk1NSA0My4xNzRjLTIuMjgyIDAtNy43NDYuMDItMTIuMzczLjAzOHYtMTYuMzgxYzEuMTA1LS4wMDQgMTIuMzczLS4wMTIgMTIuMzczLS4wMTIgNC41MDkgMCA4LjE3NyAzLjY2OCA4LjE3NyA4LjE3OCAwIDQuNTA5LTMuNjY4IDguMTc3LTguMTc3IDguMTc3eiIvPjxwYXRoIGQ9Im0yMjYuMDc3IDE3OC44NDljLS4wMjUtLjA2Ny0uMDUyLS4xMzQtLjA3OC0uMjAxLTEuMzY1LTMuMzIzLTQuNTY2LTUuNDY5LTguMTU4LTUuNDY5LS4wMDIgMC0uMDA0IDAtLjAwNSAwLTMuNTk1LjAwMi02Ljc5NyAyLjE1My04LjE1OSA1LjQ3OS0uMDIzLjA1Ny0uMDQ2LjExNC0uMDY3LjE3MWwtMjEuODcgNTcuNDIzYy0xLjQ3NSAzLjg3MS40NjkgOC4yMDQgNC4zNCA5LjY3OCAzLjg2NiAxLjQ3NSA4LjIwMy0uNDY4IDkuNjc4LTQuMzM5bDMuNjA3LTkuNDcxaDI0Ljc4NmwzLjU2NiA5LjQ1YzEuMTMzIDMuMDAzIDMuOTg3IDQuODU0IDcuMDE4IDQuODU0Ljg4IDAgMS43NzUtLjE1NiAyLjY0Ny0uNDg1IDMuODc1LTEuNDYzIDUuODMxLTUuNzkgNC4zNjgtOS42NjV6bS0xNSAzOC4yNzIgNi43MzctMTcuNjg4IDYuNjc1IDE3LjY4OHoiLz48cGF0aCBkPSJtMzExLjYwNyAxNzMuMTc5Yy0uMDI0IDAtLjA1IDAtLjA3NCAwLTQuMTQzLjA0LTcuNDY4IDMuNDMtNy40MjggNy41NzJsLjMzNyAzNC43NzgtMjYuOTM1LTM5LjAwM2MtMS44NjQtMi43MDEtNS4yNjYtMy44NzQtOC40MDQtMi44OTgtMy4xMzMuOTc3LTUuMjY4IDMuODc4LTUuMjY4IDcuMTZ2NTguMTM1YzAgNC4xNDIgMy4zNTcgNy41IDcuNSA3LjVzNy41LTMuMzU4IDcuNS03LjV2LTM0LjA3NmwyNS42MzggMzcuMTI1YzIuMTkzIDMuMTcxIDUuODYgNC41MjEgOS4zMzcgMy40MzQgMy41NDctMS4xMDcgNS44MzktNC40MjIgNS44MzktOC41MThsLS41NDQtNTYuMjgxYy0uMDQtNC4xMTgtMy4zODktNy40MjgtNy40OTgtNy40Mjh6Ii8+PHBhdGggZD0ibTM4Ny45NTggMjMzLjUyNS0yNi4xOTctMjUuMjc0IDIzLjk3Mi0yMi4wMzRjMy4wNS0yLjgwMyAzLjI1LTcuNTQ4LjQ0Ni0xMC41OTgtMi44MDItMy4wNDktNy41NDgtMy4yNS0xMC41OTctLjQ0NmwtMTkuMTQ3IDE3LjZ2LTEyLjgyM2MwLTQuMTQyLTMuMzU3LTcuNS03LjUtNy41cy03LjUgMy4zNTgtNy41IDcuNXY1OC45NzJjMCA0LjE0MiAzLjM1NyA3LjUgNy41IDcuNXM3LjUtMy4zNTggNy41LTcuNXYtMTQuOTY4bDIxLjEwOSAyMC4zNjZjMS40NTUgMS40MDQgMy4zMzIgMi4xMDMgNS4yMDYgMi4xMDMgMS45NjUgMCAzLjkyNy0uNzY3IDUuMzk4LTIuMjkyIDIuODc2LTIuOTgyIDIuNzkxLTcuNzMtLjE5LTEwLjYwNnoiLz48L2c+PC9nPjwvZz48L3N2Zz4="
-							width="100" /></a>
-					</div>
-					<h3 id="thumbnail-label">
-						<a th:href="@{/bank/}">BANKA</a>
-					</h3>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -195,8 +189,11 @@
 					</h3>
 				</div>
 			</div>
-		</div>		
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -210,21 +207,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" th:if="${#authentication.getPrincipal().getUsername() == 'ivans'}">
-			<div class="thumbnail">
-				<div class="caption text-center">
-					<div class="position-relative">
-						<a th:href="@{/transaction/admin/income/add}" title="Ulaz"><img
-							src="https://www.freepnglogos.com/uploads/plus-icon/file-ambox-emblem-plus-svg-wikimedia-commons-18.png"
-							width="100" /></a>
-					</div>
-					<h3 id="thumbnail-label">
-						<a th:href="@{/transaction/admin/income/add}">ADMIN ULAZ</a>
-					</h3>
-				</div>
-			</div>
-		</div>
-				<div class="col-sm-6" th:if="${#authentication.getPrincipal().getUsername() == 'ivans'}">
+		<div class="col-sm-6"
+			th:if="${#authentication.getPrincipal().getUsername() == 'ivans'}">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
@@ -234,6 +218,21 @@
 					</div>
 					<h3 id="thumbnail-label">
 						<a th:href="@{/wallet/}">WALLET</a>
+					</h3>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6"
+			th:if="${#authentication.getPrincipal().getUsername() != 'banka'}">
+			<div class="thumbnail">
+				<div class="caption text-center">
+					<div class="position-relative">
+						<a th:href="@{'/task/' + ${#authentication.name} }" title="OBAVEZE"><img
+							src="https://cdn-icons.flaticon.com/png/512/2098/premium/2098402.png?token=exp=1656447334~hmac=568702dfc383d9d5d03ef233c31c5b69"
+							width="100" /></a>
+					</div>
+					<h3 id="thumbnail-label">
+						<a th:href="@{'/task/' + ${#authentication.name} }">MOJE OBAVEZE</a>
 					</h3>
 				</div>
 			</div>

@@ -3,29 +3,20 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="ISO-8859-1">
-<title>Dodaj štednju</title>
+<title>Izmjeni komentar</title>
 <th:block th:include="fragments/generalFragments.html :: headerfiles">
 </head>
 <body>
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
-	<form method="POST" th:object="${addSaving}"
-		th:action="@{'/savings/add/'}">
+	<form method="POST" th:object="${editTask}"
+		th:action="@{'/task/comment/' + *{id}}">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="form-group col-lg-4">
-					<label for="subtype">Valuta:</label> <input type="text"
-						class="form-control" id="amount" th:field="*{name}"
-						required="required">
-				</div>
-			</div>
-		</div>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="form-group col-lg-4">
-					<label for="subtype">Skraćenica:</label> <input type="text"
-						class="form-control" id="amount" th:field="*{sign}"
-						required="required">
+				<div class="form-group col-lg-8">
+					<label for="name">Komentar:</label> <input type="text"
+						class="form-control" id="user" th:field="*{comment}"
+						th:value="*{comment}">
 				</div>
 			</div>
 		</div>

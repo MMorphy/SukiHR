@@ -3,29 +3,30 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="ISO-8859-1">
-<title>Dodaj štednju</title>
+<title>Dodaj obavezu</title>
 <th:block th:include="fragments/generalFragments.html :: headerfiles">
 </head>
 <body>
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
-	<form method="POST" th:object="${addSaving}"
-		th:action="@{'/savings/add/'}">
+	<form method="POST" th:object="${addTask}" th:action="@{/task/add/}">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="form-group col-lg-4">
-					<label for="subtype">Valuta:</label> <input type="text"
-						class="form-control" id="amount" th:field="*{name}"
+					<label for="subtype">Opis:</label> <input type="text"
+						class="form-control" id="amount" th:field="*{description}"
 						required="required">
 				</div>
-			</div>
-		</div>
-		<div class="container-fluid">
-			<div class="row">
 				<div class="form-group col-lg-4">
-					<label for="subtype">Skraćenica:</label> <input type="text"
-						class="form-control" id="amount" th:field="*{sign}"
-						required="required">
+					<label for="subtype">Rok:</label> <input type="date"
+						class="form-control" id="description" th:field="*{dueDate}">
+				</div>
+				<div class="form-group col-lg-4">
+					<label>Korisnik:</label> <select th:field="*{user}"
+						class="form-control" required="required">
+						<option th:each="user : ${users}" th:value="${user.id}"
+							th:text="${user.username}"></option>
+					</select>
 				</div>
 			</div>
 		</div>

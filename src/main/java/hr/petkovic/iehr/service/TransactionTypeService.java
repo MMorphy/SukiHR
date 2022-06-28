@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -47,13 +48,9 @@ public class TransactionTypeService {
 	}
 
 	public List<TransactionType> getOperativeExpenseTypes() {
-		return typeRepo.findBySubTypeIn(tUtil.getOperativeExpenses());
-	}
-
-	public List<TransactionType> getBorisExpenseTypes() {
-		List<String> subtypes = tUtil.getOperativeExpenses();
-		subtypes = tUtil.addBorisExpenses(subtypes);
-		subtypes = tUtil.removeTinoBonus(subtypes);
-		return typeRepo.findBySubTypeIn(subtypes);
+		List<TransactionType> returnList = typeRepo.findBySubTypeIn(tUtil.getOperativeExpenses());
+		TransactionType razduzenje = typeRepo.findByMainTypeAndSubType("Izlaz", "RAZDUZENJE").get();
+		Collections.swap(returnList, returnList.indexOf(razduzenje), 0);
+		return returnList;
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import hr.petkovic.iehr.DTO.SavingsDTO;
 import hr.petkovic.iehr.entity.Saving;
 import hr.petkovic.iehr.service.SavingsService;
 
@@ -38,22 +39,31 @@ public class SavingsController {
 		return "redirect:/savings/";
 	}
 
-	@GetMapping("/edit/{id}")
-	public String getSavingsEditing(@PathVariable(name = "id") Long id, Model model) {
-		Saving editSaving = savSer.findSavingById(id);
-		model.addAttribute("editSaving", editSaving);
-		return "savings/edit";
+	@GetMapping("/add/{id}")
+	public String getAddToSavings(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("addSaving", new SavingsDTO());
+		model.addAttribute("id", id);
+		return "savings/moneyAdd";
 	}
 
-	@PostMapping("/edit/{id}")
-	public String editSaving(@PathVariable(name = "id") Long id, Saving editSaving) {
-		savSer.editSaving(id, editSaving);
+	@PostMapping("/add/{id}")
+	public String addToSaving(@PathVariable("id") Long id, SavingsDTO addSaving) {
+		Saving sav = savSer.findSavingById(id);
+		sav = savSer.increaseSaving(sav, addSaving);
 		return "redirect:/savings/";
 	}
 
-	@PostMapping("/delete/{id}")
-	public String deleteSaving(@PathVariable(name = "id") Long id) {
-		savSer.deleteSavingById(id);
+	@GetMapping("/substract/{id}")
+	public String getASubstractFromSavings(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("addSaving", new SavingsDTO());
+		model.addAttribute("id", id);
+		return "savings/moneySubstract";
+	}
+
+	@PostMapping("/substract/{id}")
+	public String substractFromSaving(@PathVariable("id") Long id, SavingsDTO addSaving) {
+		Saving sav = savSer.findSavingById(id);
+		sav = savSer.decreaseSaving(sav, addSaving);
 		return "redirect:/savings/";
-}
+	}
 }

@@ -50,6 +50,8 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private Set<Site> sites = new HashSet<Site>();
 
+	@OneToMany(mappedBy = "user")
+	private List<Task> tasks = new ArrayList<>();
 	private Float saldo = 0F;
 
 	// Utility methods
@@ -82,11 +84,13 @@ public class User {
 	public void decreaseSaldo(Float amount) {
 		this.saldo -= amount;
 	}
+
 	// Constructors
 	public User() {
 		this.roles = new ArrayList<Role>();
 		this.transactions = new ArrayList<Transaction>();
 		this.sites = new HashSet<Site>();
+		this.tasks = new ArrayList<>();
 	}
 
 	public User(Long id, String username, String password, boolean enabled, Collection<Role> roles,
@@ -165,6 +169,14 @@ public class User {
 
 	public void setSaldo(Float saldo) {
 		this.saldo = saldo;
+	}
+
+	public List<Task> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
 	}
 
 }

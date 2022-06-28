@@ -1,17 +1,11 @@
 package hr.petkovic.iehr.entity;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "savings")
@@ -21,19 +15,18 @@ public class Saving {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@CreationTimestamp
-	@Temporal(TemporalType.DATE)
-	private Date createDate;
+	@Column(nullable = false)
+	private String name;
 
 	@Column(nullable = false)
-	private Float amount;
+	private String sign;
+
+	private Float amountInHRK = 0f;
+
+	private Float amountInCurrency = 0f;
 
 	// Constructors
 	public Saving() {
-	}
-
-	public Saving(float amount) {
-		this.amount = amount;
 	}
 
 	// Getters & Setters
@@ -45,19 +38,35 @@ public class Saving {
 		this.id = id;
 	}
 
-	public Date getCreateDate() {
-		return createDate;
+	public String getName() {
+		return name;
 	}
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Float getAmount() {
-		return amount;
+	public String getSign() {
+		return sign;
 	}
 
-	public void setAmount(Float amount) {
-		this.amount = amount;
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
+
+	public Float getAmountInHRK() {
+		return amountInHRK;
+	}
+
+	public void setAmountInHRK(Float amountInHRK) {
+		this.amountInHRK = amountInHRK;
+	}
+
+	public Float getAmountInCurrency() {
+		return amountInCurrency;
+	}
+
+	public void setAmountInCurrency(Float amountInCurrency) {
+		this.amountInCurrency = amountInCurrency;
 	}
 }

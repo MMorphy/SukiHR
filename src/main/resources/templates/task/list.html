@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Obaveze</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#taskTable').dataTable({
+				"order" : [ [ 3, 'asc' ], [ 0, 'asc' ] ]
+			});
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Obaveze</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="taskTable">
+				<thead>
+					<tr>
+						<th>Korisnik</th>
+						<th>Opis</th>
+						<th>Datum nastanka</th>
+						<th>Krajnji rok</th>
+						<th>Komentar</th>
+						<th>Završi</th>
+						<th sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')">Dodaj
+							komentar</th>
+						<th
+							th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">Izmijeni</th>
+						<th
+							th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">Briši</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="task : ${activeTasks}">
+						<td th:text="${task.user.username}"></td>
+						<td th:text="${task.description}"></td>
+						<td th:text="${task.createDate}"></td>
+						<td th:text="${task.dueDate}"></td>
+						<td th:text="${task.comment}"></td>
+						<td>
+							<form th:action="@{'/task/finish/' + ${task.id}}" method="post">
+								<button>Završi</button>
+							</form>
+						</td>
+						<td sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')">
+							<form th:action="@{'/task/comment/' + ${task.id}}" method="get">
+								<button>Dodaj komentar</button>
+							</form>
+						</td>
+						<td
+							th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">
+							<form th:action="@{'/task/edit/' + ${task.id}}" method="get">
+								<button>Izmijeni</button>
+							</form>
+						</td>
+						<td
+							th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">
+							<form th:action="@{'/task/delete/' + ${task.id}}" method="post">
+								<button>Briši</button>
+							</form>
+
+						</td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<form th:action="@{/task/add/}" method="get">
+			<button>Dodaj novu obavezu</button>
+		</form>
+	</div>
+</body>
+</html>

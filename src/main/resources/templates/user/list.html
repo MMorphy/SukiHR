@@ -31,6 +31,7 @@
 						<th>Username</th>
 						<th>Password</th>
 						<th>Saldo</th>
+						<th>Obaveze</th>
 						<th>Lokali</th>
 						<th>Dugovanja Lokala</th>
 						<th>Transakcije</th>
@@ -44,6 +45,7 @@
 						<td th:text="${user.dto.user.password}"></td>
 						<td
 							th:text="${user.saldo == ''} ? ${#numbers.formatDecimal(0, 1, 'COMMA', 2, 'POINT')} + ' HRK' :${#numbers.formatDecimal(user.saldo, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td><a th:href="@{'/task/' + ${user.dto.user.username}}">Obaveze</a></td>
 						<td><a th:if="${user.dto.user.sites != null}"
 							th:href="@{'/site/' + ${user.dto.user.username}}"> Lokali</a> <span
 							th:if="${user.dto.user.sites == null}"> Nema lokala </span></td>

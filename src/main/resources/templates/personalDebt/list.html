@@ -15,78 +15,10 @@
 	<script>
 		$(document).ready(function() {
 			$('#myDebtTable').dataTable({
-				"order" : [ [ 0, 'desc' ], [1, 'asc'] ],
-				"footerCallback": function ( row, data, start, end, display ) {
-	            var api = this.api(), data;
-	 
-	            function extractContent(html) {
-	                return new DOMParser()
-	                    .parseFromString(html, "text/html")
-	                    .documentElement.textContent;
-	            }
-	            // Remove the formatting to get integer data for summation
-	            var intVal = function ( i ) {
-	            	if (typeof i === 'string'){
-	            		i = extractContent(i)
-	            		i = i.replace(/[\HRK,]/g, '') * 1
-	            		return i
-	            	} else if (typeof i === 'number') {
-	            		if (isNaN(i)){
-	            			return 0;
-	            		} else {
-	            			return i;
-	            		}
-	            	}
-	            };
-	            pageTotal = api
-                .column( 3, { page: 'current'} )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
-	            
-            // Update footer
-            $( api.column( 4 ).footer() ).html(
-                pageTotal + ' HRK'
-            );
-            }
+				"order" : [ [ 0, 'desc' ], [1, 'asc'] ]
 			});
 			$('#debtToMeTable').dataTable({
-				"order" : [ [ 0, 'desc' ], [1, 'asc'] ],
-				"footerCallback": function ( row, data, start, end, display ) {
-	            var api = this.api(), data;
-	 
-	            function extractContent(html) {
-	                return new DOMParser()
-	                    .parseFromString(html, "text/html")
-	                    .documentElement.textContent;
-	            }
-	            // Remove the formatting to get integer data for summation
-	            var intVal = function ( i ) {
-	            	if (typeof i === 'string'){
-	            		i = extractContent(i)
-	            		i = i.replace(/[\HRK,]/g, '') * 1
-	            		return i
-	            	} else if (typeof i === 'number') {
-	            		if (isNaN(i)){
-	            			return 0;
-	            		} else {
-	            			return i;
-	            		}
-	            	}
-	            };
-	            pageTotal = api
-                .column( 3, { page: 'current'} )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
-	            
-            // Update footer
-            $( api.column( 4 ).footer() ).html(
-                pageTotal + ' HRK'
-            );
-            }
+				"order" : [ [ 0, 'desc' ], [1, 'asc'] ]
 			});
 		});
 	</script>
@@ -143,17 +75,11 @@
 						</td>
 					</tr>
 				</tbody>
-				<tfoot>
-		            <tr>
-		                <th colspan="3" style="text-align:right">Total:</th>
-		                <th colspan="6"></th>
-		            </tr>
-		        </tfoot>
 			</table>
 		</div>
 	</div>
 	<div class="col-md-12">
-		<form th:action="@{/personal_debt/add/}" method="get">
+		<form th:action="@{/personal_debt/mydebt/add/}" method="get">
 			<button>Dodaj novu posudbu</button>
 		</form>
 	</div>
@@ -163,8 +89,8 @@
 			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(outTotal, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
 		<h4 class="col-md-4"
 			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
-		<h3 class="col-md-4 text-danger font-weight-bold"
-			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(outTotal-outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h3>
+		<h4 class="col-md-4 text-danger"
+			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(outTotal-outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
 	</div>
 	
 	<div class="col-md-12">
@@ -213,22 +139,16 @@
 						<td>
 							<form th:action="@{'/personal_debt/delete/' + ${debt.debt.id}}"
 								method="post">
-								<button>BriÅ¡i</button>
+								<button>Briši</button>
 							</form>
 						</td>
 					</tr>
 				</tbody>
-				<tfoot>
-		            <tr>
-		                <th colspan="3" style="text-align:right">Total:</th>
-		                <th colspan="6"></th>
-		            </tr>
-		        </tfoot>
 			</table>
 		</div>
 	</div>
 	<div class="col-md-12">
-		<form th:action="@{/personal_debt/add/}" method="get">
+		<form th:action="@{/personal_debt/debttome/add/}" method="get">
 			<button>Dodaj novu posudbu</button>
 		</form>
 	</div>
@@ -238,8 +158,8 @@
 			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(inTotal, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
 		<h4 class="col-md-4"
 			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
-		<h3 class="col-md-4 text-danger font-weight-bold"
-			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(inTotal-inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h3>
+		<h4 class="col-md-4 text-danger"
+			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(inTotal-inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
 	</div>
 </body>
 </html>

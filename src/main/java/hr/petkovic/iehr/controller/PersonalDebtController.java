@@ -43,20 +43,34 @@ public class PersonalDebtController {
 		return "personalDebt/list";
 	}
 
-	@GetMapping("/add")
-	public String getPersonalDebtAdding(Model model) {
-		model.addAttribute("addDebt", debtServ.getNewPersonalDebt());
+	@GetMapping("/mydebt/add")
+	public String getMyPersonalDebtAdding(Model model) {
+		model.addAttribute("addDebt", debtServ.getNewMyPersonalDebt());
 		model.addAttribute("types", debtServ.getPersonalDebtTypes());
-		return "personalDebt/add";
+		return "personalDebt/addMyDebt";
 	}
 
-	@PostMapping("/add")
-	public String addPersonalDebt(PersonalDebt addDebt) {
+	@PostMapping("/mydebt/add")
+	public String addMyPersonalDebt(PersonalDebt addDebt) {
+		addDebt = debtServ.setMyDebt(addDebt);
 		debtServ.saveDebt(addDebt);
 		return "redirect:/personal_debt/";
 
 	}
+	@GetMapping("/debttome/add")
+	public String getPersonalDebtToMeAdding(Model model) {
+		model.addAttribute("addDebt", debtServ.getNewPersonalDebtToMe());
+		model.addAttribute("types", debtServ.getPersonalDebtTypes());
+		return "personalDebt/addDebtToMe";
+	}
 
+	@PostMapping("/debttome/add")
+	public String addPersonalDebtToMe(PersonalDebt addDebt) {
+		addDebt = debtServ.setDebtTome(addDebt);
+		debtServ.saveDebt(addDebt);
+		return "redirect:/personal_debt/";
+
+	}
 	@PostMapping("/delete/{id}")
 	public String deletePersonalDebt(@PathVariable("id") Long id) {
 		debtServ.deletePersonalDebtById(id);
