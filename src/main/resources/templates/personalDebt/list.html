@@ -160,6 +160,11 @@
 			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
 		<h4 class="col-md-4 text-danger"
 			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(inTotal-inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
-	</div>
+</div>
+<div class="col-md-12">
+		<form th:action="@{/personal_debt/inactive}" method="get">
+			<button>Rješene posudbe</button>
+		</form>
+</div>
 </body>
 </html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Potencijalni lokali</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#siteTable').dataTable({
+				"order" : [ [ 4, 'desc' ], [ 5, 'asc' ] ],
+			});
+			$('#inactiveTable').dataTable({
+				"order" : [ [ 4, 'desc' ], [ 5, 'asc' ] ]
+			});
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Potencijalni lokali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="siteTable">
+				<thead>
+					<tr>
+						<th>Ime</th>
+						<th>Adresa</th>
+						<th>Vlasnik</th>
+						<th>Kontakt</th>
+						<th>Datum</th>
+						<th>Stanje</th>
+						<th>Ocjena</th>
+						<th>Opis</th>
+						<th>Briši</th>
+						<th>Izmjeni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="site : ${potentialActive}">
+						<td th:text="${site.name}"></td>
+						<td th:text="${site.address}"></td>
+						<td th:text="${site.owner}"></td>
+						<td th:text="${site.contact}"></td>
+						<td th:text="${site.createDate}"></td>
+						<td th:text="${site.state.name}"></td>
+						<td th:text="${site.evaluation}"></td>
+						<td th:text="${site.description}"></td>
+						<td>
+							<form th:action="@{'/potential/delete/' + ${site.id}}"
+								method="post" onsubmit="return confirm('Pobriši lokal?');">
+								<button>Briši</button>
+							</form>
+
+						</td>
+						<td>
+							<form th:action="@{'/potential/edit/' + ${site.id}}" method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<form th:action="@{/potential/add/}" method="get">
+			<button>Dodaj novi lokal</button>
+		</form>
+
+	</div>
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Nezainteresirani lokali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="inactiveTable">
+				<thead>
+					<tr>
+						<th>Ime</th>
+						<th>Adresa</th>
+						<th>Vlasnik</th>
+						<th>Kontakt</th>
+						<th>Datum</th>
+						<th>Stanje</th>
+						<th>Ocjena</th>
+						<th>Opis</th>
+						<th>Izmjeni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="site : ${potentialInctive}">
+						<td th:text="${site.name}"></td>
+						<td th:text="${site.address}"></td>
+						<td th:text="${site.owner}"></td>
+						<td th:text="${site.contact}"></td>
+						<td th:text="${site.createDate}"></td>
+						<td th:text="${site.state.name}"></td>
+						<td th:text="${site.evaluation}"></td>
+						<td th:text="${site.description}"></td>
+						<td>
+							<form th:action="@{'/potential/edit/' + ${site.id}}" method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

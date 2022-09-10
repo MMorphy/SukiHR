@@ -1,5 +1,7 @@
 package hr.petkovic.iehr.controller;
 
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -50,6 +52,22 @@ public class SiteController {
 			model.addAttribute("sites", tServ.makeFullSiteListActive(siteSer.findAllSitesByUsernameRole(username),
 					tServ.findAllSitesWithDebtForUsername(username)));
 			model.addAttribute("inactive", tServ.makeFullSiteListInactive(siteSer.findAllSitesByUsernameRole(username),
+					tServ.findAllSitesWithDebtForUsername(username)));
+		}
+		return "site/list";
+	}
+
+	@GetMapping(value = { "/debt", "/debt/{username}" })
+	public String getAllSitesWithDebt(@PathVariable(required = false) String username, Model model) {
+		if (username == null || username.isEmpty()) {
+			model.addAttribute("sites",
+					tServ.makeFullSiteListActive(new ArrayList<Site>(), tServ.findAllSitesWithDebt()));
+			model.addAttribute("inactive",
+					tServ.makeFullSiteListInactive(new ArrayList<Site>(), tServ.findAllSitesWithDebt()));
+		} else {
+			model.addAttribute("sites", tServ.makeFullSiteListActive(new ArrayList<Site>(),
+					tServ.findAllSitesWithDebtForUsername(username)));
+			model.addAttribute("inactive", tServ.makeFullSiteListInactive(new ArrayList<Site>(),
 					tServ.findAllSitesWithDebtForUsername(username)));
 		}
 		return "site/list";

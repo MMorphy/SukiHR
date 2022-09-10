@@ -83,4 +83,21 @@ public class TaskService {
 	public void deleteTask(Long id) {
 		taskRepo.deleteById(id);
 	}
+
+	public List<Task> findAllFinishedTasks() {
+		return taskRepo.findAllByDone(true);
+	}
+
+	public List<Task> findAllFinishedTasksForUsername(String username) {
+		return taskRepo.findAllByDoneAndUser_Username(true, username);
+	}
+
+	public Task unfinishTask(Long id) {
+		Task old = findTaskById(id);
+		if (old.getDone() == true) {
+			old.setDone(false);
+			return saveTask(old);
+		}
+		return old;
+	}
 }

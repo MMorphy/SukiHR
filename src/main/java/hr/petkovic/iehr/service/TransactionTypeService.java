@@ -53,4 +53,12 @@ public class TransactionTypeService {
 		Collections.swap(returnList, returnList.indexOf(razduzenje), 0);
 		return returnList;
 	}
+
+	public TransactionType getDefaultPayType() {
+		return typeRepo.findByMainTypeAndSubType("Izlaz", "Placa").get();
+	}
+
+	public TransactionType getDefaultFixedExpenseType() {
+		return typeRepo.findByMainTypeAndSubType("Izlaz", "Fiksni Trosak").get();
+	}
 }

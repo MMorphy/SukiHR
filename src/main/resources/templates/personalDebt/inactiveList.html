@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Rješene posudbe</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.10.18/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+	<script>
+		$(document).ready(function() {
+			$('#oldDebtTable').dataTable({
+				"order" : [ [ 0, 'desc' ], [2, 'asc'] ]
+			});
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-6">Rješene posudbe</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="oldDebtTable">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Korisnik</th>
+						<th>Tip</th>
+						<th>Dogovoreno dugovanje</th>
+						<th>Preostalo dugovanje</th>
+						<th>Opis</th>
+						<th>Izmjeni</th>
+						<th>Briši</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="debt : ${debts}">
+						<td th:text="${debt.debt.createDate}"></td>
+						<td th:text="${debt.debt.user}"></td>
+						<td th:text="${debt.debt.type.type}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td><a th:if="${debt.debt.amount != null}"
+							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}"
+							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><a
+							th:if="${debt.debt.amount == null}">0</a></td>
+						<td th:text="${debt.debt.description}"></td>
+						<td>
+							<form th:action="@{'/personal_debt/edit/' + ${debt.debt.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+						<td>
+							<form th:action="@{'/personal_debt/delete/' + ${debt.debt.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

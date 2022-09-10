@@ -19,7 +19,7 @@
 				<div class="form-group col-lg-4">
 					<label for="amount" class="control-label">Iznos:</label> <input
 						type="number" class="form-control" id="amount"
-						th:field="*{amount}" required="required" step="0.01">
+						th:field="*{amount}" required="required">
 				</div>
 				<div class="form-group col-lg-4">
 					<label>Lokal i dugovanje:</label> <select th:field="*{site}"
@@ -33,7 +33,7 @@
 				<div class="form-group col-lg-4">
 					<label for="amount" class="control-label">Povrat duga (+ ako vraća / - ako se zadužuje)</label> <input
 						type="number" class="form-control" id="amount"
-						th:field="*{debt.amount}" required="required" step="0.01">
+						th:field="*{debt.amount}" required="required">
 				</div>
 				<div class="form-group col-lg-4">
 					<label for="description" class="control-label">Opis:</label>

@@ -15,7 +15,6 @@ import hr.petkovic.iehr.DTO.DeviceMapDTO;
 import hr.petkovic.iehr.DTO.SiteAndDevicesDTO;
 import hr.petkovic.iehr.entity.Device;
 import hr.petkovic.iehr.entity.DeviceHistory;
-import hr.petkovic.iehr.entity.Role;
 import hr.petkovic.iehr.entity.Site;
 import hr.petkovic.iehr.entity.SiteDeviceKey;
 import hr.petkovic.iehr.entity.SiteDevices;
@@ -93,11 +92,10 @@ public class SiteService {
 	}
 
 	public List<Site> findAllSitesByUsernameRole(String username) {
-		for (Role r : userSer.findUserByUsername(username).getRoles()) {
-			if (r.getName().equals("ROLE_ADMIN")) {
-				return findAllSites();
-			}
-		}
+		/*
+		 * for (Role r : userSer.findUserByUsername(username).getRoles()) { if
+		 * (r.getName().equals("ROLE_ADMIN")) { return findAllSites(); } }
+		 */
 		return findAllActiveSitesForUsername(username);
 	}
 

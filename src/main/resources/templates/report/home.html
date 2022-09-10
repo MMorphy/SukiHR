@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Report Home</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+	<div class="row">
+		<div class="col-sm-6"
+			th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">
+			<div class="thumbnail">
+				<div class="caption text-center">
+					<div class="position-relative">
+						<a th:href="@{/report/total}" title="Total"><img
+							src="https://www.freepnglogos.com/uploads/plus-icon/file-ambox-emblem-plus-svg-wikimedia-commons-18.png"
+							width="100" /></a>
+					</div>
+					<h3 id="thumbnail-label">
+						<a th:href="@{/report/total}">Total</a>
+					</h3>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6"
+			th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">
+			<div class="thumbnail">
+				<div class="caption text-center">
+					<div class="position-relative">
+						<a th:href="@{/report/year}" title="Godina"><img
+							src="https://www.freepnglogos.com/uploads/plus-icon/file-ambox-emblem-plus-svg-wikimedia-commons-18.png"
+							width="100" /></a>
+					</div>
+					<h3 id="thumbnail-label">
+						<a th:href="@{/report/year}">Godina</a>
+					</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6"
+			th:if="${#authentication.getPrincipal().getUsername() == 'banka'}">
+			<div class="thumbnail">
+				<div class="caption text-center">
+					<div class="position-relative">
+						<a th:href="@{/report/month}" title="Mjeseci"><img
+							src="https://www.freepnglogos.com/uploads/plus-icon/file-ambox-emblem-plus-svg-wikimedia-commons-18.png"
+							width="100" /></a>
+					</div>
+					<h3 id="thumbnail-label">
+						<a th:href="@{/report/month}">Mjeseci</a>
+					</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -65,6 +65,8 @@ public class Site {
 	@OneToMany(mappedBy = "site")
 	private Collection<Transaction> transactions = new ArrayList<Transaction>();
 
+	private Integer payPercentage = 30;
+
 	// Utility methods
 	public void addDevice(SiteDevices device) {
 		this.devices.add(device);
@@ -82,7 +84,8 @@ public class Site {
 	}
 
 	public Site(Long id, String address, Date lastVisit, Float debt, String contact, Boolean active,
-			Set<SiteDevices> devices, User user, String name, List<Transaction> transactions, Date createDate, Date releaseDate) {
+			Set<SiteDevices> devices, User user, String name, List<Transaction> transactions, Date createDate,
+			Date releaseDate, Integer payPercentage) {
 		super();
 		this.id = id;
 		this.address = address;
@@ -94,6 +97,7 @@ public class Site {
 		this.user = user;
 		this.name = name;
 		this.transactions = transactions;
+		this.payPercentage = payPercentage;
 	}
 
 	// Getters & Setters
@@ -191,6 +195,14 @@ public class Site {
 
 	public void setReleaseDate(Date releaseDate) {
 		this.releaseDate = releaseDate;
+	}
+
+	public Integer getPayPercentage() {
+		return payPercentage;
+	}
+
+	public void setPayPercentage(Integer payPercentage) {
+		this.payPercentage = payPercentage;
 	}
 
 	// Hashcode and equals

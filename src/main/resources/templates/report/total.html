@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Report Totali</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.11.3/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#userTable').DataTable({
+				"order" : [ [ 1, 'desc' ], [ 2, 'desc' ] ]
+			});
+			$('#siteTable').DataTable({
+				"order" : [ [ 1, 'desc' ], [ 2, 'desc' ] ]
+			});
+			$('#transTable').DataTable({
+				"order" : [ [ 1, 'desc' ], [ 2, 'desc' ] ]
+			});
+			$('#inOutTable').DataTable({
+				"order" : [ [ 0, 'desc' ], [ 1, 'desc' ] ]
+			});
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">User Totali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="userTable">
+				<thead>
+					<tr>
+						<th>Korisnik</th>
+						<th>Tip</th>
+						<th>Iznos</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="u : ${userTotal}">
+						<td th:text="${u.username}"></td>
+						<td th:text="${u.type}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(u.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Lokal Totali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="siteTable">
+				<thead>
+					<tr>
+						<th>Lokal</th>
+						<th>Adresa</th>
+						<th>Iznos</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="s : ${siteTotal}">
+						<td th:text="${s.siteName}"></td>
+						<td th:text="${s.location}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(s.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Transakcije Totali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="transTable">
+				<thead>
+					<tr>
+						<th>Kategorija</th>
+						<th>Tip</th>
+						<th>Iznos</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="t : ${transTotal}">
+						<td th:text="${t.category}"></td>
+						<td th:text="${t.type}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(t.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Ulaz/Izlaz Totali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="inOutTable">
+				<thead>
+					<tr>
+						<th>Tip</th>
+						<th>Iznos</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="i : ${inOutTotal}">
+						<td th:text="${i.type}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(i.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

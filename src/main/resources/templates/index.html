@@ -153,7 +153,7 @@
 							width="100" /></a>
 					</div>
 					<h3 id="thumbnail-label">
-						<a th:href="@{/user/}">KORISNICI I OBAVEZE</a>
+						<a th:href="@{/user/}">KORISNICI</a>
 					</h3>
 				</div>
 			</div>
@@ -208,31 +208,46 @@
 			</div>
 		</div>
 		<div class="col-sm-6"
-			th:if="${#authentication.getPrincipal().getUsername() == 'ivans'}">
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
-						<a th:href="@{/wallet/}" title="Wallet"><img
-							src="https://cdn1.iconfinder.com/data/icons/aami-web-internet/64/aami6-47-512.png"
+						<a th:href="@{/fixed/}" title="Fiksni Troškovi"><img
+							src="https://cdn-icons-png.flaticon.com/512/584/584093.png"
 							width="100" /></a>
 					</div>
 					<h3 id="thumbnail-label">
-						<a th:href="@{/wallet/}">WALLET</a>
+						<a th:href="@{/fixed/}">FIKSNI TROŠKOVI</a>
 					</h3>
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6"
-			th:if="${#authentication.getPrincipal().getUsername() != 'banka'}">
+	</div>
+	<div class="row">
+		<div class="col-sm-6">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
-						<a th:href="@{'/task/' + ${#authentication.name} }" title="OBAVEZE"><img
-							src="https://cdn-icons.flaticon.com/png/512/2098/premium/2098402.png?token=exp=1656447334~hmac=568702dfc383d9d5d03ef233c31c5b69"
+						<a th:href="@{/potential/}" title="POTENCIJALNI LOKALI"><img
+							src="https://cdn-icons-png.flaticon.com/512/584/584093.png"
 							width="100" /></a>
 					</div>
 					<h3 id="thumbnail-label">
-						<a th:href="@{'/task/' + ${#authentication.name} }">MOJE OBAVEZE</a>
+						<a th:href="@{/potential/}">POTENCIJALNI LOKALI</a>
+					</h3>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+			<div class="thumbnail">
+				<div class="caption text-center">
+					<div class="position-relative">
+						<a th:href="@{/report/}" title="REPORT"><img
+							src="https://cdn-icons-png.flaticon.com/512/584/584093.png"
+							width="100" /></a>
+					</div>
+					<h3 id="thumbnail-label">
+						<a th:href="@{/report/}">REPORT</a>
 					</h3>
 				</div>
 			</div>

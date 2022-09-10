@@ -57,6 +57,19 @@ public class PersonalDebtService {
 		return returnList;
 	}
 
+	public List<PersonalDebtUIDTO> getResolvedPersonalDebtsToMe() {
+		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
+		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebts()) {
+			PersonalDebt debt = dRepo.findById(dto.getId()).get();
+			if (dto.getOutstandingAmount() == null) {
+				dto.setOutstandingAmount(0D);
+			} else if (dto.getOutstandingAmount().compareTo(debt.getAmount().doubleValue()) < 0) {
+				continue;
+			}
+			returnList.add(new PersonalDebtUIDTO(debt, dto.getOutstandingAmount()));
+		}
+		return returnList;
+	}
 	public List<PersonalDebtUIDTO> getMyActivePersonalDebts() {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
 		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getMyDebtType())) {

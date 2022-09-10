@@ -102,4 +102,8 @@ public class UserService {
 		return userRepo.save(user);
 	}
 
+	public User getBankUser() {
+		return findUserByUsername("banka");
+	}
+
 }

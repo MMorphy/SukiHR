@@ -1,6 +1,9 @@
 package hr.petkovic.iehr.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +16,23 @@ import org.springframework.stereotype.Service;
 import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
 import hr.petkovic.iehr.DTO.UserWithSum;
 import hr.petkovic.iehr.DTO.UserWithTotalDebtDTO;
+import hr.petkovic.iehr.DTO.report.InOutMonthReportDTO;
+import hr.petkovic.iehr.DTO.report.InOutYearReportDTO;
+import hr.petkovic.iehr.DTO.report.ReportingBaseDTO;
+import hr.petkovic.iehr.DTO.report.SiteMonthReportDTO;
+import hr.petkovic.iehr.DTO.report.SiteTotalReportDTO;
+import hr.petkovic.iehr.DTO.report.SiteYearReportDTO;
+import hr.petkovic.iehr.DTO.report.TransactionMonthReportDTO;
+import hr.petkovic.iehr.DTO.report.TransactionTotalReportDTO;
+import hr.petkovic.iehr.DTO.report.TransactionYearReportDTO;
+import hr.petkovic.iehr.DTO.report.UserMonthReportDTO;
+import hr.petkovic.iehr.DTO.report.UserTotalReportDTO;
+import hr.petkovic.iehr.DTO.report.UserYearReportDTO;
 import hr.petkovic.iehr.entity.Debt;
+import hr.petkovic.iehr.entity.FixedExpense;
 import hr.petkovic.iehr.entity.Site;
 import hr.petkovic.iehr.entity.Transaction;
+import hr.petkovic.iehr.entity.TransactionType;
 import hr.petkovic.iehr.entity.User;
 import hr.petkovic.iehr.repo.TransactionRepo;
 import hr.petkovic.iehr.util.TimeUtil;
@@ -30,14 +47,16 @@ public class TransactionService {
 	private TransactionTypeService typeSer;
 	private TimeUtil timeUtil;
 	private TransactionTypeUtil typeUtil;
+	private FixedExpenseService fixSer;
 
 	public TransactionService(TransactionRepo transR, UserService userService, TransactionTypeService typeService,
-			TimeUtil tUtil, TransactionTypeUtil tyUtil) {
+			TimeUtil tUtil, TransactionTypeUtil tyUtil, FixedExpenseService fixedService) {
 		transRepo = transR;
 		userSer = userService;
 		typeSer = typeService;
 		timeUtil = tUtil;
 		typeUtil = tyUtil;
+		fixSer = fixedService;
 	}
 
 	public Transaction findTransactionById(Long id) {
@@ -62,6 +81,19 @@ public class TransactionService {
 	}
 
 	public List<Transaction> findNonNullTransactionsForUsername(String username) {
+		if (username.equals("ivans")) {
+			List<Transaction> returnList = transRepo.findAllByCreatedBy_UsernameAndType_SubType(username, "Lokal");
+			List<Transaction> operativeList = transRepo.findAllTransactionsForUserWithSubtype(username,
+					typeUtil.getOperativeExpenses());
+			if (returnList != null && operativeList != null) {
+				returnList.addAll(operativeList);
+				return returnList;
+			} else if (returnList == null) {
+				return operativeList;
+			} else if (operativeList == null) {
+				return returnList;
+			}
+		}
 		return filterTransactionsForCurrentYear(transRepo.findAllWithValuesForUser(username));
 	}
 
@@ -189,6 +221,11 @@ public class TransactionService {
 		List<SiteWithTotalDebtDTO> listToReturn = new ArrayList<>();
 		for (SiteWithTotalDebtDTO s : sitesWithDebt) {
 			if (s.getSite().getReleaseDate() == null) {
+				if (isCollectionLate(s.getSite())) {
+					s.setLate(true);
+				} else {
+					s.setLate(false);
+				}
 				listToReturn.add(s);
 			}
 		}
@@ -271,8 +308,8 @@ public class TransactionService {
 	private Double getAdminSaldo(User user) {
 		Optional<Double> incomes = Optional
 				.ofNullable(transRepo.findAllTransactionsOfMainTypeForUsername(user.getUsername(), "Ulaz"));
-		Optional<Double> operativeExpenses = Optional.ofNullable(
-				transRepo.findSumOfAllTransactionsForUserOfSubtypes(user.getUsername(), typeUtil.getOperativeExpenses()));
+		Optional<Double> operativeExpenses = Optional.ofNullable(transRepo
+				.findSumOfAllTransactionsForUserOfSubtypes(user.getUsername(), typeUtil.getOperativeExpenses()));
 		return incomes.orElse(0d) - operativeExpenses.orElse(0d);
 	}
 
@@ -308,8 +345,8 @@ public class TransactionService {
 
 	public Double getAdminWalletDifference(User user) {
 		Optional<Double> incomes = Optional.ofNullable(transRepo.findSumOfAllTransactionsOfSubtype("Kesh I"));
-		Optional<Double> expenses = Optional
-				.ofNullable(transRepo.findSumOfAllTransactionsForUserOfSubtypes("ivans", typeUtil.getPrivateExpenses()));
+		Optional<Double> expenses = Optional.ofNullable(
+				transRepo.findSumOfAllTransactionsForUserOfSubtypes("ivans", typeUtil.getPrivateExpenses()));
 		return incomes.orElse(0d) - expenses.orElse(0d);
 	}
 
@@ -411,8 +448,8 @@ public class TransactionService {
 	public Double findBankExpenseSum() {
 		Optional<Double> business = Optional
 				.ofNullable(transRepo.findSumOfTransactionsWithSubtypes(typeUtil.getBusinessExpenses()));
-		Optional<Double> bankOperative = Optional
-				.ofNullable(transRepo.findSumOfAllTransactionsForUserOfSubtypes("banka", typeUtil.getOperativeExpenses()));
+		Optional<Double> bankOperative = Optional.ofNullable(
+				transRepo.findSumOfAllTransactionsForUserOfSubtypes("banka", typeUtil.getOperativeExpenses()));
 		return business.orElse(0d) + bankOperative.orElse(0d);
 	}
 
@@ -422,4 +459,133 @@ public class TransactionService {
 		retList.addAll(transRepo.findAllTransactionsForUserWithSubtype("ivans", typeUtil.getPrivateExpenses()));
 		return retList;
 	}
+
+	public boolean isCollectionLate(Site s) {
+		if (s.getLastVisit() == null)
+			return true;
+		long milis = 1 * 31556952L / 12 * 1000;
+		if (new Date().getTime() - s.getLastVisit().getTime() > milis)
+			return true;
+		return false;
+	}
+
+	public List<UserTotalReportDTO> findUserTotalReport(User u) {
+		return transRepo.findUserTotalReport(u.getUsername());
+	}
+
+	public List<UserYearReportDTO> findUserYearReport(User u) {
+		return transRepo.findUserYearReport(u.getUsername());
+	}
+
+	public List<UserMonthReportDTO> findUserMonthReport(User u) {
+		return transRepo.findUserMonthReport(u.getUsername());
+	}
+
+	public List<SiteTotalReportDTO> findSiteTotalReport() {
+		return transRepo.findSiteTotalReport();
+	}
+
+	public List<SiteYearReportDTO> findSiteYearReport() {
+		return transRepo.findSiteYearReport();
+	}
+
+	public List<SiteMonthReportDTO> findSiteMonthReport() {
+		return transRepo.findSiteMonthReport();
+	}
+
+	public List<TransactionTotalReportDTO> findTransactionTotalReport() {
+		return transRepo.findTransactionTotalReport();
+	}
+
+	public List<TransactionYearReportDTO> findTransactionYearReport() {
+		return transRepo.findTransactionYearReport();
+	}
+
+	public List<TransactionMonthReportDTO> findTransactionMonthReport() {
+		return transRepo.findTransactionMonthReport();
+	}
+
+	public String determineCategory(String type) {
+		if (type.equals("Banka") || type.equals("Lokal")) {
+			return "Ulaz";
+		} else if (typeUtil.getBusinessExpenses().contains(type)) {
+			return "Poslovni";
+		} else if (typeUtil.getOperativeExpenses().contains(type)) {
+			return "Operativni";
+		} else
+			return "Privatni";
+	}
+
+	public Boolean generatePays() {
+		List<User> users = userSer.findAllEnabledUsers();
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -1);
+		cal.set(Calendar.DATE, 1);
+		Date firstDayOfPrevMonth = cal.getTime();
+		cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+		Date lastDayOfPrevMonth = cal.getTime();
+		for (User u : users) {
+			Double sum = 0d;
+			List<Transaction> transactions = transRepo.findAllPayTransactionForUser(firstDayOfPrevMonth,
+					lastDayOfPrevMonth, u.getUsername(), "Lokal");
+			for (Transaction t : transactions) {
+				Float percentage = t.getSite().getPayPercentage().floatValue() / 100f;
+				sum += t.getAmount() * percentage;
+			}
+			Float truncSum = BigDecimal.valueOf(sum).setScale(2, RoundingMode.HALF_UP).floatValue();
+			if (generatePay(u, truncSum)) {
+				logger.info("Generated pay for user: " + u.getUsername());
+			} else {
+				logger.error("Error while generating pay for: " + u.getUsername());
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean generatePay(User u, Float truncSum) {
+		Transaction t = new Transaction();
+		t.setAmount(truncSum);
+		t.setDescription("Autogenerirana placa");
+		t.setType(getPayType());
+		t.setCreatedBy(u);
+		if (saveTransaction(t) == null) {
+			return false;
+		}
+		return true;
+	}
+
+	private boolean generateFixedExpense(FixedExpense f) {
+		Transaction t = new Transaction();
+		t.setAmount(f.getAmount());
+		t.setDescription("Fiksni Trosak: " + f.getName());
+		t.setType(getFixedExpenseType());
+		t.setCreatedBy(userSer.getBankUser());
+		if (saveTransaction(t) == null) {
+			return false;
+		}
+		return true;
+	}
+
+	private TransactionType getFixedExpenseType() {
+		return typeSer.getDefaultFixedExpenseType();
+	}
+
+	private TransactionType getPayType() {
+		return typeSer.getDefaultPayType();
+	}
+
+	public Boolean generateFixedExpenses() {
+		List<FixedExpense> expenses = fixSer.getAllFixedExpenses();
+		for (FixedExpense ex : expenses) {
+			if (generateFixedExpense(ex)) {
+				logger.info("Generated fixed expense: " + ex.getName());
+			} else {
+				logger.error("Error while fixed expense: " + ex.getName());
+				return false;
+			}
+		}
+		return true;
+	}
+
 }

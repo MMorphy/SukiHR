@@ -43,6 +43,11 @@ public class PersonalDebtController {
 		return "personalDebt/list";
 	}
 
+	@GetMapping("/inactive")
+	public String getResolvedPersonalDebts(Model model) {
+		model.addAttribute("debts", debtServ.getResolvedPersonalDebtsToMe());
+		return "personalDebt/inactiveList";
+	}
 	@GetMapping("/mydebt/add")
 	public String getMyPersonalDebtAdding(Model model) {
 		model.addAttribute("addDebt", debtServ.getNewMyPersonalDebt());

@@ -31,7 +31,7 @@ public class DebtService {
 		return this.debtRepo.findAllNonZeroDebtsForSiteId(id);
 	}
 	public Float getDebtsForLoggedInUser() {
-		if (SecurityContextHolder.getContext().getAuthentication().getName().equals("Banka")) {
+		if (SecurityContextHolder.getContext().getAuthentication().getName().equals("banka")) {
 			return sumOfAllDebts();
 		}
 /*		for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {

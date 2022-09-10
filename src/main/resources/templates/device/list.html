@@ -58,7 +58,7 @@
 
 	</div>
 
-	<div class="col-md-12" sec:authorize="hasRole('ROLE_ADMIN')">
+	<div class="col-md-12" sec:authorize="hasRole('ROLE_BANK')">
 		<div class="col-md-12">
 			<h1 class="col-md-3">Aparati na stanju</h1>
 		</div>
@@ -92,7 +92,7 @@
 	<form th:action="@{/device/add/}" method="get">
 		<button>Dodaj novi aparat</button>
 	</form>
-	<div class="col-md-12" sec:authorize="hasRole('ROLE_ADMIN')">
+	<div class="col-md-12" sec:authorize="hasRole('ROLE_BANK')">
 		<div class="col-md-12">
 			<h1 class="col-md-3">Povijest dodavanja</h1>
 		</div>

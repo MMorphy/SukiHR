@@ -35,6 +35,7 @@ public class TransactionTypeUtil {
 		returnList.add("Kesh B");
 		returnList.add("Kesh S");
 		returnList.add("Kesh M");
+		returnList.add("Fiksni Trosak");
 		returnList.add("Poslovno - Ostalo");
 		return returnList;
 	}

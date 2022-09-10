@@ -7,6 +7,7 @@ public class SiteWithTotalDebtDTO {
 	Site site;
 
 	Double debtTotal;
+	boolean isLate = false;
 
 	public SiteWithTotalDebtDTO(Site site, Double debtTotal) {
 		super();
@@ -33,4 +34,11 @@ public class SiteWithTotalDebtDTO {
 		this.debtTotal = debtTotal;
 	}
 
+	public boolean isLate() {
+		return isLate;
+	}
+
+	public void setLate(boolean isLate) {
+		this.isLate = isLate;
+	}
 }

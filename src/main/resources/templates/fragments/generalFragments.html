@@ -34,9 +34,6 @@
 								sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')"><a
 								th:href="@{/bank/}"
 								th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(session.sum, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
-							<li sec:authorize="hasRole('ROLE_BANK') "><a
-								th:href="@{/wallet/}"
-								th:text="@{'Wallet: ' + ${#numbers.formatDecimal(session.wallet, 1, 'COMMA', 2, 'POINT')}} + ' HRK'"></a></li>
 							<li
 								sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')"><a
 								th:href="@{'/transaction/' + ${#authentication.name} }"
@@ -47,18 +44,22 @@
 								th:text="@{'Ukupni saldo kod korisnika: ' + ${#numbers.formatDecimal(session.saldo, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li
 								sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')"><a
-								th:href="@{'/site/' + ${#authentication.name} }"
+								th:href="@{'/site/debt/' + ${#authentication.name} }"
 								th:text="@{'Ukupna dugovanja mojih lokala: ' + ${#numbers.formatDecimal(session.dugovanja, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li
 								sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')"><a
-								th:href="@{/site/}"
+								th:href="@{/site/debt}"
 								th:text="@{'Ukupna dugovanja lokala: ' + ${#numbers.formatDecimal(session.dugovanja, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li
 								sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')"><a
 								th:href="@{/task/}">Sve obaveze</a></li>
 							<li
 								sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')"><a
-								th:href="@{'/task/' + ${#authentication.name} }">Moje obaveze</a></li>
+								th:href="@{'/task/' + ${#authentication.name} }">Moje
+									obaveze</a></li>
+							<li sec:authorize="hasRole('ROLE_BANK') "><a
+								th:href="@{/wallet/}"
+								th:text="@{'Wallet: ' + ${#numbers.formatDecimal(session.wallet, 1, 'COMMA', 2, 'POINT')}} + ' HRK'"></a></li>
 						</ul>
 
 

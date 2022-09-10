@@ -30,8 +30,10 @@ public class TaskController {
 	public String getAllTasks(@PathVariable(required = false) String username, Model model) {
 		if (username == null || username.isEmpty()) {
 			model.addAttribute("activeTasks", taskSer.findAllActiveTasks());
+			model.addAttribute("finishedTasks", taskSer.findAllFinishedTasks());
 		} else {
 			model.addAttribute("activeTasks", taskSer.findAllActiveTasksForUsername(username));
+			model.addAttribute("finishedTasks", taskSer.findAllFinishedTasksForUsername(username));
 		}
 		return "task/list";
 	}
@@ -77,6 +79,12 @@ public class TaskController {
 	@PostMapping("/finish/{id}")
 	public String finishTask(@PathVariable Long id) {
 		taskSer.finishTask(id);
+		return "redirect:/";
+	}
+
+	@PostMapping("/unfinish/{id}")
+	public String unfinishTask(@PathVariable Long id) {
+		taskSer.unfinishTask(id);
 		return "redirect:/";
 	}
 
