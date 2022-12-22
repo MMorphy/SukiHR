@@ -76,7 +76,7 @@ public class SavingsService {
 		return sum;
 	}
 
-	public SavingsPayment savePayment (SavingsPayment payment) {
+	public SavingsPayment savePayment(SavingsPayment payment) {
 		return payRepo.save(payment);
 	}
 
@@ -90,15 +90,20 @@ public class SavingsService {
 		return savePayment(sp);
 	}
 
-	public Saving decreaseSaving(Saving sav, SavingsDTO addSaving) {
-		sav.setAmountInCurrency(sav.getAmountInCurrency() - addSaving.getAmountInCurrency());
-		sav.setAmountInHRK(sav.getAmountInHRK() - addSaving.getAmountInHRK());
-		return saveSaving(sav);
+	public SavingsPayment decreaseSaving(Saving sav, SavingsDTO addSaving) {
+		SavingsPayment sp = new SavingsPayment();
+		sp.setAmountInCurrency(addSaving.getAmountInCurrency()* -1f);
+		sp.setAmountInHRK(addSaving.getAmountInHRK() * -1f);
+		sp.setNote(addSaving.getNote());
+		sp.setSaving(sav);
+		sp.setCreateDate(new Date());
+		return savePayment(sp);
 	}
 
-	public List<SavingsPayment> findAllSavingPayments(){
+	public List<SavingsPayment> findAllSavingPayments() {
 		return payRepo.findAll();
 	}
+
 	public List<SavingsPayment> getAllPaymentsForSavingsId(Long id) {
 		return payRepo.findAllBySaving_Id(id);
 	}

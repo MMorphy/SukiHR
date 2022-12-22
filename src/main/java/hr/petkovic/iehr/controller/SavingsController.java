@@ -73,7 +73,7 @@ public class SavingsController {
 	@PostMapping("/substract/{id}")
 	public String substractFromSaving(@PathVariable("id") Long id, SavingsDTO addSaving) {
 		Saving sav = savSer.findSavingById(id);
-		sav = savSer.decreaseSaving(sav, addSaving);
+		savSer.decreaseSaving(sav, addSaving);
 		return "redirect:/savings/";
 	}
 }
