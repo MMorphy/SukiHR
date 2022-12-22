@@ -49,7 +49,10 @@ public class User {
 
 	@OneToMany(mappedBy = "user")
 	private Set<Site> sites = new HashSet<Site>();
-
+	
+	@OneToMany(mappedBy = "user")
+	private Set<PotentialSite> potentialSites = new HashSet<PotentialSite>();
+	
 	@OneToMany(mappedBy = "user")
 	private List<Task> tasks = new ArrayList<>();
 	private Float saldo = 0F;

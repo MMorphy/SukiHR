@@ -16,20 +16,46 @@
 	<script>
 		$(document).ready(function() {
 			$('#userTable').DataTable({
-				"order" : [ [ 1, 'desc' ], [ 2, 'desc' ] ]
+				"order" : [ [ 2, 'desc' ], [ 1, 'asc' ] ]
 			});
 			$('#siteTable').DataTable({
-				"order" : [ [ 1, 'desc' ], [ 2, 'desc' ] ]
+				"order" : [ [ 2, 'desc' ], [ 1, 'asc' ] ]
 			});
 			$('#transTable').DataTable({
-				"order" : [ [ 1, 'desc' ], [ 2, 'desc' ] ]
+				"order" : [ [ 2, 'desc' ], [ 1, 'asc' ] ]
 			});
 			$('#inOutTable').DataTable({
-				"order" : [ [ 0, 'desc' ], [ 1, 'desc' ] ]
+				"order" : [ [ 0, 'desc' ], [ 1, 'asc' ] ]
 			});
 		});
 	</script>
-
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Ulaz/Izlaz Totali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="inOutTable">
+				<thead>
+					<tr>
+						<th>Tip</th>
+						<th>Iznos</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="i : ${inOutTotal}">
+						<td th:text="${i.type}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(i.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div>
+		<form th:action="@{/report/chart/inout}" method="get">
+			<button>Prikaži graf</button>
+		</form>
+	</div>
 	<div class="col-md-12">
 		<div class="col-md-12">
 			<h1 class="col-md-3">User Totali</h1>
@@ -48,13 +74,41 @@
 						<td th:text="${u.username}"></td>
 						<td th:text="${u.type}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(u.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(u.total, 0, 'COMMA', 2, 'POINT')}"></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-
+	<div>
+		<form th:action="@{/report/chart/user/income}" method="get">
+			<button>Prikaži graf</button>
+		</form>
+	</div>
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Transakcija Totali</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="transTable">
+				<thead>
+					<tr>
+						<th>Kategorija</th>
+						<th>Tip</th>
+						<th>Iznos</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="t : ${transTotal}">
+						<td th:text="${t.category}"></td>
+						<td th:text="${t.type}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(t.total, 0, 'COMMA', 2, 'POINT')}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 	<div class="col-md-12">
 		<div class="col-md-12">
 			<h1 class="col-md-3">Lokal Totali</h1>
@@ -73,54 +127,7 @@
 						<td th:text="${s.siteName}"></td>
 						<td th:text="${s.location}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(s.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="col-md-12">
-		<div class="col-md-12">
-			<h1 class="col-md-3">Transakcije Totali</h1>
-		</div>
-		<div class="col-md-12">
-			<table class="table" id="transTable">
-				<thead>
-					<tr>
-						<th>Kategorija</th>
-						<th>Tip</th>
-						<th>Iznos</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="t : ${transTotal}">
-						<td th:text="${t.category}"></td>
-						<td th:text="${t.type}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(t.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	<div class="col-md-12">
-		<div class="col-md-12">
-			<h1 class="col-md-3">Ulaz/Izlaz Totali</h1>
-		</div>
-		<div class="col-md-12">
-			<table class="table" id="inOutTable">
-				<thead>
-					<tr>
-						<th>Tip</th>
-						<th>Iznos</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="i : ${inOutTotal}">
-						<td th:text="${i.type}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(i.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(s.total, 0, 'COMMA', 2, 'POINT')}"></td>
 					</tr>
 				</tbody>
 			</table>

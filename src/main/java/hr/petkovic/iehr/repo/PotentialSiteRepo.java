@@ -12,4 +12,7 @@ public interface PotentialSiteRepo extends JpaRepository<PotentialSite, Long> {
 
 	List<PotentialSite> findAllByState_nameNot (String name);
 
+	List<PotentialSite> findAllByState_nameAndUser_username (String name, String username);
+
+	List<PotentialSite> findAllByState_nameNotAndUser_username (String name, String username);
 }

@@ -5,7 +5,9 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -16,8 +18,6 @@ import org.springframework.stereotype.Service;
 import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
 import hr.petkovic.iehr.DTO.UserWithSum;
 import hr.petkovic.iehr.DTO.UserWithTotalDebtDTO;
-import hr.petkovic.iehr.DTO.report.InOutMonthReportDTO;
-import hr.petkovic.iehr.DTO.report.InOutYearReportDTO;
 import hr.petkovic.iehr.DTO.report.ReportingBaseDTO;
 import hr.petkovic.iehr.DTO.report.SiteMonthReportDTO;
 import hr.petkovic.iehr.DTO.report.SiteTotalReportDTO;
@@ -271,7 +271,8 @@ public class TransactionService {
 	public List<UserWithSum> updateSaldoForUserDTOs(List<UserWithTotalDebtDTO> users) {
 		List<UserWithSum> rList = new ArrayList<>();
 		for (UserWithTotalDebtDTO user : users) {
-			rList.add(new UserWithSum(user, getSaldoForUserSite(user.getUser())));
+			Float pay = findPayForUsername(user.getUser().getUsername());
+			rList.add(new UserWithSum(user, getSaldoForUserSite(user.getUser()), pay));
 		}
 		return rList;
 	}
@@ -543,10 +544,69 @@ public class TransactionService {
 		return true;
 	}
 
+	public Map<User, Float> findCurrentPayForAllUsers() {
+		Map<User, Float> returnMap = new HashMap<User, Float>();
+		List<User> users = userSer.findAllEnabledUsers();
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DATE, 1);
+		Date firstDayOfPrevMonth = cal.getTime();
+		cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+		Date lastDayOfPrevMonth = cal.getTime();
+		for (User u : users) {
+			Double sum = 0d;
+			List<Transaction> transactions = transRepo.findAllPayTransactionForUser(firstDayOfPrevMonth,
+					lastDayOfPrevMonth, u.getUsername(), "Lokal");
+			for (Transaction t : transactions) {
+				Float percentage = t.getSite().getPayPercentage().floatValue() / 100f;
+				sum += t.getAmount() * percentage;
+			}
+			Float truncSum = BigDecimal.valueOf(sum).setScale(2, RoundingMode.HALF_UP).floatValue();
+			returnMap.put(u, truncSum);
+
+		}
+		return returnMap;
+	}
+
+	public Float findPayForuser() {
+		User user = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DATE, 1);
+		Date firstDayOfPrevMonth = cal.getTime();
+		cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+		Date lastDayOfPrevMonth = cal.getTime();
+		Double sum = 0d;
+		List<Transaction> transactions = transRepo.findAllPayTransactionForUser(firstDayOfPrevMonth, lastDayOfPrevMonth,
+				user.getUsername(), "Lokal");
+		for (Transaction t : transactions) {
+			Float percentage = t.getSite().getPayPercentage().floatValue() / 100f;
+			sum += t.getAmount() * percentage;
+		}
+		Float truncSum = BigDecimal.valueOf(sum).setScale(2, RoundingMode.HALF_UP).floatValue();
+		return truncSum;
+	}
+
+	public Float findPayForUsername(String username) {
+		User user = userSer.findUserByUsername(username);
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DATE, 1);
+		Date firstDayOfPrevMonth = cal.getTime();
+		cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+		Date lastDayOfPrevMonth = cal.getTime();
+		Double sum = 0d;
+		List<Transaction> transactions = transRepo.findAllPayTransactionForUser(firstDayOfPrevMonth, lastDayOfPrevMonth,
+				user.getUsername(), "Lokal");
+		for (Transaction t : transactions) {
+			Float percentage = t.getSite().getPayPercentage().floatValue() / 100f;
+			sum += t.getAmount() * percentage;
+		}
+		Float truncSum = BigDecimal.valueOf(sum).setScale(2, RoundingMode.HALF_UP).floatValue();
+		return truncSum;
+	}
+
 	private boolean generatePay(User u, Float truncSum) {
 		Transaction t = new Transaction();
 		t.setAmount(truncSum);
-		t.setDescription("Autogenerirana placa");
+		t.setDescription("Placa/Bonus");
 		t.setType(getPayType());
 		t.setCreatedBy(u);
 		if (saveTransaction(t) == null) {
@@ -588,4 +648,36 @@ public class TransactionService {
 		return true;
 	}
 
+	public List<List<Object>> getIncomePercentageForUsers() {
+		List<List<Object>> returnList = new ArrayList<>();
+		List<User> users = userSer.findAllEnabledUsers();
+		for (User u : users) {
+			List<Object> individualList = new ArrayList<>();
+			individualList.add(0, u.getUsername());
+			individualList.add(1, transRepo.findAllTransactionsOfMainTypeForUsername(u.getUsername(), "Ulaz"));
+			returnList.add(individualList);
+		}
+		return returnList;
+	}
+
+	public List<List<Object>> getExpensePercentageForUsers() {
+		List<List<Object>> returnList = new ArrayList<>();
+		List<User> users = userSer.findAllEnabledUsers();
+		for (User u : users) {
+			List<Object> individualList = new ArrayList<>();
+			individualList.add(0, u.getUsername());
+			Double d = transRepo.findAllTransactionsOfMainTypeForUsername(u.getUsername(), "Izlaz");
+			Double razduzenjeSum = transRepo.findAllTransactionsOfSubTypeForUsername(u.getUsername(), "RAZDUZENJE");
+			if (razduzenjeSum != null) {
+				d -= razduzenjeSum;
+			}
+			individualList.add(1, d);
+			returnList.add(individualList);
+		}
+		return returnList;
+	}
+
+	public List<ReportingBaseDTO> findExpensesTotalReport() {
+		return transRepo.findTotalExpensesReport("Izlaz");
+	}
 }

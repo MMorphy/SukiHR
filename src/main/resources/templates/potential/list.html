@@ -16,10 +16,10 @@
 	<script>
 		$(document).ready(function() {
 			$('#siteTable').dataTable({
-				"order" : [ [ 4, 'desc' ], [ 5, 'asc' ] ],
+				"order" : [ [ 5, 'desc' ], [ 6, 'asc' ] ],
 			});
 			$('#inactiveTable').dataTable({
-				"order" : [ [ 4, 'desc' ], [ 5, 'asc' ] ]
+				"order" : [ [ 5, 'desc' ], [ 6, 'asc' ] ]
 			});
 		});
 	</script>
@@ -32,6 +32,7 @@
 			<table class="table" id="siteTable">
 				<thead>
 					<tr>
+						<th>Korisnik</th>
 						<th>Ime</th>
 						<th>Adresa</th>
 						<th>Vlasnik</th>
@@ -46,6 +47,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="site : ${potentialActive}">
+						<td th:text="${site.user.username}"></td>
 						<td th:text="${site.name}"></td>
 						<td th:text="${site.address}"></td>
 						<td th:text="${site.owner}"></td>
@@ -97,6 +99,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="site : ${potentialInctive}">
+						<td th:text="${site.user.username}"></td>
 						<td th:text="${site.name}"></td>
 						<td th:text="${site.address}"></td>
 						<td th:text="${site.owner}"></td>

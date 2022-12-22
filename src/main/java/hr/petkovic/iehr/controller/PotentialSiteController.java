@@ -20,10 +20,15 @@ public class PotentialSiteController {
 		potServ = potentialSiteSerivce;
 	}
 
-	@GetMapping("/")
-	public String getPotentialSiteHome(Model model) {
-		model.addAttribute("potentialActive", potServ.getAllActivePotentialSites());
-		model.addAttribute("potentialInctive", potServ.getAllInactivePotentialSites());
+	@GetMapping(value = { "/", "/{username}" })
+	public String getPotentialSiteHome(@PathVariable(required = false) String username, Model model) {
+		if (username == null || username.isEmpty()) {
+			model.addAttribute("potentialActive", potServ.getAllActivePotentialSites());
+			model.addAttribute("potentialInctive", potServ.getAllInactivePotentialSites());
+		} else {
+			model.addAttribute("potentialActive", potServ.getAllActivePotentialSitesForUsername(username));
+			model.addAttribute("potentialInctive", potServ.getAllInactivePotentialSitesForUsername(username));
+		}
 		return "potential/list";
 	}
 

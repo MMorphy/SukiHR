@@ -20,6 +20,6 @@ public class WalletController {
 	@GetMapping("/")
 	public String getWallet(Model model) {
 		model.addAttribute("transactions", transServ.getWalletTransactions());
-		return "transaction/list";
+		return "transaction/wallet";
 	}
 }

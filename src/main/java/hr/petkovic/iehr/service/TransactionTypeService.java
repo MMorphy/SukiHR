@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,6 +52,12 @@ public class TransactionTypeService {
 		List<TransactionType> returnList = typeRepo.findBySubTypeIn(tUtil.getOperativeExpenses());
 		TransactionType razduzenje = typeRepo.findByMainTypeAndSubType("Izlaz", "RAZDUZENJE").get();
 		Collections.swap(returnList, returnList.indexOf(razduzenje), 0);
+		return returnList;
+	}
+	public List<TransactionType> getRazduzenjeType() {
+		List<TransactionType> returnList = new ArrayList<TransactionType>();
+		TransactionType razduzenje = typeRepo.findByMainTypeAndSubType("Izlaz", "RAZDUZENJE").get();
+		returnList.add(razduzenje);
 		return returnList;
 	}
 

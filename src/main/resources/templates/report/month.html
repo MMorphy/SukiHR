@@ -29,7 +29,30 @@
 			});
 		});
 	</script>
-
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Ulaz/Izlaz Mjeseci</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="inOutTable">
+				<thead>
+					<tr>
+						<th>Mjesec/Godina</th>
+						<th>Tip</th>
+						<th>Iznos</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="i : ${inOutMonth}">
+						<td th:text="${i.month} + '/' +${i.year}"></td>
+						<td th:text="${i.type}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(i.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 	<div class="col-md-12">
 		<div class="col-md-12">
 			<h1 class="col-md-3">User Mjeseci</h1>
@@ -57,35 +80,10 @@
 		</div>
 	</div>
 
+
 	<div class="col-md-12">
 		<div class="col-md-12">
-			<h1 class="col-md-3">Lokal Mjeseci</h1>
-		</div>
-		<div class="col-md-12">
-			<table class="table" id="siteTable">
-				<thead>
-					<tr>
-						<th>Mjesec/Godina</th>
-						<th>Lokal</th>
-						<th>Adresa</th>
-						<th>Iznos</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="s : ${siteMonth}">
-						<td th:text="${s.month} + '/' + ${s.year}"></td>
-						<td th:text="${s.siteName}"></td>
-						<td th:text="${s.location}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(s.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="col-md-12">
-		<div class="col-md-12">
-			<h1 class="col-md-3">Transakcije Mjeseci</h1>
+			<h1 class="col-md-3">Transakcija Mjeseci</h1>
 		</div>
 		<div class="col-md-12">
 			<table class="table" id="transTable">
@@ -111,23 +109,25 @@
 	</div>
 	<div class="col-md-12">
 		<div class="col-md-12">
-			<h1 class="col-md-3">Ulaz/Izlaz Mjeseci</h1>
+			<h1 class="col-md-3">Lokal Mjeseci</h1>
 		</div>
 		<div class="col-md-12">
-			<table class="table" id="inOutTable">
+			<table class="table" id="siteTable">
 				<thead>
 					<tr>
 						<th>Mjesec/Godina</th>
-						<th>Tip</th>
+						<th>Lokal</th>
+						<th>Adresa</th>
 						<th>Iznos</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="i : ${inOutMonth}">
-						<td th:text="${i.month} + '/' +${i.year}"></td>
-						<td th:text="${i.type}"></td>
+					<tr th:each="s : ${siteMonth}">
+						<td th:text="${s.month} + '/' + ${s.year}"></td>
+						<td th:text="${s.siteName}"></td>
+						<td th:text="${s.location}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(i.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(s.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 					</tr>
 				</tbody>
 			</table>

@@ -2,6 +2,7 @@ package hr.petkovic.iehr.service;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import hr.petkovic.iehr.entity.PotentialSite;
@@ -14,11 +15,13 @@ public class PotentialSiteService {
 
 	private PotentialSiteRepo siteRepo;
 	private PotentialSiteStateRepo stateRepo;
+	private UserService uServ;
 
 	public PotentialSiteService(PotentialSiteRepo potentialSiteRepository,
-			PotentialSiteStateRepo potentialSiteStateRepository) {
+			PotentialSiteStateRepo potentialSiteStateRepository, UserService userService) {
 		siteRepo = potentialSiteRepository;
 		stateRepo = potentialSiteStateRepository;
+		uServ = userService;
 	}
 
 	public List<PotentialSite> getAllActivePotentialSites() {
@@ -34,10 +37,12 @@ public class PotentialSiteService {
 	}
 
 	public List<PotentialSiteState> getStates() {
-		return stateRepo.findAll() ;
+		return stateRepo.findAll();
 	}
 
 	public PotentialSite savePotentialSite(PotentialSite addPotentialSite) {
+		addPotentialSite
+				.setUser(uServ.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()));
 		return siteRepo.save(addPotentialSite);
 	}
 
@@ -63,5 +68,15 @@ public class PotentialSiteService {
 
 	public void deletePotentialSite(Long id) {
 		siteRepo.deleteById(id);
+	}
+
+	public List<PotentialSite> getAllActivePotentialSitesForUsername(String username) {
+		return siteRepo.findAllByState_nameNotAndUser_username("NEZAINTERESIRAN", username);
+
+	}
+
+	public List<PotentialSite> getAllInactivePotentialSitesForUsername(String username) {
+		return siteRepo.findAllByState_nameAndUser_username("NEZAINTERESIRAN", username);
+
 	}
 }

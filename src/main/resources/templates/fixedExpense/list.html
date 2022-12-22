@@ -13,46 +13,66 @@
 
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 	<script>
-		$(document).ready(function() {
-			$('#projects').dataTable({
-				"order" : [ 1, 'asc' ],
-				"footerCallback": function ( row, data, start, end, display ) {
-		            var api = this.api(), data;
-		 
-		            function extractContent(html) {
-		                return new DOMParser()
-		                    .parseFromString(html, "text/html")
-		                    .documentElement.textContent;
-		            }
-		            // Remove the formatting to get integer data for summation
-		            var intVal = function ( i ) {
-		            	if (typeof i === 'string'){
-		            		i = extractContent(i)
-		            		i = i.replace(/[\HRK,]/g, '') * 1
-		            		console.log('Current ' + i)
-		            		return i
-		            	} else if (typeof i === 'number') {
-		            		if (isNaN(i)){
-		            			return 0;
-		            		} else {
-		            			return i;
-		            		}
-		            	}
-		            };
-		            pageTotal = api
-	                .column( 2, { page: 'current'} )
-	                .data()
-	                .reduce( function (a, b) {
-	                    return intVal(a) + intVal(b);
-	                }, 0 );
-		            
-	            // Update footer
-	            $( api.column( 2 ).footer() ).html(
-	                pageTotal + ' HRK'
-	            );
-	            }
-			});
-		});
+		$(document)
+				.ready(
+						function() {
+							$('#projects')
+									.dataTable(
+											{
+												"order" : [ 1, 'asc' ],
+												"footerCallback" : function(
+														row, data, start, end,
+														display) {
+													var api = this.api(), data;
+
+													function extractContent(
+															html) {
+														return new DOMParser()
+																.parseFromString(
+																		html,
+																		"text/html").documentElement.textContent;
+													}
+													// Remove the formatting to get integer data for summation
+													var intVal = function(i) {
+														if (typeof i === 'string') {
+															i = extractContent(i)
+															i = i.replace(
+																	/[\HRK,]/g,
+																	'') * 1
+															console
+																	.log('Current '
+																			+ i)
+															return i
+														} else if (typeof i === 'number') {
+															if (isNaN(i)) {
+																return 0;
+															} else {
+																return i;
+															}
+														}
+													};
+													pageTotal = api
+															.column(
+																	2,
+																	{
+																		page : 'current'
+																	})
+															.data()
+															.reduce(
+																	function(a,
+																			b) {
+																		return intVal(a)
+																				+ intVal(b);
+																	}, 0);
+
+													// Update footer
+													$(api.column(2).footer())
+															.html(
+																	pageTotal
+																			+ ' HRK');
+												}
+											});
+						});
 	</script>
 
 	<div class="col-md-12">
@@ -75,33 +95,39 @@
 					<tr th:each="fix : ${fixed}">
 						<td th:text="${fix.createDate}"></td>
 						<td th:text="${fix.name}"></td>
-						<td th:text="${#numbers.formatDecimal(fix.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td
+							th:text="${#numbers.formatDecimal(fix.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td>
-							<form th:action="@{'/fixed/edit/' + ${fix.id}}"
-								method="get">
+							<form th:action="@{'/fixed/edit/' + ${fix.id}}" method="get">
 								<button>Izmjeni</button>
 							</form>
 						</td>
 						<td>
-							<form th:action="@{'/fixed/delete/' + ${fix.id}}"
-								method="post">
+							<form th:action="@{'/fixed/delete/' + ${fix.id}}" method="post">
 								<button>Briši</button>
 							</form>
 						</td>
 					</tr>
 				</tbody>
 				<tfoot>
-		            <tr>
-		                <th colspan="2" style="text-align:right">Total:</th>
-		                <th colspan="3"></th>
-		            </tr>
-		        </tfoot>
+					<tr>
+						<th colspan="2" style="text-align: right">Total:</th>
+						<th colspan="3"></th>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
 	<div class="col-md-12">
 		<form th:action="@{/fixed/add/}" method="get">
 			<button>Dodaj novi fiksni trošak</button>
+		</form>
+	</div>
+	<br>
+	<div class="col-md-12">
+		<form th:action="@{/transaction/fixgenerate/}" method="post"
+			onsubmit="return confirm('Generiraj troškove?');">
+			<button>Generiraj fiksne troškove</button>
 		</form>
 	</div>
 </body>

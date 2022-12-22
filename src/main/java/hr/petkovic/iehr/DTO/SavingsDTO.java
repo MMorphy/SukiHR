@@ -6,6 +6,8 @@ public class SavingsDTO {
 
 	private Float amountInCurrency;
 
+	private String note;
+
 	public SavingsDTO() {
 		// TODO Auto-generated constructor stub
 	}
@@ -24,5 +26,13 @@ public class SavingsDTO {
 
 	public void setAmountInCurrency(Float amountInCurrency) {
 		this.amountInCurrency = amountInCurrency;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 }

@@ -6,6 +6,8 @@ public class UserWithSum {
 
 	private Double saldo;
 
+	private Float pay;
+
 	public UserWithSum() {
 	}
 
@@ -13,6 +15,13 @@ public class UserWithSum {
 		super();
 		this.dto = dto;
 		this.saldo = saldo;
+	}
+
+	public UserWithSum(UserWithTotalDebtDTO dto, Double saldo, Float pay) {
+		super();
+		this.dto = dto;
+		this.saldo = saldo;
+		this.pay = pay;
 	}
 
 	public UserWithTotalDebtDTO getDto() {
@@ -29,5 +38,13 @@ public class UserWithSum {
 
 	public void setSaldo(Double saldo) {
 		this.saldo = saldo;
+	}
+
+	public Float getPay() {
+		return pay;
+	}
+
+	public void setPay(Float pay) {
+		this.pay = pay;
 	}
 }

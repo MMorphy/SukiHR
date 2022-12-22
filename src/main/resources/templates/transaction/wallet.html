@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Transactions</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/v/bs/dt-1.11.3/datatables.min.js"></script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<script>
+		$(document).ready(function() {
+			$('#transTable').DataTable({
+				"order" : [ [ 1, 'desc' ], [2, 'desc' ] ],
+				"footerCallback": function ( row, data, start, end, display ) {
+		            var api = this.api(), data;
+		 
+		            // Remove the formatting to get integer data for summation
+		            var intVal = function ( i ) {
+		            	console.log (i)
+		            	console.log (typeof i)
+		                return typeof i === 'string' ?
+		                    i.replace(/[\HRK,]/g, '')*1 :
+		                    typeof i === 'number' ?
+		                        i : 0;
+		            };
+		            pageTotal = api
+	                .column( 3, { page: 'current'} )
+	                .data()
+	                .reduce( function (a, b) {
+	                    return intVal(a) + intVal(b);
+	                }, 0 );
+	 
+	            // Update footer
+	            $( api.column( 7 ).footer() ).html(
+	                pageTotal + ' HRK'
+	            );
+	            }
+			});
+		});
+	</script>
+
+	<div class="col-md-12">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Wallet</h1>
+		</div>
+		<div class="col-md-12">
+			<table class="table" id="transTable">
+				<thead>
+					<tr>
+						<th>Korisnik</th>
+						<th>Datum</th>
+						<th>Lokal</th>
+						<th>Iznos</th>
+						<th>Tip</th>
+						<th>Napomena</th>
+						<th>Aparati</th>
+						<th>Briši</th>
+						<th>Izmjeni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="trans : ${transactions}">
+						<td th:text="${trans.createdBy.username}"></td>
+						<td th:text="${trans.createDate}"></td>
+						<td
+							th:text="${trans.site !=null ? trans.site.name : trans.type.mainType == 'Izlaz' ? 'Izlaz' : trans.type.subType == 'Admin' ? 'Admin Ulaz' : 'Banka Ulaz'}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td th:if="${trans.type != null}" th:text="${trans.type.subType}"></td>
+						<td th:text="${trans.description}"></td>
+						<td><a th:if="${trans.site != null}"
+							th:href="@{'/device/' + ${trans.site.id}}"> Aparati</a> <span
+							th:if="${trans.site == null}"> Nema aparata </span></td>
+						<td>
+							<form th:action="@{'/transaction/delete/' + ${trans.id}}"
+								method="post">
+								<button>Briši</button>
+							</form>
+						</td>
+						<td>
+							<form th:if="${trans.type.subType == 'Banka'}" th:action="@{'/transaction/bank/edit/' + ${trans.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+							<form th:if="${trans.type.subType == 'Admin'}" th:action="@{'/transaction/admin/edit/' + ${trans.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+							<form th:if="${trans.type.subType != 'Banka' and trans.type.subType != 'Admin'}" th:action="@{'/transaction/edit/' + ${trans.id}}"
+								method="get">
+								<button>Izmjeni</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+		            <tr>
+		                <th colspan="3" style="text-align:right">Total:</th>
+		                <th colspan="6"></th>
+		            </tr>
+		        </tfoot>
+			</table>
+		</div>
+	</div>
+
+
+</body>
+</html>

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
 import hr.petkovic.iehr.DTO.UserWithTotalDebtDTO;
+import hr.petkovic.iehr.DTO.report.ReportingBaseDTO;
 import hr.petkovic.iehr.DTO.report.SiteMonthReportDTO;
 import hr.petkovic.iehr.DTO.report.SiteTotalReportDTO;
 import hr.petkovic.iehr.DTO.report.SiteYearReportDTO;
@@ -27,6 +28,8 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 	public List<Transaction> findAllByCreatedBy_UsernameAndType_SubType(String username, String subType);
 
 	public List<Transaction> findAllByCreatedBy_Roles_NameInOrType_SubType(List<String> roleNames, String subtype);
+
+	public List<Transaction> findAllByType_MainType(String mainType);
 
 	public List<Transaction> findAllByType_SubType(String subtype);
 
@@ -75,6 +78,9 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 	@Query("SELECT new hr.petkovic.iehr.DTO.report.UserTotalReportDTO(t.type.subType, sum(t.amount), t.createdBy.username) FROM Transaction t where t.createdBy.username = :username GROUP BY t.createdBy.username, t.type.subType")
 	public List<UserTotalReportDTO> findUserTotalReport(String username);
 
+	@Query("SELECT new hr.petkovic.iehr.DTO.report.ReportingBaseDTO(t.type.subType, sum(t.amount)) FROM Transaction t where t.type.mainType = :type GROUP BY t.type.subType")
+	public List<ReportingBaseDTO> findTotalExpensesReport(String type);
+	
 	@Query("SELECT new hr.petkovic.iehr.DTO.report.UserYearReportDTO(t.type.subType, sum(t.amount), t.createdBy.username, year(t.createDate)) FROM Transaction t where t.createdBy.username = :username GROUP BY t.createdBy.username, t.type.subType, year(t.createDate)")
 	public List<UserYearReportDTO> findUserYearReport(String username);
 

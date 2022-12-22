@@ -27,35 +27,20 @@
 														display) {
 													var api = this.api(), data;
 
-													function extractContent(
-															html) {
-														return new DOMParser()
-																.parseFromString(
-																		html,
-																		"text/html").documentElement.textContent;
-													}
 													// Remove the formatting to get integer data for summation
 													var intVal = function(i) {
-														if (typeof i === 'string') {
-															i = extractContent(i)
-															i = i.replace(
-																	/[\HRK,]/g,
-																	'') * 1
-															console
-																	.log('Current '
-																			+ i)
-															return i
-														} else if (typeof i === 'number') {
-															if (isNaN(i)) {
-																return 0;
-															} else {
-																return i;
-															}
-														}
+														console.log(i)
+														console.log(typeof i)
+														return typeof i === 'string' ? i
+																.replace(
+																		/[\HRK,]/g,
+																		'') * 1
+																: typeof i === 'number' ? i
+																		: 0;
 													};
 													pageTotal = api
 															.column(
-																	1,
+																	0,
 																	{
 																		page : 'current'
 																	})
@@ -85,52 +70,30 @@
 			<table class="table" id="savingsTable">
 				<thead>
 					<tr>
-						<th>Deviza</th>
+						<th>Datum</th>
 						<th>Iznos u Kunama</th>
 						<th>Iznos u Devizi</th>
-						<th>Dodaj</th>
-						<th>Povuci</th>
+						<th>Opis</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="sav : ${savings}">
-						<td th:text="${sav.saving.name}"></td>
-						<td><a th:if="${sav.localTotal != null}"
-							th:href="@{'/savings/list/' + ${sav.saving.id}}"
-							th:text="${#numbers.formatDecimal(sav.localTotal, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><span
-							th:if="${sav.localTotal == null}">0.00</span></td>
-						<td><a th:if="${sav.currencyTotal != null}"
-							th:href="@{'/savings/list/' + ${sav.saving.id}}"
-							th:text="${#numbers.formatDecimal(sav.currencyTotal, 1, 'COMMA', 2, 'POINT')} + ' ' +  ${sav.saving.sign}"></a><span
-							th:if="${sav.currencyTotal == null}">0.00</span></td>
-
-						<td>
-							<form th:action="@{'/savings/add/' + ${sav.saving.id}}"
-								method="get">
-								<button>Dodaj</button>
-							</form>
-						</td>
-						<td>
-							<form th:action="@{'/savings/substract/' + ${sav.saving.id}}"
-								method="get">
-								<button>Oduzmi</button>
-							</form>
-						</td>
+					<tr th:each="pay : ${payments}">
+						<td th:text="${pay.createDate}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(pay.amountInHRK, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td
+							th:text="${#numbers.formatDecimal(pay.amountInCurrency, 1, 'COMMA', 2, 'POINT')} +' '+ ${sign}"></td>
+						<td th:text="${pay.note}"></td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
 						<th colspan="1" style="text-align: right">Total:</th>
-						<th colspan="3"></th>
+						<th colspan="2"></th>
 						<th></th>
 					</tr>
 				</tfoot>
 			</table>
-			<div class="col-md-12">
-				<form th:action="@{/savings/add/}" method="get">
-					<button>Dodaj novu valutu</button>
-				</form>
-			</div>
 		</div>
 	</div>
 </body>

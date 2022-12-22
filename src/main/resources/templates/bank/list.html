@@ -107,9 +107,9 @@
 					<!-- Stednja -->
 					<tr th:each="saving : ${savings}">
 						<td>banka</td>
-						<td th:text="${#calendars.format(#calendars.createNow(), 'YYYY-MM-dd')}"></td>
+						<td th:text="${saving.createDate}"></td>
 						<td>Štednja</td>
-						<td th:text="${saving.sign}"></td>
+						<td th:text="${saving.saving.sign}"></td>
 						<td
 							th:text="${#numbers.formatDecimal(saving.amountInHRK, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
 						<td></td>

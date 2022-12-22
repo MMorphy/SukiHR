@@ -213,7 +213,7 @@
 				<div class="caption text-center">
 					<div class="position-relative">
 						<a th:href="@{/fixed/}" title="Fiksni Troškovi"><img
-							src="https://cdn-icons-png.flaticon.com/512/584/584093.png"
+							src="https://cdn-icons-png.flaticon.com/512/2244/2244465.png"
 							width="100" /></a>
 					</div>
 					<h3 id="thumbnail-label">
@@ -224,12 +224,13 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-6">
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
 						<a th:href="@{/potential/}" title="POTENCIJALNI LOKALI"><img
-							src="https://cdn-icons-png.flaticon.com/512/584/584093.png"
+							src="https://cdn-icons-png.flaticon.com/512/684/684809.png"
 							width="100" /></a>
 					</div>
 					<h3 id="thumbnail-label">
@@ -238,12 +239,29 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+		<div class="col-sm-6"
+			sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')">
+			<div class="thumbnail">
+				<div class="caption text-center">
+					<div class="position-relative">
+						<a th:href="@{'/potential/' + ${#authentication.name} }"
+							title="POTENCIJALNI LOKALI"><img
+							src="https://cdn-icons-png.flaticon.com/512/684/684809.png"
+							width="100" /></a>
+					</div>
+					<h3 id="thumbnail-label">
+						<a th:href="@{/potential/}">POTENCIJALNI LOKALI</a>
+					</h3>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6"
+			sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
 			<div class="thumbnail">
 				<div class="caption text-center">
 					<div class="position-relative">
 						<a th:href="@{/report/}" title="REPORT"><img
-							src="https://cdn-icons-png.flaticon.com/512/584/584093.png"
+							src="https://cdn-icons-png.flaticon.com/512/9222/9222044.png"
 							width="100" /></a>
 					</div>
 					<h3 id="thumbnail-label">

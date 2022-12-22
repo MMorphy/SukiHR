@@ -224,4 +224,41 @@ public class ReportService {
 		}
 		return returnList;
 	}
+
+	public List<List<Object>> getIncomePercentageForUsers() {
+		return tServ.getIncomePercentageForUsers();
+	}
+
+	public List<List<Object>> getExpensePercentageForUsers() {
+		return tServ.getExpensePercentageForUsers();
+	}
+
+	public List<List<Object>> getInOut() {
+		List<List<Object>> returnList = new ArrayList<>();
+		for (ReportingBaseDTO dto : getInOutTotals()) {
+			if (dto.getType().equals("Ulaz")) {
+				List<Object> miniList = new ArrayList<>();
+				miniList.add(0, "Ulaz");
+				miniList.add(1, dto.getTotal());
+				returnList.add(miniList);
+			} else {
+				List<Object> miniList2 = new ArrayList<>();
+				miniList2.add(0, "Izlaz");
+				miniList2.add(1, dto.getTotal());
+				returnList.add(miniList2);
+			}
+		}
+		return returnList;
+	}
+
+	public List<List<Object>> getExpenses() {
+		List<List<Object>> returnList = new ArrayList<>();
+		for (ReportingBaseDTO dto : tServ.findExpensesTotalReport()) {
+			List<Object> miniList = new ArrayList<>();
+			miniList.add(0,dto.getType());
+			miniList.add(1, dto.getTotal());
+			returnList.add(miniList);
+		}
+		return returnList;
+	}
 }

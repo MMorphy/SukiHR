@@ -8,7 +8,8 @@
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css"
 	href="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.css" />
-
+<link rel="shortcut icon" type="image/jpeg" href="favicon.jpg">
+<link rel="apple-touch-icon" href="favicon.jpg">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script
@@ -53,6 +54,9 @@
 							<li
 								sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')"><a
 								th:href="@{/task/}">Sve obaveze</a></li>
+							<li
+								sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')"><a
+								th:text="@{'Stanje place: ' + ${#numbers.formatDecimal(session.placa, 1, 'COMMA', 2, 'POINT')} + ' HRK'}"></a></li>
 							<li
 								sec:authorize="!hasRole('ROLE_BANK') || hasRole('ROLE_ADMIN')"><a
 								th:href="@{'/task/' + ${#authentication.name} }">Moje

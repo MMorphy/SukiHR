@@ -45,11 +45,14 @@ public class PotentialSite {
 
 	private String description = "";
 
+	@ManyToOne(targetEntity = User.class)
+	private User user;
+
 	public PotentialSite() {
 	}
 
 	public PotentialSite(Long id, Date createDate, String name, String address, String contact, String owner,
-			PotentialSiteState state, Integer evaluation, String description) {
+			PotentialSiteState state, Integer evaluation, String description, User user) {
 		super();
 		this.id = id;
 		this.createDate = createDate;
@@ -60,6 +63,7 @@ public class PotentialSite {
 		this.state = state;
 		this.evaluation = evaluation;
 		this.description = description;
+		this.user = user;
 	}
 
 	public Long getId() {
@@ -132,5 +136,13 @@ public class PotentialSite {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

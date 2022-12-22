@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Report Home</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</th:block>
+<script type="text/javascript"
+	src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" th:inline="javascript">
+
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawChart2);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+
+            // Create the data table.
+            var data1 = new google.visualization.DataTable();
+            data1.addColumn('string', 'Korisnik');
+            data1.addColumn('number', 'Iznos');
+            data1.addRows([[${inOut}]]);
+
+            // Set chart options
+            var options1 = {'title':'Postotak transakcija po tipu',
+                'width':500,
+                'height':300};
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart1 = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart1.draw(data1, options1);
+        }
+        function drawChart2() {
+
+            // Create the data table.
+            var data2 = new google.visualization.DataTable();
+            data2.addColumn('string', 'Tip');
+            data2.addColumn('number', 'Iznos');
+            data2.addRows([[${expenses}]]);
+            // Set chart options
+            var options = {'title':'Postotak troškova po tipu',
+                'width':500,
+                'height':300};
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart2 = new google.visualization.PieChart(document.getElementById('chart_div2'));
+            chart2.draw(data2, options);
+        }
+    </script>
+</head>
+<body>
+
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+	<div class="row">
+		<div class="col-md-12">
+			<h1 class="col-md-3">Graf Ulaz/Izlaz</h1>
+		</div>
+		<div class="col-md-12">
+			<div id="chart_div"></div>
+		</div>
+		<div class="col-md-12">
+			<div id="chart_div2"></div>
+		</div>
+	</div>
+</body>
+</html>

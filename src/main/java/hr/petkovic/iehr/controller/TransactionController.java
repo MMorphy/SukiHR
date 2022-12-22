@@ -62,7 +62,7 @@ public class TransactionController {
 		//Admin user ivans
 		if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			model.addAttribute("private", typeSer.getPrivateExpenseTypes());
-			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
+			model.addAttribute("operative", typeSer.getRazduzenjeType());
 		}
 		//Bank user banka
 		else if(transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
@@ -98,7 +98,7 @@ public class TransactionController {
 			//Admin user ivans
 			if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 				model.addAttribute("private", typeSer.getPrivateExpenseTypes());
-				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
+				model.addAttribute("operative", typeSer.getRazduzenjeType());
 			}
 			//Bank user banka
 			else if(transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
@@ -185,5 +185,18 @@ public class TransactionController {
 	public String editAdminIncome(@PathVariable Long id, Transaction editTrans) {
 		transSer.editAdminIncome(id, editTrans);
 		return "redirect:/";
+	}
+
+	
+	@PostMapping("/fixgenerate/")
+	public String generateFixedExpense(Model model) {
+		transSer.generateFixedExpenses();
+		return "redirect:/fixed/";
+	}
+
+	@PostMapping("/paygenerate/")
+	public String generatePayment(Model model) {
+		transSer.generatePays();
+		return "redirect:/user/";
 	}
 }
