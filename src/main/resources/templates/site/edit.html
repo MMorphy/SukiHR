@@ -13,20 +13,26 @@
 		th:action="@{'/site/edit/' + *{site.id}}">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="form-group col-lg-4">
+				<div class="form-group col-lg-3">
 					<label for="name">Naziv lokala:</label> <input type="text"
 						class="form-control" id="name" th:field="*{site.name}"
 						required="required">
 				</div>
-				<div class="form-group col-lg-4">
+				<div class="form-group col-lg-3">
 					<label for="subtype">Adresa:</label> <input type="text"
 						class="form-control" id="adress" th:field="*{site.address}"
 						required="required">
 				</div>
-				<div class="form-group col-lg-4">
+				<div class="form-group col-lg-3">
 					<label for="subtype">Kontakt (Ime i broj):</label> <input
 						type="text" class="form-control" id="contact"
 						th:field="*{site.contact}">
+				</div>
+				<div class="form-group col-lg-3"
+					sec:authorize="hasRole('ROLE_BANK') && !hasRole('ROLE_ADMIN')">
+					<label for="subtype">Bonus (%):</label> <input type="number"
+						step="0.1" min="0" class="form-control" id="pay"
+						th:field="*{site.payPercentage}">
 				</div>
 			</div>
 			<div class="row">

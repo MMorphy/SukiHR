@@ -3,6 +3,7 @@ package hr.petkovic.iehr.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import hr.petkovic.iehr.service.ReportService;
@@ -29,6 +30,13 @@ public class ReportController {
 		model.addAttribute("transTotal", reportServ.getTransactionTotals());
 		model.addAttribute("inOutTotal", reportServ.getInOutTotals());
 		return "report/total";
+	}
+
+	@GetMapping("/total/inout/{type}")
+	public String getTotalInOutSublist(@PathVariable String type,Model model) {
+		model.addAttribute("mainType", type);
+		model.addAttribute("inOutTotal", reportServ.getInOutTotalSubtotals(type));
+		return "report/subtotal";
 	}
 
 	@GetMapping("/year")

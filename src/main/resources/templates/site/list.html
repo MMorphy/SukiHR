@@ -39,7 +39,7 @@
 														if (typeof i === 'string') {
 															i = extractContent(i)
 															i = i.replace(
-																	/[\HRK,]/g,
+																	/[\€,]/g,
 																	'') * 1
 															console
 																	.log('Current '
@@ -63,15 +63,14 @@
 															.reduce(
 																	function(a,
 																			b) {
-																		return intVal(a)
-																				+ intVal(b);
+													                    return (intVal(a) + intVal(b)).toFixed(2);
 																	}, 0);
 
 													// Update footer
 													$(api.column(5).footer())
 															.html(
 																	pageTotal
-																			+ ' HRK');
+																			+ ' €');
 												}
 											});
 							$('#inactiveTable').dataTable({
@@ -95,6 +94,7 @@
 						<th>Zadnji Obračun</th>
 						<th>Stanje (+ pretplata / - dug)</th>
 						<th>Aparati</th>
+						<th>Bonus (%)</th>
 						<th>Povuci</th>
 						<th>Izmjeni</th>
 					</tr>
@@ -106,16 +106,19 @@
 						<td th:text="${site.site.address}"></td>
 						<td th:text="${site.site.createDate}"></td>
 						<td style="background-color: #FF0000; font-weight: bold"
-							th:if="${site.isLate}" th:text="${site.site.lastVisit}"></td>
-						<td th:if="${!site.isLate}" th:text="${site.site.lastVisit}"></td>
+							th:if="${site.isLate}"
+							th:text="${#dates.format(site.site.lastVisit, 'yyyy-MM-dd')}"></td>
+						<td th:if="${!site.isLate}"
+							th:text="${#dates.format(site.site.lastVisit, 'yyyy-MM-dd')}"></td>
 						<td><a th:if="${site.debtTotal != 0}"
-							th:text="${#numbers.formatDecimal(site.debtTotal, 1, 'COMMA', 2, 'POINT')} + ' HRK'"
+							th:text="${#numbers.formatDecimal(site.debtTotal, 1, 'COMMA', 2, 'POINT')} + ' €'"
 							th:href="@{'/debt/site/' + ${site.site.id}}"></a> <a
 							th:if="${site.debtTotal == 0}"
-							th:href="@{'/debt/site/' + ${site.site.id}}">0.00 HRK</a>
+							th:href="@{'/debt/site/' + ${site.site.id}}">0.00 €</a>
 						<td><a th:if="${site.site.devices != null}"
 							th:href="@{'/device/' + ${site.site.id}}"> Aparati</a> <span
 							th:if="${site.site.devices == null}"> Nema aparata </span></td>
+						<td th:text="${site.site.payPercentage}"></td>
 						<td>
 							<form th:action="@{'/site/disable/' + ${site.site.id}}"
 								method="post" onsubmit="return confirm('Povuci lokal?');">
@@ -134,7 +137,7 @@
 				<tfoot>
 					<tr>
 						<th colspan="5" style="text-align: right">Total:</th>
-						<th colspan="4"></th>
+						<th colspan="5"></th>
 					</tr>
 				</tfoot>
 			</table>
@@ -169,9 +172,9 @@
 						<td th:text="${site.site.lastVisit}"></td>
 						<td th:text="${site.site.releaseDate}"></td>
 						<td><a th:if="${site.debtTotal != 0}"
-							th:text="${#numbers.formatDecimal(site.debtTotal, 0, 'COMMA', 2, 'POINT')} + ' HRK'"
+							th:text="${#numbers.formatDecimal(site.debtTotal, 1, 'COMMA', 2, 'POINT')} + ' €'"
 							th:href="@{'/debt/' + ${site.site.user.username}}"></a> <span
-							th:if="${site.debtTotal == 0}">0.00 HRK</span>
+							th:if="${site.debtTotal == 0}">0.00 €</span>
 					</tr>
 				</tbody>
 			</table>

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import hr.petkovic.iehr.DTO.ProjectDatabaseDTO;
 import hr.petkovic.iehr.DTO.ProjectUIDTO;
+import hr.petkovic.iehr.DTO.report.ReportingBaseDTO;
 import hr.petkovic.iehr.entity.Investment;
 import hr.petkovic.iehr.entity.Project;
 import hr.petkovic.iehr.repo.InvestmentRepo;
@@ -110,8 +111,12 @@ public class ProjectService {
 		return sum;
 	}
 
-	private List<Project> findAllProjects(){
+	private List<Project> findAllProjects() {
 		return pRepo.findAll();
+	}
+
+	public ReportingBaseDTO getProjectsReportTotal() {
+		return new ReportingBaseDTO("Izlaz", findBankSum());
 	}
 
 }

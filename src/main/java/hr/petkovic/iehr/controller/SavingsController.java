@@ -1,7 +1,5 @@
 package hr.petkovic.iehr.controller;
 
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import hr.petkovic.iehr.DTO.SavingsDTO;
-import hr.petkovic.iehr.DTO.SavingsDatabaseDTO;
 import hr.petkovic.iehr.entity.Saving;
 import hr.petkovic.iehr.service.SavingsService;
 

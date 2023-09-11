@@ -47,10 +47,10 @@
 						<td th:text="${debt.debt.createDate}"></td>
 						<td th:text="${debt.debt.user}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td><a th:if="${debt.debt.amount != null}"
 							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}"
-							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><a
+							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' €'"></a><a
 							th:if="${debt.debt.amount == null}">0</a></td>
 						<td th:text="${debt.debt.description}"></td>
 						<td>
@@ -86,11 +86,11 @@
 	<div class="col-md-12">
 		<h2 class="col-md-12">Total:</h2>
 		<h4 class="col-md-4"
-			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(outTotal, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
+			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(outTotal, 1, 'COMMA', 2, 'POINT')}}+ ' €'"></h4>
 		<h4 class="col-md-4"
-			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
+			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' €'"></h4>
 		<h4 class="col-md-4 text-danger"
-			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(outTotal-outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
+			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(outTotal-outPaid, 1, 'COMMA', 2, 'POINT')}}+ ' €'"></h4>
 	</div>
 	
 	<div class="col-md-12">
@@ -117,10 +117,10 @@
 						<td th:text="${debt.debt.createDate}"></td>
 						<td th:text="${debt.debt.user}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td><a th:if="${debt.debt.amount != null}"
 							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}"
-							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><a
+							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' €'"></a><a
 							th:if="${debt.debt.amount == null}">0</a></td>
 						<td th:text="${debt.debt.description}"></td>
 						<td>
@@ -155,11 +155,11 @@
 <div class="col-md-12">
 		<h2 class="col-md-12">Total:</h2>
 		<h4 class="col-md-4"
-			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(inTotal, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
+			th:text="@{'Dogovoreno: '+ ${#numbers.formatDecimal(inTotal, 1, 'COMMA', 2, 'POINT')}}+ ' €'"></h4>
 		<h4 class="col-md-4"
-			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
+			th:text="@{'Plaćeno: '+ ${#numbers.formatDecimal(inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' €'"></h4>
 		<h4 class="col-md-4 text-danger"
-			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(inTotal-inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' HRK'"></h4>
+			th:text="@{'Ostatak duga: '+ ${#numbers.formatDecimal(inTotal-inPaid, 1, 'COMMA', 2, 'POINT')}}+ ' €'"></h4>
 </div>
 <div class="col-md-12">
 		<form th:action="@{/personal_debt/inactive}" method="get">

@@ -39,7 +39,7 @@
 														if (typeof i === 'string') {
 															i = extractContent(i)
 															i = i.replace(
-																	/[\HRK,]/g,
+																	/[\€,]/g,
 																	'') * 1
 															console
 																	.log('Current '
@@ -63,15 +63,15 @@
 															.reduce(
 																	function(a,
 																			b) {
-																		return intVal(a)
-																				+ intVal(b);
+																		return (intVal(a) + intVal(b))
+																				.toFixed(2);
 																	}, 0);
 
 													// Update footer
 													$(api.column(1).footer())
 															.html(
 																	pageTotal
-																			+ ' HRK');
+																			+ ' €');
 												}
 											});
 						});
@@ -86,7 +86,7 @@
 				<thead>
 					<tr>
 						<th>Deviza</th>
-						<th>Iznos u Kunama</th>
+						<th>Iznos u Eurima</th>
 						<th>Iznos u Devizi</th>
 						<th>Dodaj</th>
 						<th>Povuci</th>
@@ -97,7 +97,7 @@
 						<td th:text="${sav.saving.name}"></td>
 						<td><a th:if="${sav.localTotal != null}"
 							th:href="@{'/savings/list/' + ${sav.saving.id}}"
-							th:text="${#numbers.formatDecimal(sav.localTotal, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><span
+							th:text="${#numbers.formatDecimal(sav.localTotal, 1, 'COMMA', 2, 'POINT')} + ' €'"></a><span
 							th:if="${sav.localTotal == null}">0.00</span></td>
 						<td><a th:if="${sav.currencyTotal != null}"
 							th:href="@{'/savings/list/' + ${sav.saving.id}}"

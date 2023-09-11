@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,7 +46,10 @@ public class PersonalDebtController {
 
 	@GetMapping("/inactive")
 	public String getResolvedPersonalDebts(Model model) {
-		model.addAttribute("debts", debtServ.getResolvedPersonalDebtsToMe());
+		List<PersonalDebtUIDTO> debs = new ArrayList<PersonalDebtUIDTO>();
+		debs.addAll(debtServ.getResolvedPersonalDebtsToMe());
+		debs.addAll(debtServ.getMyResolvedPersonalDebts());
+		model.addAttribute("debts", debs);
 		return "personalDebt/inactiveList";
 	}
 	@GetMapping("/mydebt/add")

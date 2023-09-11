@@ -37,7 +37,7 @@
 														if (typeof i === 'string') {
 															i = extractContent(i)
 															i = i.replace(
-																	/[\HRK,]/g,
+																	/[\€,]/g,
 																	'') * 1
 															console
 																	.log('Current '
@@ -61,15 +61,15 @@
 															.reduce(
 																	function(a,
 																			b) {
-																		return intVal(a)
-																				+ intVal(b);
+																		return (intVal(a) + intVal(b))
+																				.toFixed(2);
 																	}, 0);
 
 													// Update footer
 													$(api.column(2).footer())
 															.html(
 																	pageTotal
-																			+ ' HRK');
+																			+ ' €');
 												}
 											});
 						});
@@ -96,7 +96,7 @@
 						<td th:text="${fix.createDate}"></td>
 						<td th:text="${fix.name}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(fix.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(fix.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td>
 							<form th:action="@{'/fixed/edit/' + ${fix.id}}" method="get">
 								<button>Izmjeni</button>

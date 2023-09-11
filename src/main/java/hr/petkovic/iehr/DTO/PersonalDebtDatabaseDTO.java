@@ -3,15 +3,15 @@ package hr.petkovic.iehr.DTO;
 public class PersonalDebtDatabaseDTO {
 
 	Long debtId;
-	Double outstandingAmount;
+	Double paidAmount;
 
 	public PersonalDebtDatabaseDTO() {
 	}
 
-	public PersonalDebtDatabaseDTO(Long debtId, Double outstandingAmount) {
+	public PersonalDebtDatabaseDTO(Long debtId, Double paidAmount) {
 		super();
 		this.debtId = debtId;
-		this.outstandingAmount = outstandingAmount;
+		this.paidAmount = paidAmount;
 	}
 	public Long getId() {
 		return debtId;
@@ -19,11 +19,11 @@ public class PersonalDebtDatabaseDTO {
 	public void setId(Long debt) {
 		this.debtId = debt;
 	}
-	public Double getOutstandingAmount() {
-		return outstandingAmount;
+	public Double getPaidAmount() {
+		return paidAmount;
 	}
-	public void setOutstandingAmount(Double outstandingAmount) {
-		this.outstandingAmount = outstandingAmount;
+	public void setPaidAmount(Double paidAmount) {
+		this.paidAmount = paidAmount;
 	}
 
 }

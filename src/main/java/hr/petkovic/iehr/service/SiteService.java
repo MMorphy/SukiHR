@@ -143,6 +143,9 @@ public class SiteService {
 		oldSite.setAddress(newDTO.getSite().getAddress());
 		oldSite.setContact(newDTO.getSite().getContact());
 		oldSite.setName(newDTO.getSite().getName());
+		if (newDTO.getSite().getPayPercentage() != 30) {
+			oldSite.setPayPercentage(newDTO.getSite().getPayPercentage());
+		}
 		oldSite = saveSite(oldSite);
 
 		for (DeviceMapDTO newDeviceMap : newDTO.getDevices()) {

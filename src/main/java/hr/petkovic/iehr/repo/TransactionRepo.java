@@ -40,11 +40,11 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 	public List<Transaction> findAllWithValuesForUser(String username);
 
 	@Query("SELECT new hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO(t.site, SUM(t.debt.amount)) "
-			+ "FROM Transaction t GROUP BY t.site")
+			+ "FROM Transaction t WHERE t.debt.amount <> 0 GROUP BY t.site ")
 	List<SiteWithTotalDebtDTO> findAllSitesAndDebt();
 
 	@Query("SELECT new hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO(t.site, SUM(t.debt.amount)) "
-			+ "FROM Transaction t WHERE t.createdBy.username = :username  GROUP BY t.site")
+			+ "FROM Transaction t WHERE t.createdBy.username = :username AND t.debt.amount <> 0 GROUP BY t.site")
 	List<SiteWithTotalDebtDTO> findAllSitesAndDebtCreatedBy(@Param("username") String username);
 
 	@Query("SELECT new hr.petkovic.iehr.DTO.UserWithTotalDebtDTO(t.createdBy, SUM(t.debt.amount)) "
@@ -80,7 +80,7 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
 	@Query("SELECT new hr.petkovic.iehr.DTO.report.ReportingBaseDTO(t.type.subType, sum(t.amount)) FROM Transaction t where t.type.mainType = :type GROUP BY t.type.subType")
 	public List<ReportingBaseDTO> findTotalExpensesReport(String type);
-	
+
 	@Query("SELECT new hr.petkovic.iehr.DTO.report.UserYearReportDTO(t.type.subType, sum(t.amount), t.createdBy.username, year(t.createDate)) FROM Transaction t where t.createdBy.username = :username GROUP BY t.createdBy.username, t.type.subType, year(t.createDate)")
 	public List<UserYearReportDTO> findUserYearReport(String username);
 
@@ -105,7 +105,8 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 	@Query("SELECT new hr.petkovic.iehr.DTO.report.TransactionMonthReportDTO(t.type.subType, sum(t.amount), year(t.createDate), month(t.createDate)) FROM Transaction t GROUP BY t.type.subType, year(t.createDate), month(t.createDate)")
 	public List<TransactionMonthReportDTO> findTransactionMonthReport();
 
-	@Query("SELECT t FROM Transaction t WHERE t.type.subType = :subType AND t.createdBy.username = :username AND t.createDate >= :firstDate AND t.createDate <= :lastDate")
+	@Query("SELECT t FROM Transaction t WHERE t.type.subType = :subType AND t.createdBy.username = :username AND t.createDate >= :firstDate")
 	public List<Transaction> findAllPayTransactionForUser(@Param("firstDate") Date firstDate,
-			@Param("lastDate") Date lastDate, @Param("username") String username, @Param("subType") String subType);
+			@Param("username") String username, @Param("subType") String subType);
+
 }

@@ -48,8 +48,8 @@
 															.reduce(
 																	function(a,
 																			b) {
-																		return intVal(a)
-																				+ intVal(b);
+																		return (intVal(a) + intVal(b))
+																				.toFixed(2);
 																	}, 0);
 
 													// Update footer
@@ -71,7 +71,7 @@
 				<thead>
 					<tr>
 						<th>Datum</th>
-						<th>Iznos u Kunama</th>
+						<th>Iznos u Eurima</th>
 						<th>Iznos u Devizi</th>
 						<th>Opis</th>
 					</tr>
@@ -80,7 +80,7 @@
 					<tr th:each="pay : ${payments}">
 						<td th:text="${pay.createDate}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(pay.amountInHRK, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(pay.amountInHRK, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td
 							th:text="${#numbers.formatDecimal(pay.amountInCurrency, 1, 'COMMA', 2, 'POINT')} +' '+ ${sign}"></td>
 						<td th:text="${pay.note}"></td>

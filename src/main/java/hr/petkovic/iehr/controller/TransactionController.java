@@ -59,17 +59,17 @@ public class TransactionController {
 
 	@GetMapping("/expense/add")
 	public String getExpenseAdding(Model model) {
-		//Admin user ivans
+		// Admin user ivans
 		if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			model.addAttribute("private", typeSer.getPrivateExpenseTypes());
 			model.addAttribute("operative", typeSer.getRazduzenjeType());
 		}
-		//Bank user banka
-		else if(transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
+		// Bank user banka
+		else if (transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 			model.addAttribute("business", typeSer.getBusinessExpenseTypes());
-		} 
-		//Operative users
+		}
+		// Operative users
 		else {
 			model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 		}
@@ -95,17 +95,17 @@ public class TransactionController {
 		model.addAttribute("editTrans", trans);
 		// Expenses
 		if (trans.getSite() == null) {
-			//Admin user ivans
+			// Admin user ivans
 			if (transSer.isAdmin(SecurityContextHolder.getContext().getAuthentication().getName())) {
 				model.addAttribute("private", typeSer.getPrivateExpenseTypes());
 				model.addAttribute("operative", typeSer.getRazduzenjeType());
 			}
-			//Bank user banka
-			else if(transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			// Bank user banka
+			else if (transSer.isOnlyBank(SecurityContextHolder.getContext().getAuthentication().getName())) {
 				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 				model.addAttribute("business", typeSer.getBusinessExpenseTypes());
-			} 
-			//Operative users
+			}
+			// Operative users
 			else {
 				model.addAttribute("operative", typeSer.getOperativeExpenseTypes());
 			}
@@ -122,7 +122,11 @@ public class TransactionController {
 	@GetMapping(value = { "/", "/{username}" })
 	public String getAllTransactions(@PathVariable(required = false) String username, Model model) {
 		if (username == null || username.isEmpty()) {
-			model.addAttribute("transactions", transSer.findNonNullTransactions());
+			if (SecurityContextHolder.getContext().getAuthentication().getName().equals("banka")) {
+				model.addAttribute("transactions", transSer.findNonNullBankTransactions());
+			} else {
+				model.addAttribute("transactions", transSer.findNonNullTransactions());
+			}
 		} else {
 			model.addAttribute("transactions", transSer.findNonNullTransactionsForUsername(username));
 		}
@@ -187,16 +191,10 @@ public class TransactionController {
 		return "redirect:/";
 	}
 
-	
 	@PostMapping("/fixgenerate/")
 	public String generateFixedExpense(Model model) {
 		transSer.generateFixedExpenses();
 		return "redirect:/fixed/";
 	}
 
-	@PostMapping("/paygenerate/")
-	public String generatePayment(Model model) {
-		transSer.generatePays();
-		return "redirect:/user/";
-	}
 }

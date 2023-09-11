@@ -65,7 +65,7 @@ public class Site {
 	@OneToMany(mappedBy = "site")
 	private Collection<Transaction> transactions = new ArrayList<Transaction>();
 
-	private Integer payPercentage = 30;
+	private Float payPercentage = 30f;
 
 	// Utility methods
 	public void addDevice(SiteDevices device) {
@@ -85,7 +85,7 @@ public class Site {
 
 	public Site(Long id, String address, Date lastVisit, Float debt, String contact, Boolean active,
 			Set<SiteDevices> devices, User user, String name, List<Transaction> transactions, Date createDate,
-			Date releaseDate, Integer payPercentage) {
+			Date releaseDate, Float payPercentage) {
 		super();
 		this.id = id;
 		this.address = address;
@@ -197,11 +197,11 @@ public class Site {
 		this.releaseDate = releaseDate;
 	}
 
-	public Integer getPayPercentage() {
+	public Float getPayPercentage() {
 		return payPercentage;
 	}
 
-	public void setPayPercentage(Integer payPercentage) {
+	public void setPayPercentage(Float payPercentage) {
 		this.payPercentage = payPercentage;
 	}
 

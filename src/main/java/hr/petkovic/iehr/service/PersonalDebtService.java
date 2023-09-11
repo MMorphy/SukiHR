@@ -29,16 +29,14 @@ public class PersonalDebtService {
 		tRepo = typeRepo;
 	}
 
-	public List<PersonalDebtUIDTO> getActivePersonalDebts() {
+	public List<PersonalDebtUIDTO> getPersonalDebtsForBank() {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
 		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebts()) {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
-			if (dto.getOutstandingAmount() == null) {
-				dto.setOutstandingAmount(0D);
-			} else if (dto.getOutstandingAmount().compareTo(debt.getAmount().doubleValue()) >= 0) {
-				continue;
+			if (dto.getPaidAmount() == null) {
+				dto.setPaidAmount(0D);
 			}
-			returnList.add(new PersonalDebtUIDTO(debt, dto.getOutstandingAmount()));
+			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
 		return returnList;
 	}
@@ -47,43 +45,58 @@ public class PersonalDebtService {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
 		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getDebtsToMeType())) {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
-			if (dto.getOutstandingAmount() == null) {
-				dto.setOutstandingAmount(0D);
-			} else if (dto.getOutstandingAmount().compareTo(debt.getAmount().doubleValue()) >= 0) {
+			if (dto.getPaidAmount() == null) {
+				dto.setPaidAmount(0D);
+			} else if (dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) >= 0) {
 				continue;
 			}
-			returnList.add(new PersonalDebtUIDTO(debt, dto.getOutstandingAmount()));
+			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
 		return returnList;
 	}
 
 	public List<PersonalDebtUIDTO> getResolvedPersonalDebtsToMe() {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
-		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebts()) {
+		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getDebtsToMeType())) {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
-			if (dto.getOutstandingAmount() == null) {
-				dto.setOutstandingAmount(0D);
-			} else if (dto.getOutstandingAmount().compareTo(debt.getAmount().doubleValue()) < 0) {
+			if (dto.getPaidAmount() == null) {
+				continue;
+			} else if ((dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) < 0)) {
 				continue;
 			}
-			returnList.add(new PersonalDebtUIDTO(debt, dto.getOutstandingAmount()));
+			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
 		return returnList;
 	}
+	
 	public List<PersonalDebtUIDTO> getMyActivePersonalDebts() {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
 		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getMyDebtType())) {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
-			if (dto.getOutstandingAmount() == null) {
-				dto.setOutstandingAmount(0D);
-			} else if (dto.getOutstandingAmount().compareTo(debt.getAmount().doubleValue()) >= 0) {
+			if (dto.getPaidAmount() == null) {
+				dto.setPaidAmount(0D);
+			} else if (dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) >= 0) {
 				continue;
 			}
-			returnList.add(new PersonalDebtUIDTO(debt, dto.getOutstandingAmount()));
+			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
 		return returnList;
 	}
-
+	
+	public List<PersonalDebtUIDTO> getMyResolvedPersonalDebts() {
+		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
+		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getMyDebtType())) {
+			PersonalDebt debt = dRepo.findById(dto.getId()).get();
+			if (dto.getPaidAmount() == null) {
+				continue;
+			} else if ((dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) < 0)) {
+				continue;
+			}
+			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
+		}
+		return returnList;
+	}
+	
 	public Double getTotalOutstanding(List<PersonalDebtUIDTO> list) {
 		Double sum = 0d;
 		for (PersonalDebtUIDTO d : list) {

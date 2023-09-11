@@ -31,7 +31,7 @@
 													var intVal = function(i) {
 														return typeof i === 'string' ? i
 																.replace(
-																		/[\HRK,]/g,
+																		/[\€,]/g,
 																		'') * 1
 																: typeof i === 'number' ? i
 																		: 0;
@@ -46,15 +46,15 @@
 															.reduce(
 																	function(a,
 																			b) {
-																		return intVal(a)
-																				+ intVal(b);
+																		return (intVal(a) + intVal(b))
+																				.toFixed(2);
 																	}, 0);
 
 													// Update footer
 													$(api.column(4).footer())
 															.html(
 																	pageTotal
-																			+ ' HRK');
+																			+ ' €');
 												}
 											});
 						});
@@ -65,7 +65,7 @@
 		</div>
 		<div class="col-md-12">
 			<h2
-				th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(sum,1,'COMMA', 2, 'POINT')} + ' HRK'}"
+				th:text="@{'Stanje banke: ' + ${#numbers.formatDecimal(sum,1,'COMMA', 2, 'POINT')} + ' €'}"
 				class="col-md-3"></h2>
 		</div>
 		<div class="col-md-12">
@@ -91,7 +91,7 @@
 
 						<td th:if="${trans.type != null}" th:text="${trans.type.subType}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(trans.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(trans.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td th:text="${trans.description}"></td>
 					</tr>
 					<!-- Investicije -->
@@ -101,7 +101,7 @@
 						<td>Investicija</td>
 						<td th:text="${project.project.name}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(project.total, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(project.total, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td th:text="${project.project.description}"></td>
 					</tr>
 					<!-- Stednja -->
@@ -111,7 +111,7 @@
 						<td>Štednja</td>
 						<td th:text="${saving.saving.sign}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(saving.amountInHRK, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(saving.amountInHRK, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td></td>
 					</tr>
 					<!-- Dugovi -->
@@ -121,7 +121,7 @@
 						<td>Posudba</td>
 						<td th:text="${debt.debt.type.type}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td th:text="${debt.debt.description}"></td>
 
 					</tr>

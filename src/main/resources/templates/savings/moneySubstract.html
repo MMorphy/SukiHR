@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="ISO-8859-1">
-<title>Dodaj na štednju</title>
+<title>Dodaj na Štednju</title>
 <th:block th:include="fragments/generalFragments.html :: headerfiles">
 </head>
 <body>
@@ -14,14 +14,14 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="form-group col-lg-4">
-					<label for="subtype">Iznos u kunama:</label> <input type="number"
-						class="form-control" id="amount" th:field="*{amountInHRK}"
-						required="required">
+					<label for="subtype">Iznos u eurima:</label> <input type="number"
+						step="0.01" class="form-control" id="amount"
+						th:field="*{amountInHRK}" required="required">
 				</div>
 				<div class="form-group col-lg-4">
 					<label for="subtype">Iznos u devizi:</label> <input type="number"
-						class="form-control" id="amount" th:field="*{amountInCurrency}"
-						required="required">
+						step="0.01" class="form-control" id="amount"
+						th:field="*{amountInCurrency}" required="required">
 				</div>
 				<div class="form-group col-lg-4">
 					<label for="subtype">Opis:</label> <input type="text"

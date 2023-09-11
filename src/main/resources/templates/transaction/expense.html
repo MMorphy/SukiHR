@@ -18,7 +18,7 @@
 
 				<div class="form-group col-lg-4">
 					<label for="amount" class="control-label">Iznos:</label> <input
-						type="number" class="form-control" id="amount"
+						type="number" class="form-control" id="amount" step="0.01"
 						th:field="*{amount}" required="required">
 				</div>
 				<div class="form-group col-lg-4">
@@ -29,8 +29,7 @@
 							<option th:each="type : ${private}" th:value="${type.id}"
 								th:text="${type.subType}"></option>
 						</optgroup>
-						<optgroup
-							label="Operativni Troškovi">
+						<optgroup label="Operativni Troškovi">
 							<option th:each="type : ${operative}" th:value="${type.id}"
 								th:text="${type.subType}"></option>
 						</optgroup>

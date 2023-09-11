@@ -44,8 +44,9 @@
 				<tbody>
 					<tr th:each="i : ${inOutTotal}">
 						<td th:text="${i.type}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(i.total, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td>
+							<a th:text="${#numbers.formatDecimal(i.total, 1, 'COMMA', 2, 'POINT') + ' €'}"
+							th:href="@{'/report/total/inout/' + ${i.type}}"></a></td>
 					</tr>
 				</tbody>
 			</table>
@@ -74,7 +75,7 @@
 						<td th:text="${u.username}"></td>
 						<td th:text="${u.type}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(u.total, 0, 'COMMA', 2, 'POINT')}"></td>
+							th:text="${#numbers.formatDecimal(u.total, 1, 'COMMA', 2, 'POINT') + ' €'}"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -103,7 +104,7 @@
 						<td th:text="${t.category}"></td>
 						<td th:text="${t.type}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(t.total, 0, 'COMMA', 2, 'POINT')}"></td>
+							th:text="${#numbers.formatDecimal(t.total, 1, 'COMMA', 2, 'POINT') + ' €'}"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -127,7 +128,7 @@
 						<td th:text="${s.siteName}"></td>
 						<td th:text="${s.location}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(s.total, 0, 'COMMA', 2, 'POINT')}"></td>
+							th:text="${#numbers.formatDecimal(s.total, 1, 'COMMA', 2, 'POINT') + ' €'}"></td>
 					</tr>
 				</tbody>
 			</table>

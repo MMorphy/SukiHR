@@ -13,46 +13,66 @@
 
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 	<script>
-		$(document).ready(function() {
-			$('#projects').dataTable({
-				"order" : [ 1, 'asc' ],
-				"footerCallback": function ( row, data, start, end, display ) {
-		            var api = this.api(), data;
-		 
-		            function extractContent(html) {
-		                return new DOMParser()
-		                    .parseFromString(html, "text/html")
-		                    .documentElement.textContent;
-		            }
-		            // Remove the formatting to get integer data for summation
-		            var intVal = function ( i ) {
-		            	if (typeof i === 'string'){
-		            		i = extractContent(i)
-		            		i = i.replace(/[\HRK,]/g, '') * 1
-		            		console.log('Current ' + i)
-		            		return i
-		            	} else if (typeof i === 'number') {
-		            		if (isNaN(i)){
-		            			return 0;
-		            		} else {
-		            			return i;
-		            		}
-		            	}
-		            };
-		            pageTotal = api
-	                .column( 2, { page: 'current'} )
-	                .data()
-	                .reduce( function (a, b) {
-	                    return intVal(a) + intVal(b);
-	                }, 0 );
-		            
-	            // Update footer
-	            $( api.column( 5 ).footer() ).html(
-	                pageTotal + ' HRK'
-	            );
-	            }
-			});
-		});
+		$(document)
+				.ready(
+						function() {
+							$('#projects')
+									.dataTable(
+											{
+												"order" : [ 1, 'asc' ],
+												"footerCallback" : function(
+														row, data, start, end,
+														display) {
+													var api = this.api(), data;
+
+													function extractContent(
+															html) {
+														return new DOMParser()
+																.parseFromString(
+																		html,
+																		"text/html").documentElement.textContent;
+													}
+													// Remove the formatting to get integer data for summation
+													var intVal = function(i) {
+														if (typeof i === 'string') {
+															i = extractContent(i)
+															i = i.replace(
+																	/[\€,]/g,
+																	'') * 1
+															console
+																	.log('Current '
+																			+ i)
+															return i
+														} else if (typeof i === 'number') {
+															if (isNaN(i)) {
+																return 0;
+															} else {
+																return i;
+															}
+														}
+													};
+													pageTotal = api
+															.column(
+																	2,
+																	{
+																		page : 'current'
+																	})
+															.data()
+															.reduce(
+																	function(a,
+																			b) {
+																		return (intVal(a) + intVal(b))
+																				.toFixed(2);
+																	}, 0);
+
+													// Update footer
+													$(api.column(2).footer())
+															.html(
+																	pageTotal
+																			+ ' €');
+												}
+											});
+						});
 	</script>
 
 	<div class="col-md-12">
@@ -79,10 +99,9 @@
 						<td th:text="${pr.project.name}"></td>
 						<td><a th:if="${pr.total != null}"
 							th:href="@{'/project/investment/' + ${pr.project.id}}"
-							th:text="${#numbers.formatDecimal(pr.total, 1, 'COMMA', 2, 'POINT')} + ' HRK'">
+							th:text="${#numbers.formatDecimal(pr.total, 1, 'COMMA', 2, 'POINT') + ' €'}">
 						</a> <a th:if="${pr.total == null}"
-							th:href="@{'/project/investment/' + ${pr.project.id}}">0.00
-								HRK</a></td>
+							th:href="@{'/project/investment/' + ${pr.project.id}}">0.00 €</a></td>
 						<td th:text="${pr.project.description}"></td>
 
 						<td>
@@ -107,11 +126,15 @@
 					</tr>
 				</tbody>
 				<tfoot>
-		            <tr>
-		                <th colspan="5" style="text-align:right">Total:</th>
-		                <th ></th><th></th>
-		            </tr>
-		        </tfoot>
+					<tr>
+						<th colspan="2" style="text-align: right">Total:</th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>

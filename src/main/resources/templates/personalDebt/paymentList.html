@@ -25,7 +25,7 @@
 		            	console.log (i)
 		            	console.log (typeof i)
 		                return typeof i === 'string' ?
-		                    i.replace(/[\HRK,]/g, '')*1 :
+		                    i.replace(/[\€,]/g, '')*1 :
 		                    typeof i === 'number' ?
 		                        i : 0;
 		            };
@@ -33,12 +33,12 @@
 	                .column( 1, { page: 'current'} )
 	                .data()
 	                .reduce( function (a, b) {
-	                    return intVal(a) + intVal(b);
+	                    return (intVal(a) + intVal(b)).toFixed(2);
 	                }, 0 );
 	 
 	            // Update footer
 	            $( api.column( 1 ).footer() ).html(
-	                pageTotal + ' HRK'
+	                pageTotal + ' €'
 	            );
 	            }
 			});
@@ -64,7 +64,7 @@
 				<tbody>
 					<tr th:each="pay : ${payments}">
 						<td th:text="${pay.paymentDate}"></td>
-						<td th:text="${#numbers.formatDecimal(pay.amount, 0, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+						<td th:text="${#numbers.formatDecimal(pay.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td th:text="${pay.description}"></td>
 						<td>
 							<form th:action="@{'/personal_debt/payment/edit/' + ${pay.id}}"

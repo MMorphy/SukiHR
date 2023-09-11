@@ -32,7 +32,7 @@
 						<th>Korisnik</th>
 						<th>Tip</th>
 						<th>Dogovoreno dugovanje</th>
-						<th>Preostalo dugovanje</th>
+						<th>Preostalo dugovanje (- pretplata)</th>
 						<th>Opis</th>
 						<th>Izmjeni</th>
 						<th>Briši</th>
@@ -45,10 +45,10 @@
 						<td th:text="${debt.debt.user}"></td>
 						<td th:text="${debt.debt.type.type}"></td>
 						<td
-							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${#numbers.formatDecimal(debt.debt.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td><a th:if="${debt.debt.amount != null}"
 							th:href="@{'/personal_debt/payment/' + ${debt.debt.id}}"
-							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></a><a
+							th:text="${#numbers.formatDecimal(debt.debt.amount - debt.outstandingAmount, 1, 'COMMA', 2, 'POINT')} + ' €'"></a><a
 							th:if="${debt.debt.amount == null}">0</a></td>
 						<td th:text="${debt.debt.description}"></td>
 						<td>

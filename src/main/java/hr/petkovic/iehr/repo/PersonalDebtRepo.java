@@ -24,7 +24,8 @@ public interface PersonalDebtRepo extends JpaRepository<PersonalDebt, Long> {
 			+ "WHERE pd.type =:type "
 			+ "GROUP BY pd.id ")
 	public List<PersonalDebtDatabaseDTO> findAllActiveDebtsByType(@Param("type") PersonalDebtType type);
-	@Query("SELECT pd.amount, SUM(pay.amount)"
+	
+	@Query("SELECT SUM(pay.amount)"
 			+ "FROM PersonalDebt pd "
 			+ "LEFT JOIN pd.payments pay "
 			+ "WHERE pd.id = ?1 "

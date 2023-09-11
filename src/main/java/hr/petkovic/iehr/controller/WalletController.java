@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class WalletController {
 
 	@GetMapping("/")
 	public String getWallet(Model model) {
-		model.addAttribute("transactions", transServ.getWalletTransactions());
+		model.addAttribute("transactions", transServ.getWalletTransactions(SecurityContextHolder.getContext().getAuthentication().getName()));
 		return "transaction/wallet";
 	}
 }

@@ -45,16 +45,16 @@
 						<td th:text="${user.dto.user.username}"></td>
 						<td th:text="${user.dto.user.password}"></td>
 						<td
-							th:text="${user.saldo == ''} ? ${#numbers.formatDecimal(0, 1, 'COMMA', 2, 'POINT')} + ' HRK' :${#numbers.formatDecimal(user.saldo, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${user.saldo == ''} ? ${#numbers.formatDecimal(0, 1, 'COMMA', 2, 'POINT')} + ' €' :${#numbers.formatDecimal(user.saldo, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td
-							th:text="${user.pay == ''} ? ${#numbers.formatDecimal(0, 1, 'COMMA', 2, 'POINT')} + ' HRK' :${#numbers.formatDecimal(user.pay, 1, 'COMMA', 2, 'POINT')} + ' HRK'"></td>
+							th:text="${user.pay == ''} ? ${#numbers.formatDecimal(0, 1, 'COMMA', 2, 'POINT')} + ' €' :${#numbers.formatDecimal(user.pay, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
 						<td><a th:href="@{'/task/' + ${user.dto.user.username}}">Obaveze</a></td>
 						<td><a th:if="${user.dto.user.sites != null}"
 							th:href="@{'/site/' + ${user.dto.user.username}}"> Lokali</a> <span
 							th:if="${user.dto.user.sites == null}"> Nema lokala </span></td>
 						<td><a th:if="${user.dto.totalDebt != null}"
 							th:href="@{'/debt/' + ${user.dto.user.username}}"
-							th:text="${#numbers.formatDecimal(user.dto.totalDebt, 1, 'COMMA', 2, 'POINT')} + ' HRK'">
+							th:text="${#numbers.formatDecimal(user.dto.totalDebt, 1, 'COMMA', 2, 'POINT')} + ' €'">
 						</a> <span th:if="${user.dto.user.sites == null}"> Nema
 								dugovanja </span></td>
 						<td><a th:if="${user.dto.user.transactions != null}"
@@ -66,12 +66,5 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-md-12">
-		<form th:action="@{/transaction/paygenerate/}" method="post"
-			onsubmit="return confirm('Generiraj plaće?');">
-			<button>Generiraj plaće</button>
-		</form>
-	</div>
-
 </body>
 </html>

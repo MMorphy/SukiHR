@@ -27,10 +27,17 @@ public class ReportService {
 
 	private TransactionService tServ;
 	private UserService uServ;
+	private ProjectService pServ;
+	private PersonalDebtService debServ;
+	private SavingsService sServ;
 
-	public ReportService(TransactionService transactionService, UserService userService) {
+	public ReportService(TransactionService transactionService, UserService userService, ProjectService projectService,
+			PersonalDebtService personalDebtService, SavingsService savingsService) {
 		tServ = transactionService;
 		uServ = userService;
+		pServ = projectService;
+		debServ = personalDebtService;
+		sServ = savingsService;
 	}
 
 	public List<UserTotalReportDTO> getUserTotals() {
@@ -153,6 +160,17 @@ public class ReportService {
 		return returnList;
 	}
 
+	public List<ReportingBaseDTO> getInOutTotalSubtotals(String type) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		List<TransactionTotalReportDTO> allTrans = getTransactionTotals();
+		if (type.equals("Ulaz")) {
+			returnList.addAll(getIncomesTotalSubtotals(allTrans));
+		} else {
+			returnList.addAll(getExpensesTotalSubtotals(allTrans)); // TODO
+		}
+		return returnList;
+	}
+
 	private ReportingBaseDTO getIncomesTotal(List<TransactionTotalReportDTO> in) {
 		Double sum = 0d;
 		for (TransactionTotalReportDTO dto : in) {
@@ -160,18 +178,55 @@ public class ReportService {
 				sum += dto.getTotal();
 			}
 		}
+		sum += debServ.getAllBankIncome();
 		return new ReportingBaseDTO("Ulaz", sum);
+	}
+
+	private List<ReportingBaseDTO> getIncomesTotalSubtotals(List<TransactionTotalReportDTO> in) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		// Transactions
+		for (TransactionTotalReportDTO dto : in) {
+			if (dto.getCategory().equals("Ulaz")) {
+				returnList.add(new ReportingBaseDTO(dto.getType(), dto.getTotal()));
+			}
+		}
+		// Personal Debts
+		returnList.add(new ReportingBaseDTO("Posudbe", debServ.getAllBankIncome()));
+		return returnList;
 	}
 
 	private ReportingBaseDTO getExpensesTotal(List<TransactionTotalReportDTO> in) {
 		Double sum = 0d;
 		for (TransactionTotalReportDTO dto : in) {
-			if ((!dto.getCategory().equals("Ulaz"))
-					&& (!dto.getType().equals("RAZDUZENJE") && (!dto.getCategory().equals("Privatni")))) {
+			if ((!dto.getCategory().equals("Ulaz")) && (!dto.getType().equals("RAZDUZENJE")
+					&& (!dto.getCategory().equals("Privatni") && (!dto.getType().equals("Kesh I"))))) {
 				sum += dto.getTotal();
 			}
 		}
+		// Projects
+		sum += pServ.getProjectsReportTotal().getTotal();
+		// Personal debts
+		sum += debServ.getAllBankExpense();
+		// Savings
+		sum += sServ.findBankSum();
 		return new ReportingBaseDTO("Izlaz", sum);
+	}
+
+	private List<ReportingBaseDTO> getExpensesTotalSubtotals(List<TransactionTotalReportDTO> in) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		for (TransactionTotalReportDTO dto : in) {
+			if ((!dto.getCategory().equals("Ulaz")) && (!dto.getType().equals("RAZDUZENJE")
+					&& (!dto.getCategory().equals("Privatni") && (!dto.getType().equals("Kesh I"))))) {
+				returnList.add(new ReportingBaseDTO(dto.getType(), dto.getTotal()));
+			}
+		}
+		// Projects
+		returnList.add(new ReportingBaseDTO("Projekti", pServ.getProjectsReportTotal().getTotal()));
+		// Personal debts		
+		returnList.add(new ReportingBaseDTO("Posudbe", debServ.getAllBankExpense()));
+		// Savings
+		returnList.add(new ReportingBaseDTO("Štednja", sServ.findBankSum()));
+		return returnList;
 	}
 
 	public List<InOutMonthReportDTO> getInOutMonth() {
@@ -255,7 +310,7 @@ public class ReportService {
 		List<List<Object>> returnList = new ArrayList<>();
 		for (ReportingBaseDTO dto : tServ.findExpensesTotalReport()) {
 			List<Object> miniList = new ArrayList<>();
-			miniList.add(0,dto.getType());
+			miniList.add(0, dto.getType());
 			miniList.add(1, dto.getTotal());
 			returnList.add(miniList);
 		}

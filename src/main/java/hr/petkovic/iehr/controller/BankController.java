@@ -32,7 +32,7 @@ public class BankController {
 		model.addAttribute("sum", bankServ.getSum());
 		model.addAttribute("transactions", bankServ.getAllBankTransactions());
 		model.addAttribute("projects", projServ.getAllProjects());
-		model.addAttribute("debts", debtServ.getActivePersonalDebts());
+		model.addAttribute("debts", debtServ.getPersonalDebtsForBank());
 		model.addAttribute("savings", saveServ.findAllSavingPayments());
 
 		return "bank/list";

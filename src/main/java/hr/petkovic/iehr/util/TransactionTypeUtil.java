@@ -48,10 +48,8 @@ public class TransactionTypeUtil {
 		returnList.add("Pice");
 		returnList.add("Bonus Konobari");
 		returnList.add("Rezervni dijelovi aparati");
-		returnList.add("Novi aparati");
 		returnList.add("Auto: servis, osiguranje, registracija");
 		returnList.add("Telefon i bon");
-		returnList.add("Odvjetnik");
 		returnList.add("Operativno - Ostalo");
 		returnList.add("RAZDUZENJE");
 		return returnList;
