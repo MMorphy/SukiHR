@@ -111,6 +111,32 @@ public class ProjectService {
 		return sum;
 	}
 
+	public Double findBankSumForYear(Integer year) {
+		Double sum = 0d;
+		List<Project> projects = findAllProjects();
+		for (Project p : projects) {
+			for (Investment i : p.getInvestments()) {
+				if (i.getPaymentDate().getYear() == (year - 1900)) {
+					sum += i.getAmount();
+				}
+			}
+		}
+		return sum;
+	}
+
+	public Double findBankSumForYearMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		List<Project> projects = findAllProjects();
+		for (Project p : projects) {
+			for (Investment i : p.getInvestments()) {
+				if (i.getPaymentDate().getYear() == (year - 1900) && i.getPaymentDate().getMonth() == (month - 1)) {
+					sum += i.getAmount();
+				}
+			}
+		}
+		return sum;
+	}
+
 	private List<Project> findAllProjects() {
 		return pRepo.findAll();
 	}
@@ -119,4 +145,11 @@ public class ProjectService {
 		return new ReportingBaseDTO("Izlaz", findBankSum());
 	}
 
+	public ReportingBaseDTO getProjectsReportTotalForYear(Integer year) {
+		return new ReportingBaseDTO("Izlaz", findBankSumForYear(year));
+	}
+
+	public ReportingBaseDTO getProjectsReportTotalForYearMonth(Integer year, Integer month) {
+		return new ReportingBaseDTO("Izlaz", findBankSumForYearMonth(year, month));
+	}
 }

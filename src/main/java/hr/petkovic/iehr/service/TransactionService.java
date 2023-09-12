@@ -212,7 +212,9 @@ public class TransactionService {
 	public List<SiteWithTotalDebtDTO> findAllSitesWithDebt() {
 		List<SiteWithTotalDebtDTO> sites = new ArrayList<>();
 		for (SiteWithTotalDebtDTO s : transRepo.findAllSitesAndDebt()) {
-			if (Double.compare(s.getDebtTotal(), new Double(0)) == -1) {
+			BigDecimal bdValue = BigDecimal.valueOf(s.getDebtTotal());
+			bdValue = bdValue.setScale(2, BigDecimal.ROUND_DOWN);
+			if (bdValue.compareTo(new BigDecimal(0) ) == -1) {
 				sites.add(s);
 			}
 		}
@@ -222,7 +224,9 @@ public class TransactionService {
 	public List<SiteWithTotalDebtDTO> findAllSitesWithDebtForUsername(String username) {
 		List<SiteWithTotalDebtDTO> sites = new ArrayList<>();
 		for (SiteWithTotalDebtDTO s : transRepo.findAllSitesAndDebtCreatedBy(username)) {
-			if (Double.compare(s.getDebtTotal(), new Double(0)) == -1) {
+			BigDecimal bdValue = BigDecimal.valueOf(s.getDebtTotal());
+			bdValue = bdValue.setScale(2, BigDecimal.ROUND_DOWN);
+			if (bdValue.compareTo(new BigDecimal(0) ) == -1) {
 				sites.add(s);
 			}
 		}

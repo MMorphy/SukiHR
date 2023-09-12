@@ -1,9 +1,12 @@
 package hr.petkovic.iehr.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -113,6 +116,7 @@ public class ReportService {
 
 	private List<InOutYearReportDTO> getIncomesYear(List<TransactionYearReportDTO> in) {
 		Map<Integer, Double> yearSumMap = new HashMap<Integer, Double>();
+		// Transactions
 		for (TransactionYearReportDTO dto : in) {
 			if (dto.getCategory().equals("Ulaz")) {
 				if (yearSumMap.containsKey(dto.getYear())) {
@@ -124,6 +128,13 @@ public class ReportService {
 				}
 			}
 		}
+
+		for (Integer year : yearSumMap.keySet()) {
+			Double oldSum = yearSumMap.get(year);
+			oldSum += debServ.getAllBankIncomeForYear(year);
+			yearSumMap.put(year, oldSum);
+		}
+
 		List<InOutYearReportDTO> returnList = new ArrayList<>();
 		for (Integer key : yearSumMap.keySet()) {
 			returnList.add(new InOutYearReportDTO("Ulaz", yearSumMap.get(key), key));
@@ -145,6 +156,15 @@ public class ReportService {
 				}
 			}
 		}
+
+		for (Integer year : yearSumMap.keySet()) {
+			Double oldSum = yearSumMap.get(year);
+			oldSum += debServ.getAllBankExpenseForYear(year);
+			oldSum += pServ.getProjectsReportTotalForYear(year).getTotal();
+			oldSum += sServ.findBankSumForYear(year);
+			yearSumMap.put(year, oldSum);
+		}
+
 		List<InOutYearReportDTO> returnList = new ArrayList<>();
 		for (Integer key : yearSumMap.keySet()) {
 			returnList.add(new InOutYearReportDTO("Izlaz", yearSumMap.get(key), key));
@@ -167,6 +187,28 @@ public class ReportService {
 			returnList.addAll(getIncomesTotalSubtotals(allTrans));
 		} else {
 			returnList.addAll(getExpensesTotalSubtotals(allTrans)); // TODO
+		}
+		return returnList;
+	}
+
+	public List<ReportingBaseDTO> getInOutYearSubtotals(String type, Integer year) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		List<TransactionYearReportDTO> allTrans = getTransactionYear();
+		if (type.equals("Ulaz")) {
+			returnList.addAll(getIncomesYearSubtotals(allTrans, year));
+		} else {
+			returnList.addAll(getExpensesYearSubtotals(allTrans, year));
+		}
+		return returnList;
+	}
+
+	public List<ReportingBaseDTO> getInOutMonthSubtotals(String type, Integer year, Integer month) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		List<TransactionMonthReportDTO> allTrans = getTransactionMonth();
+		if (type.equals("Ulaz")) {
+			returnList.addAll(getIncomesMonthSubtotals(allTrans, year, month));
+		} else {
+			returnList.addAll(getExpensesMonthSubtotals(allTrans, year, month));
 		}
 		return returnList;
 	}
@@ -195,11 +237,38 @@ public class ReportService {
 		return returnList;
 	}
 
+	private List<ReportingBaseDTO> getIncomesYearSubtotals(List<TransactionYearReportDTO> in, Integer year) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		// Transactions
+		for (TransactionYearReportDTO dto : in) {
+			if (dto.getCategory().equals("Ulaz") && dto.getYear().equals(year)) {
+				returnList.add(new ReportingBaseDTO(dto.getType(), dto.getTotal()));
+			}
+		}
+		// Personal Debts
+		returnList.add(new ReportingBaseDTO("Posudbe", debServ.getAllBankIncomeForYear(year)));
+		return returnList;
+	}
+
+	private List<ReportingBaseDTO> getIncomesMonthSubtotals(List<TransactionMonthReportDTO> in, Integer year,
+			Integer month) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		// Transactions
+		for (TransactionMonthReportDTO dto : in) {
+			if (dto.getCategory().equals("Ulaz") && dto.getYear().equals(year) && dto.getMonth().equals(month)) {
+				returnList.add(new ReportingBaseDTO(dto.getType(), dto.getTotal()));
+			}
+		}
+		// Personal Debts
+		returnList.add(new ReportingBaseDTO("Posudbe", debServ.getAllBankIncomeForYearAndMonth(year, month)));
+		return returnList;
+	}
+
 	private ReportingBaseDTO getExpensesTotal(List<TransactionTotalReportDTO> in) {
 		Double sum = 0d;
 		for (TransactionTotalReportDTO dto : in) {
-			if ((!dto.getCategory().equals("Ulaz")) && (!dto.getType().equals("RAZDUZENJE")
-					&& (!dto.getCategory().equals("Privatni") && (!dto.getType().equals("Kesh I"))))) {
+			if ((!dto.getCategory().equals("Ulaz"))
+					&& (!dto.getType().equals("RAZDUZENJE") && (!dto.getCategory().equals("Privatni")))) {
 				sum += dto.getTotal();
 			}
 		}
@@ -215,17 +284,65 @@ public class ReportService {
 	private List<ReportingBaseDTO> getExpensesTotalSubtotals(List<TransactionTotalReportDTO> in) {
 		List<ReportingBaseDTO> returnList = new ArrayList<>();
 		for (TransactionTotalReportDTO dto : in) {
-			if ((!dto.getCategory().equals("Ulaz")) && (!dto.getType().equals("RAZDUZENJE")
-					&& (!dto.getCategory().equals("Privatni") && (!dto.getType().equals("Kesh I"))))) {
+			if ((!dto.getCategory().equals("Ulaz"))
+					&& (!dto.getType().equals("RAZDUZENJE") && (!dto.getCategory().equals("Privatni")))) {
 				returnList.add(new ReportingBaseDTO(dto.getType(), dto.getTotal()));
 			}
 		}
 		// Projects
-		returnList.add(new ReportingBaseDTO("Projekti", pServ.getProjectsReportTotal().getTotal()));
-		// Personal debts		
-		returnList.add(new ReportingBaseDTO("Posudbe", debServ.getAllBankExpense()));
+		ReportingBaseDTO projekti = new ReportingBaseDTO("Projekti", pServ.getProjectsReportTotal().getTotal());
+		returnList.add(projekti);
+		// Personal debts
+		ReportingBaseDTO dugovanja = new ReportingBaseDTO("Posudbe", debServ.getAllBankExpense());
+		returnList.add(dugovanja);
 		// Savings
-		returnList.add(new ReportingBaseDTO("Štednja", sServ.findBankSum()));
+		ReportingBaseDTO stednja = new ReportingBaseDTO("Štednja", sServ.findBankSum());
+		returnList.add(stednja);
+		return returnList;
+	}
+
+	private List<ReportingBaseDTO> getExpensesYearSubtotals(List<TransactionYearReportDTO> in, Integer year) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		for (TransactionYearReportDTO dto : in) {
+			if ((!dto.getCategory().equals("Ulaz")) && (!dto.getType().equals("RAZDUZENJE")
+					&& (!dto.getCategory().equals("Privatni") && (dto.getYear().equals(year))))) {
+				returnList.add(new ReportingBaseDTO(dto.getType(), dto.getTotal()));
+			}
+		}
+		// Projects
+		ReportingBaseDTO projekti = new ReportingBaseDTO("Projekti",
+				pServ.getProjectsReportTotalForYear(year).getTotal());
+		returnList.add(projekti);
+		// Personal debts
+		ReportingBaseDTO dugovanja = new ReportingBaseDTO("Posudbe", debServ.getAllBankExpenseForYear(year));
+		returnList.add(dugovanja);
+		// Savings
+		ReportingBaseDTO stednja = new ReportingBaseDTO("Štednja", sServ.findBankSumForYear(year));
+		returnList.add(stednja);
+		return returnList;
+	}
+
+	private List<ReportingBaseDTO> getExpensesMonthSubtotals(List<TransactionMonthReportDTO> in, Integer year,
+			Integer month) {
+		List<ReportingBaseDTO> returnList = new ArrayList<>();
+		for (TransactionMonthReportDTO dto : in) {
+			if ((!dto.getCategory().equals("Ulaz"))
+					&& (!dto.getType().equals("RAZDUZENJE") && (!dto.getCategory().equals("Privatni")
+							&& (dto.getYear().equals(year) && (dto.getMonth().equals(month)))))) {
+				returnList.add(new ReportingBaseDTO(dto.getType(), dto.getTotal()));
+			}
+		}
+		// Projects
+		ReportingBaseDTO projekti = new ReportingBaseDTO("Projekti",
+				pServ.getProjectsReportTotalForYearMonth(year, month).getTotal());
+		returnList.add(projekti);
+		// Personal debts
+		ReportingBaseDTO dugovanja = new ReportingBaseDTO("Posudbe",
+				debServ.getAllBankExpenseForYearMonth(year, month));
+		returnList.add(dugovanja);
+		// Savings
+		ReportingBaseDTO stednja = new ReportingBaseDTO("Štednja", sServ.findBankSumForYearMonth(year, month));
+		returnList.add(stednja);
 		return returnList;
 	}
 
@@ -251,6 +368,12 @@ public class ReportService {
 				}
 			}
 		}
+		for (Pair<Integer, Integer> key : yearSumMap.keySet()) {
+			Double oldSum = yearSumMap.get(key);
+			oldSum += debServ.getAllBankIncomeForYearAndMonth(key.getSecond(), key.getFirst());
+			yearSumMap.put(Pair.of(key.getFirst(), key.getSecond()), oldSum);
+		}
+
 		List<InOutMonthReportDTO> returnList = new ArrayList<>();
 		for (Pair<Integer, Integer> key : yearSumMap.keySet()) {
 			returnList.add(new InOutMonthReportDTO("Ulaz", yearSumMap.get(key), key.getSecond(), key.getFirst()));
@@ -272,6 +395,13 @@ public class ReportService {
 					yearSumMap.put(Pair.of(dto.getMonth(), dto.getYear()), dto.getTotal());
 				}
 			}
+		}
+		for (Pair<Integer, Integer> key : yearSumMap.keySet()) {
+			Double oldSum = yearSumMap.get(key);
+			oldSum += debServ.getAllBankExpenseForYearMonth(key.getSecond(), key.getFirst());
+			oldSum += pServ.findBankSumForYearMonth(key.getSecond(), key.getFirst());
+			oldSum += sServ.findBankSumForYearMonth(key.getSecond(), key.getFirst());
+			yearSumMap.put(Pair.of(key.getFirst(), key.getSecond()), oldSum);
 		}
 		List<InOutMonthReportDTO> returnList = new ArrayList<>();
 		for (Pair<Integer, Integer> key : yearSumMap.keySet()) {
@@ -312,6 +442,83 @@ public class ReportService {
 			List<Object> miniList = new ArrayList<>();
 			miniList.add(0, dto.getType());
 			miniList.add(1, dto.getTotal());
+			returnList.add(miniList);
+		}
+		return returnList;
+	}
+
+	public List<List<Object>> getInOutYearChartIncome() {
+		List<List<Object>> returnList = new ArrayList<>();
+		Double lastTotal = 0d;
+		for (InOutYearReportDTO dto : getIncomesYear(getTransactionYear())) {
+			List<Object> miniList = new ArrayList<>();
+			miniList.add(0, dto.getYear().toString());
+			miniList.add(1, dto.getTotal());
+			if (lastTotal.equals(new Double(0d))) {
+				miniList.add(2, 0d);
+			} else {
+				Double diff;
+				diff = (dto.getTotal() - lastTotal) / Math.abs(lastTotal);
+				miniList.add(2, diff);
+			}
+			lastTotal = dto.getTotal();
+			returnList.add(miniList);
+		}
+		return returnList;
+	}
+
+	public List<List<Object>> getInOutYearChartExpense() {
+		List<List<Object>> returnList = new ArrayList<>();
+		Double lastTotal = 0d;
+		for (InOutYearReportDTO dto : getExpensesYear(getTransactionYear())) {
+			List<Object> miniList = new ArrayList<>();
+			miniList.add(0, dto.getYear().toString());
+			miniList.add(1, dto.getTotal());
+			if (lastTotal.equals(new Double(0d))) {
+				miniList.add(2, 0d);
+			} else {
+				Double diff;
+				diff = (dto.getTotal() - lastTotal) / Math.abs(lastTotal);
+				miniList.add(2, diff);
+			}
+			lastTotal = dto.getTotal();
+			returnList.add(miniList);
+		}
+		return returnList;
+	}
+
+	public List<List<Object>> getInOutYearChartProfit() {
+		List<List<Object>> returnList = new ArrayList<>();
+		Map<Integer, Double> profitMap = new HashMap<Integer, Double>();
+		for (InOutYearReportDTO incomeDto : getIncomesYear(getTransactionYear())) {
+			profitMap.put(incomeDto.getYear(), incomeDto.getTotal());
+		}
+		for (InOutYearReportDTO expenseDto : getExpensesYear(getTransactionYear())) {
+			if (profitMap.containsKey(expenseDto.getYear())) {
+				Double sum = profitMap.get(expenseDto.getYear()) - expenseDto.getTotal();
+				profitMap.put(expenseDto.getYear(), sum);
+
+			} else {
+				profitMap.put(expenseDto.getYear(), expenseDto.getTotal() * -1d);
+
+			}
+		}
+		List<Integer> sortedKeySet = new ArrayList<>(profitMap.keySet());
+		Collections.sort(sortedKeySet);
+		Double lastTotal = 0d;
+		for (Integer i : sortedKeySet) {
+			List<Object> miniList = new ArrayList<>();
+			miniList.add(0, i.toString());
+			miniList.add(1, profitMap.get(i));
+			if (lastTotal.equals(new Double(0d))) {
+				miniList.add(2, 0d);
+			} else {
+				Double diff;
+				diff = (profitMap.get(i) - lastTotal) / Math.abs(lastTotal);
+				miniList.add(2, diff);
+			}
+			lastTotal = profitMap.get(i);
+
 			returnList.add(miniList);
 		}
 		return returnList;

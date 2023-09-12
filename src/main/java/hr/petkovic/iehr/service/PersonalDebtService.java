@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import hr.petkovic.iehr.DTO.PersonalDebtDatabaseDTO;
 import hr.petkovic.iehr.DTO.PersonalDebtUIDTO;
+import hr.petkovic.iehr.DTO.report.PersonalDebtPaymentsDTO;
 import hr.petkovic.iehr.entity.PersonalDebt;
 import hr.petkovic.iehr.entity.PersonalDebtPayments;
 import hr.petkovic.iehr.entity.PersonalDebtType;
@@ -45,10 +47,17 @@ public class PersonalDebtService {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
 		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getDebtsToMeType())) {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
+
 			if (dto.getPaidAmount() == null) {
 				dto.setPaidAmount(0D);
-			} else if (dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) >= 0) {
-				continue;
+			} else {
+				BigDecimal left = BigDecimal.valueOf(dto.getPaidAmount());
+				left = left.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				BigDecimal right = BigDecimal.valueOf(debt.getAmount().doubleValue());
+				right = right.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				if (left.compareTo(right) >= 0) {
+					continue;
+				}
 			}
 			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
@@ -61,42 +70,61 @@ public class PersonalDebtService {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
 			if (dto.getPaidAmount() == null) {
 				continue;
-			} else if ((dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) < 0)) {
-				continue;
+			} else {
+				BigDecimal left = BigDecimal.valueOf(dto.getPaidAmount());
+				left = left.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				BigDecimal right = BigDecimal.valueOf(debt.getAmount().doubleValue());
+				right = right.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				if (left.compareTo(right) < 0) {
+					continue;
+				}
 			}
+
 			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
 		return returnList;
 	}
-	
+
 	public List<PersonalDebtUIDTO> getMyActivePersonalDebts() {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
 		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getMyDebtType())) {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
 			if (dto.getPaidAmount() == null) {
 				dto.setPaidAmount(0D);
-			} else if (dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) >= 0) {
-				continue;
+			} else {
+				BigDecimal left = BigDecimal.valueOf(dto.getPaidAmount());
+				left = left.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				BigDecimal right = BigDecimal.valueOf(debt.getAmount().doubleValue());
+				right = right.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				if (left.compareTo(right) >= 0) {
+					continue;
+				}
 			}
 			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
 		return returnList;
 	}
-	
+
 	public List<PersonalDebtUIDTO> getMyResolvedPersonalDebts() {
 		List<PersonalDebtUIDTO> returnList = new ArrayList<>();
 		for (PersonalDebtDatabaseDTO dto : dRepo.findAllActiveDebtsByType(getMyDebtType())) {
 			PersonalDebt debt = dRepo.findById(dto.getId()).get();
 			if (dto.getPaidAmount() == null) {
 				continue;
-			} else if ((dto.getPaidAmount().compareTo(debt.getAmount().doubleValue()) < 0)) {
-				continue;
+			} else {
+				BigDecimal left = BigDecimal.valueOf(dto.getPaidAmount());
+				left = left.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				BigDecimal right = BigDecimal.valueOf(debt.getAmount().doubleValue());
+				right = right.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+				if (left.compareTo(right) < 0) {
+					continue;
+				}
 			}
 			returnList.add(new PersonalDebtUIDTO(debt, dto.getPaidAmount()));
 		}
 		return returnList;
 	}
-	
+
 	public Double getTotalOutstanding(List<PersonalDebtUIDTO> list) {
 		Double sum = 0d;
 		for (PersonalDebtUIDTO d : list) {
@@ -183,8 +211,15 @@ public class PersonalDebtService {
 		return outstandingAmount;
 	}
 
-	public List<PersonalDebtPayments> getPaymentsForId(Long id) {
-		return pRepo.findAllByDebt_Id(id);
+	public List<PersonalDebtPaymentsDTO> getPaymentsForId(Long id) {
+		List<PersonalDebtPayments> debts = pRepo.findAllByDebt_Id(id);
+		List<PersonalDebtPaymentsDTO> returnList = new ArrayList<PersonalDebtPaymentsDTO>();
+		Float currentDebt = dRepo.findById(id).get().getAmount();
+		for (PersonalDebtPayments d : debts) {
+			currentDebt -= d.getAmount();
+			returnList.add(new PersonalDebtPaymentsDTO(d, currentDebt));
+		}
+		return returnList;
 	}
 
 	public PersonalDebtPayments addPayment(Long id, PersonalDebtPayments addPayment) {
@@ -253,11 +288,59 @@ public class PersonalDebtService {
 		return sum;
 	}
 
+	public Double getInPaymentsSumForYear(Integer year) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllDebtsToMe();
+		for (PersonalDebt d : debts) {
+			for (PersonalDebtPayments p : d.getPayments()) {
+				if (p.getPaymentDate().getYear() == (year - 1900)) {
+					sum += p.getAmount();
+				}
+			}
+		}
+		return sum;
+	}
+
+	public Double getInPaymentsSumForYearAndMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllDebtsToMe();
+		for (PersonalDebt d : debts) {
+			for (PersonalDebtPayments p : d.getPayments()) {
+				if (p.getPaymentDate().getYear() == (year - 1900) && p.getPaymentDate().getMonth() == (month - 1)) {
+					sum += p.getAmount();
+				}
+			}
+		}
+		return sum;
+	}
+
 	public Double getInAgreedSum() {
 		Double sum = 0d;
 		List<PersonalDebt> debts = getAllDebtsToMe();
 		for (PersonalDebt d : debts) {
 			sum += d.getAmount();
+		}
+		return sum;
+	}
+
+	public Double getInAgreedSumForYear(Integer year) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllDebtsToMe();
+		for (PersonalDebt d : debts) {
+			if (d.getCreateDate().getYear() == (year - 1900)) {
+				sum += d.getAmount();
+			}
+		}
+		return sum;
+	}
+
+	public Double getInAgreedSumForYearAndMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllDebtsToMe();
+		for (PersonalDebt d : debts) {
+			if (d.getCreateDate().getYear() == (year - 1900) && d.getCreateDate().getMonth() == (month - 1)) {
+				sum += d.getAmount();
+			}
 		}
 		return sum;
 	}
@@ -273,11 +356,59 @@ public class PersonalDebtService {
 		return sum;
 	}
 
+	public Double getOutPaymentsSumForYear(Integer year) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllMyDebts();
+		for (PersonalDebt d : debts) {
+			for (PersonalDebtPayments p : d.getPayments()) {
+				if (p.getPaymentDate().getYear() == (year - 1900)) {
+					sum += p.getAmount();
+				}
+			}
+		}
+		return sum;
+	}
+
+	public Double getOutPaymentsSumForYearAndMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllMyDebts();
+		for (PersonalDebt d : debts) {
+			for (PersonalDebtPayments p : d.getPayments()) {
+				if (p.getPaymentDate().getYear() == (year - 1900) && p.getPaymentDate().getMonth() == (month - 1)) {
+					sum += p.getAmount();
+				}
+			}
+		}
+		return sum;
+	}
+
 	public Double getOutAgreedSum() {
 		Double sum = 0d;
 		List<PersonalDebt> debts = getAllMyDebts();
 		for (PersonalDebt d : debts) {
 			sum += d.getAmount();
+		}
+		return sum;
+	}
+
+	public Double getOutAgreedSumForYear(Integer year) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllMyDebts();
+		for (PersonalDebt d : debts) {
+			if (d.getCreateDate().getYear() == (year - 1900)) {
+				sum += d.getAmount();
+			}
+		}
+		return sum;
+	}
+
+	public Double getOutAgreedSumForYearAndMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		List<PersonalDebt> debts = getAllMyDebts();
+		for (PersonalDebt d : debts) {
+			if (d.getCreateDate().getYear() == (year - 1900) && d.getCreateDate().getMonth() == (month - 1)) {
+				sum += d.getAmount();
+			}
 		}
 		return sum;
 	}
@@ -289,10 +420,38 @@ public class PersonalDebtService {
 		return sum;
 	}
 
+	public Double getAllBankIncomeForYear(Integer year) {
+		Double sum = 0d;
+		sum += getOutAgreedSumForYear(year);
+		sum += getInPaymentsSumForYear(year);
+		return sum;
+	}
+
+	public Double getAllBankIncomeForYearAndMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		sum += getOutAgreedSumForYearAndMonth(year, month);
+		sum += getInPaymentsSumForYearAndMonth(year, month);
+		return sum;
+	}
+
 	public Double getAllBankExpense() {
 		Double sum = 0d;
 		sum += getInAgreedSum();
 		sum += getOutPaymentsSum();
+		return sum;
+	}
+
+	public Double getAllBankExpenseForYear(Integer year) {
+		Double sum = 0d;
+		sum += getInAgreedSumForYear(year);
+		sum += getOutPaymentsSumForYear(year);
+		return sum;
+	}
+
+	public Double getAllBankExpenseForYearMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		sum += getInAgreedSumForYearAndMonth(year, month);
+		sum += getOutPaymentsSumForYearAndMonth(year, month);
 		return sum;
 	}
 
@@ -305,24 +464,19 @@ public class PersonalDebtService {
 		addDebt.setType(tRepo.findByType("Dugovi prema meni").get());
 		return addDebt;
 	}
-	
-	
+
 	/*
-	 * 	public PersonalDebt getNewPersonalDebtToMe() {
-		PersonalDebt pd = new PersonalDebt();
-		pd.setType(tRepo.findByType("Dugovi prema meni").get());
-		return pd;
-	}
-
-	public PersonalDebt getNewMyPersonalDebt() {
-		PersonalDebt pd = new PersonalDebt();
-		pd.setType(tRepo.findByType("Moji Dugovi").get());
-		return pd;
-	}
-
+	 * public PersonalDebt getNewPersonalDebtToMe() { PersonalDebt pd = new
+	 * PersonalDebt(); pd.setType(tRepo.findByType("Dugovi prema meni").get());
+	 * return pd; }
+	 * 
+	 * public PersonalDebt getNewMyPersonalDebt() { PersonalDebt pd = new
+	 * PersonalDebt(); pd.setType(tRepo.findByType("Moji Dugovi").get()); return pd;
+	 * }
 	 * 
 	 * 
 	 * 
 	 * 
-	 * */
+	 * 
+	 */
 }

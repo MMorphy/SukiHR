@@ -15,4 +15,18 @@ public interface SavingsRepo extends JpaRepository<Saving, Long> {
 			+ "LEFT JOIN s.payments pay "
 			+ "GROUP BY s.id")
 	public List<SavingsDatabaseDTO> findAllSavingsDBDTOs();
+	
+	@Query("SELECT new hr.petkovic.iehr.DTO.SavingsDatabaseDTO(s.id, SUM(pay.amountInHRK), SUM(pay.amountInCurrency)) "
+			+ "FROM Saving s "
+			+ "LEFT JOIN s.payments pay "
+			+ "WHERE YEAR(pay.createDate) = ?1 "
+			+ "GROUP BY s.id")
+	public List<SavingsDatabaseDTO> findAllSavingsDBDTOsForYear(Integer year);
+
+	@Query("SELECT new hr.petkovic.iehr.DTO.SavingsDatabaseDTO(s.id, SUM(pay.amountInHRK), SUM(pay.amountInCurrency)) "
+			+ "FROM Saving s "
+			+ "LEFT JOIN s.payments pay "
+			+ "WHERE YEAR(pay.createDate) = ?1 AND MONTH(pay.createDate) = ?2 "
+			+ "GROUP BY s.id")
+	public List<SavingsDatabaseDTO> findAllSavingsDBDTOsForYearMonth(Integer year, Integer month);
 }

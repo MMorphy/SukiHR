@@ -45,7 +45,12 @@ public class SavingsService {
 	public List<SavingsDatabaseDTO> findAllSavingsDBDTOs() {
 		return savRepo.findAllSavingsDBDTOs();
 	}
-
+	public List<SavingsDatabaseDTO> findAllSavingsDBDTOsForYear(Integer year) {
+		return savRepo.findAllSavingsDBDTOsForYear(year);
+	}
+	public List<SavingsDatabaseDTO> findAllSavingsDBDTOsForYearMonth(Integer year, Integer month) {
+		return savRepo.findAllSavingsDBDTOsForYearMonth(year, month);
+	}
 	public List<SavingsUIDTO> findAllDisplayDTOS() {
 		List<SavingsUIDTO> returnList = new ArrayList<SavingsUIDTO>();
 		List<SavingsDatabaseDTO> dtos = findAllSavingsDBDTOs();
@@ -66,6 +71,31 @@ public class SavingsService {
 	public Double findBankSum() {
 		Double sum = 0d;
 		List<SavingsDatabaseDTO> allSavings = findAllSavingsDBDTOs();
+		if (!allSavings.isEmpty()) {
+			for (SavingsDatabaseDTO s : allSavings) {
+				if (s.getLocalTotal() != null) {
+					sum += s.getLocalTotal();
+				}
+			}
+		}
+		return sum;
+	}
+	public Double findBankSumForYear(Integer year) {
+		Double sum = 0d;
+		List<SavingsDatabaseDTO> allSavings = findAllSavingsDBDTOsForYear(year);
+		if (!allSavings.isEmpty()) {
+			for (SavingsDatabaseDTO s : allSavings) {
+				if (s.getLocalTotal() != null) {
+					sum += s.getLocalTotal();
+				}
+			}
+		}
+		return sum;
+	}
+
+	public Double findBankSumForYearMonth(Integer year, Integer month) {
+		Double sum = 0d;
+		List<SavingsDatabaseDTO> allSavings = findAllSavingsDBDTOsForYearMonth(year, month);
 		if (!allSavings.isEmpty()) {
 			for (SavingsDatabaseDTO s : allSavings) {
 				if (s.getLocalTotal() != null) {

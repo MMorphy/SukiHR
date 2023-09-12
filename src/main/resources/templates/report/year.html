@@ -1,31 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-<meta charset="ISO-8859-1">
-<title>Report Godine</title>
-<th:block th:include="fragments/generalFragments.html :: headerfiles">
-</th:block>
-<script type="text/javascript"
-	src="https://cdn.datatables.net/v/bs/dt-1.11.3/datatables.min.js"></script>
+	<meta charset="ISO-8859-1">
+	<title>Report Godine</title>
+	<th:block th:include="fragments/generalFragments.html :: headerfiles">
+	</th:block>
+	<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.11.3/datatables.min.js"></script>
 </head>
+
 <body>
 
 	<div th:replace="fragments/generalFragments.html :: navbar"></div>
 
 	<script>
-		$(document).ready(function() {
+		$(document).ready(function () {
 			$('#userTable').DataTable({
-				"order" : [ [ 0, 'desc' ], [ 2, 'desc' ] ]
+				"order": [[0, 'desc'], [1, 'asc']]
 			});
 			$('#siteTable').DataTable({
-				"order" : [ [ 0, 'desc' ], [ 2, 'desc' ] ]
+				"order": [[0, 'desc'], [1, 'asc']]
 			});
 			$('#transTable').DataTable({
-				"order" : [ [ 0, 'desc' ], [ 2, 'desc' ] ]
+				"order": [[0, 'desc'], [2, 'asc']]
 			});
 			$('#inOutTable').DataTable({
-				"order" : [ [ 0, 'desc' ], [ 2, 'desc' ] ]
+				"order": [[0, 'desc'], [1, 'asc']]
 			});
 		});
 	</script>
@@ -46,14 +46,18 @@
 					<tr th:each="i : ${inOutYear}">
 						<td th:text="${i.year}"></td>
 						<td th:text="${i.type}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(i.total, 1, 'COMMA', 2, 'POINT')+ ' €'}"></td>
+						<td><a th:text="${#numbers.formatDecimal(i.total, 1, 'COMMA', 2, 'POINT')+ ' €'}"
+								th:href="@{'/report/year/inout/' + ${i.type}+'/'+ ${i.year}}"></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-
+	<div>
+		<form th:action="@{/report/chart/inout/}ear" method="get">
+			<button>Prikaži graf</button>
+		</form>
+	</div>
 	<div class="col-md-12">
 		<div class="col-md-12">
 			<h1 class="col-md-3">User Godine</h1>
@@ -73,8 +77,7 @@
 						<td th:text="${u.year}"></td>
 						<td th:text="${u.username}"></td>
 						<td th:text="${u.type}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(u.total, 1, 'COMMA', 2, 'POINT') + ' €'}"></td>
+						<td th:text="${#numbers.formatDecimal(u.total, 1, 'COMMA', 2, 'POINT') + ' €'}"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -99,8 +102,7 @@
 						<td th:text="${t.year}"></td>
 						<td th:text="${t.category}"></td>
 						<td th:text="${t.type}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(t.total, 1, 'COMMA', 2, 'POINT')+ ' €'}"></td>
+						<td th:text="${#numbers.formatDecimal(t.total, 1, 'COMMA', 2, 'POINT')+ ' €'}"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -126,12 +128,12 @@
 						<td th:text="${s.year}"></td>
 						<td th:text="${s.siteName}"></td>
 						<td th:text="${s.location}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(s.total, 1, 'COMMA', 2, 'POINT')+ ' €'}"></td>
+						<td th:text="${#numbers.formatDecimal(s.total, 1, 'COMMA', 2, 'POINT')+ ' €'}"></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
 </body>
+
 </html>

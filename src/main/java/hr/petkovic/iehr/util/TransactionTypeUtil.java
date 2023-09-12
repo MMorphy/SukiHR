@@ -32,6 +32,8 @@ public class TransactionTypeUtil {
 		returnList.add("IBS Idea d.o.o.");
 		returnList.add("Jarebica lov d.o.o.");
 		returnList.add("Kesh I");
+		returnList.add("Novi aparati");
+		returnList.add("Odvjetnik");
 		returnList.add("Kesh B");
 		returnList.add("Kesh S");
 		returnList.add("Kesh M");

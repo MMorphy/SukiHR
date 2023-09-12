@@ -26,8 +26,16 @@ public class ChartController {
 
 	@GetMapping("/inout")
 	public String getInOutGraph(Model model) {
-		model.addAttribute("inOut", reportServ.getInOut());
 		model.addAttribute("expenses", reportServ.getExpenses());
+		model.addAttribute("inOut", reportServ.getInOut());
 		return "report/chart/inout";
+	}
+
+	@GetMapping("/inout/year")
+	public String getInOutYearGraph(Model model) {
+		model.addAttribute("inOutIncome", reportServ.getInOutYearChartIncome());
+		model.addAttribute("inOutExpense", reportServ.getInOutYearChartExpense());
+		model.addAttribute("inOutProfit", reportServ.getInOutYearChartProfit());
+		return "report/chart/inoutYear";
 	}
 }

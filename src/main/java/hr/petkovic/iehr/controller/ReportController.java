@@ -33,7 +33,7 @@ public class ReportController {
 	}
 
 	@GetMapping("/total/inout/{type}")
-	public String getTotalInOutSublist(@PathVariable String type,Model model) {
+	public String getTotalInOutSublist(@PathVariable String type, Model model) {
 		model.addAttribute("mainType", type);
 		model.addAttribute("inOutTotal", reportServ.getInOutTotalSubtotals(type));
 		return "report/subtotal";
@@ -46,6 +46,21 @@ public class ReportController {
 		model.addAttribute("transYear", reportServ.getTransactionYear());
 		model.addAttribute("inOutYear", reportServ.getInOutYear());
 		return "report/year";
+	}
+
+	@GetMapping("/year/inout/{type}/{year}")
+	public String getTotalInOutSublistYear(@PathVariable String type, @PathVariable Integer year, Model model) {
+		model.addAttribute("mainType", type);
+		model.addAttribute("inOutTotal", reportServ.getInOutYearSubtotals(type, year));
+		return "report/subtotal";
+	}
+
+	@GetMapping("/month/inout/{type}/{year}/{month}")
+	public String getTotalInOutSublistYearMonth(@PathVariable String type, @PathVariable Integer year,
+			@PathVariable Integer month, Model model) {
+		model.addAttribute("mainType", type);
+		model.addAttribute("inOutTotal", reportServ.getInOutMonthSubtotals(type, year, month));
+		return "report/subtotal";
 	}
 
 	@GetMapping("/month")

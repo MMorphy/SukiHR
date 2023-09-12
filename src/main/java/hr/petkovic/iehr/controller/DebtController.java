@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import antlr.collections.List;
 import hr.petkovic.iehr.entity.Debt;
 import hr.petkovic.iehr.service.DebtService;
 
@@ -32,7 +33,7 @@ public class DebtController {
 
 	@GetMapping("/site/{siteId}")
 	public String getAllDebtsForSite(@PathVariable(required = true) Long siteId, Model model) {
-		model.addAttribute("debts", debtSer.findAllDebtsForSiteId(siteId));
+		model.addAttribute("debts",debtSer.findAllDebtsForSiteId(siteId));
 		return "debt/list";
 	}
 
@@ -43,7 +44,7 @@ public class DebtController {
 	}
 
 	@PostMapping("/edit/{id}")
-	public String editDebt (@PathVariable(required = true) Long id, Debt editDebt) {
+	public String editDebt(@PathVariable(required = true) Long id, Debt editDebt) {
 		debtSer.editDebt(id, editDebt);
 		return "redirect:/";
 	}

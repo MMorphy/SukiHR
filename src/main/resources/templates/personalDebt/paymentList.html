@@ -55,6 +55,7 @@
 					<tr>
 						<th>Datum</th>
 						<th>Iznos</th>
+						<th>Stanje</th>
 						<th>Opis</th>
 						<th>Izmjeni</th>
 						<th>Briši</th>
@@ -63,17 +64,18 @@
 				</thead>
 				<tbody>
 					<tr th:each="pay : ${payments}">
-						<td th:text="${pay.paymentDate}"></td>
-						<td th:text="${#numbers.formatDecimal(pay.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
-						<td th:text="${pay.description}"></td>
+						<td th:text="${pay.pay.paymentDate}"></td>
+						<td th:text="${#numbers.formatDecimal(pay.pay.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
+						<td th:text="${#numbers.formatDecimal(pay.currentDebt, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
+						<td th:text="${pay.pay.description}"></td>
 						<td>
-							<form th:action="@{'/personal_debt/payment/edit/' + ${pay.id}}"
+							<form th:action="@{'/personal_debt/payment/edit/' + ${pay.pay.id}}"
 								method="get">
 								<button>Izmjeni</button>
 							</form>
 						</td>
 						<td>
-							<form th:action="@{'/personal_debt/payment/delete/' + ${pay.id}}"
+							<form th:action="@{'/personal_debt/payment/delete/' + ${pay.pay.id}}"
 								method="post">
 								<button>Briši</button>
 							</form>
@@ -83,7 +85,7 @@
 				<tfoot>
 		            <tr>
 		                <th colspan="1" style="text-align:right">Total:</th>
-		                <th colspan="3"></th><th></th>
+		                <th colspan="4"></th><th></th>
 		            </tr>
 		        </tfoot>
 			</table>
