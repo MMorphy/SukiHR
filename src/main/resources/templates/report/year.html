@@ -16,16 +16,16 @@
 	<script>
 		$(document).ready(function () {
 			$('#userTable').DataTable({
-				"order": [[0, 'desc'], [1, 'asc']]
+				"order" : [ [ 0, 'desc' ], [ 1, 'asc' ] ]
 			});
 			$('#siteTable').DataTable({
-				"order": [[0, 'desc'], [1, 'asc']]
+				"order" : [ [ 0, 'desc' ], [ 1, 'asc' ] ]
 			});
 			$('#transTable').DataTable({
-				"order": [[0, 'desc'], [2, 'asc']]
+				"order" : [ [ 0, 'desc' ], [ 2, 'asc' ] ]
 			});
 			$('#inOutTable').DataTable({
-				"order": [[0, 'desc'], [1, 'asc']]
+				"order" : [ [ 0, 'desc' ], [ 1, 'asc' ] ]
 			});
 		});
 	</script>
@@ -54,7 +54,7 @@
 		</div>
 	</div>
 	<div>
-		<form th:action="@{/report/chart/inout/}ear" method="get">
+		<form th:action="@{/report/chart/inout/year}" method="get">
 			<button>Prikaži graf</button>
 		</form>
 	</div>

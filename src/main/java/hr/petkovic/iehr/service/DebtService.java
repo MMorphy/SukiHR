@@ -33,6 +33,9 @@ public class DebtService {
 		Float currentDebt = 0f;
 		for (Debt d : debts) {
 			Long siteId = d.getTransaction().getSite().getId();
+			if (d.getTransaction().getSite().getReleaseDate() != null) {
+				continue;
+			}
 			if (currentDebtMap.containsKey(siteId)) {
 				currentDebt = currentDebtMap.get(siteId) + d.getAmount();
 			} else {
@@ -52,6 +55,9 @@ public class DebtService {
 		Float currentDebt = 0f;
 		for (Debt d : debts) {
 			Long siteId = d.getTransaction().getSite().getId();
+			if (d.getTransaction().getSite().getReleaseDate() != null) {
+				continue;
+			}
 			if (currentDebtMap.containsKey(siteId)) {
 				currentDebt = currentDebtMap.get(siteId) + d.getAmount();
 			} else {

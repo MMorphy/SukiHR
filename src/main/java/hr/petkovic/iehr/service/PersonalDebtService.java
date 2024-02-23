@@ -202,6 +202,14 @@ public class PersonalDebtService {
 
 	}
 
+	public PersonalDebt addSiteClosureDebt(String site, BigDecimal amount) {
+		PersonalDebt pd = new PersonalDebt();
+		pd.setDescription("Povlačenje lokala " + site);
+		pd.setAmount(amount.floatValue());
+		pd.setUser(site);
+		pd.setType(getDebtsToMeType());
+		return dRepo.save(pd);
+	}
 	public Double getOutstandingDebtForId(Long id) {
 		Double outstandingAmount;
 		outstandingAmount = dRepo.getOutstandingAmountForId(id);

@@ -40,6 +40,10 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 	public List<Transaction> findAllWithValuesForUser(String username);
 
 	@Query("SELECT new hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO(t.site, SUM(t.debt.amount)) "
+			+ "FROM Transaction t WHERE t.site.id = :id GROUP BY t.site ")
+	SiteWithTotalDebtDTO findSiteAndDebtBySiteId(Long id);
+
+	@Query("SELECT new hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO(t.site, SUM(t.debt.amount)) "
 			+ "FROM Transaction t WHERE t.debt.amount <> 0 GROUP BY t.site ")
 	List<SiteWithTotalDebtDTO> findAllSitesAndDebt();
 

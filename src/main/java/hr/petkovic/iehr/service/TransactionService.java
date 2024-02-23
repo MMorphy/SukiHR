@@ -110,6 +110,18 @@ public class TransactionService {
 		return transRepo.save(trans);
 	}
 
+	public Transaction addSiteClosureTrans(Site site, BigDecimal amount) {
+		Transaction trans = new Transaction();
+		trans.setType(typeSer.getDefaultIncomeType());
+		trans.setDebt(new Debt(amount.floatValue() * -1));
+		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		trans.setCreatedBy(u);
+		trans.setAmount(0f);
+		trans.setSite(site);
+		trans.setDescription("Povlačenje lokala " + site.getName());
+		return this.saveTransaction(trans);
+	}
+
 	public Transaction saveIncomeWithLoggedInUserAndAddDebtRepay(Transaction trans, Debt debt) {
 		User u = userSer.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		trans.setCreatedBy(u);
@@ -214,11 +226,16 @@ public class TransactionService {
 		for (SiteWithTotalDebtDTO s : transRepo.findAllSitesAndDebt()) {
 			BigDecimal bdValue = BigDecimal.valueOf(s.getDebtTotal());
 			bdValue = bdValue.setScale(2, BigDecimal.ROUND_DOWN);
-			if (bdValue.compareTo(new BigDecimal(0) ) == -1) {
+			if (bdValue.compareTo(new BigDecimal(0)) == -1) {
 				sites.add(s);
 			}
 		}
 		return sites;
+	}
+
+	public SiteWithTotalDebtDTO findSiteAndDebtBySiteId(Long id) {
+		SiteWithTotalDebtDTO site = transRepo.findSiteAndDebtBySiteId(id);
+		return site;
 	}
 
 	public List<SiteWithTotalDebtDTO> findAllSitesWithDebtForUsername(String username) {
@@ -226,7 +243,7 @@ public class TransactionService {
 		for (SiteWithTotalDebtDTO s : transRepo.findAllSitesAndDebtCreatedBy(username)) {
 			BigDecimal bdValue = BigDecimal.valueOf(s.getDebtTotal());
 			bdValue = bdValue.setScale(2, BigDecimal.ROUND_DOWN);
-			if (bdValue.compareTo(new BigDecimal(0) ) == -1) {
+			if (bdValue.compareTo(new BigDecimal(0)) == -1) {
 				sites.add(s);
 			}
 		}
@@ -617,6 +634,10 @@ public class TransactionService {
 
 	private TransactionType getFixedExpenseType() {
 		return typeSer.getDefaultFixedExpenseType();
+	}
+
+	private TransactionType getLokalType() {
+		return typeSer.getDefaultIncomeType();
 	}
 
 	public Boolean generateFixedExpenses() {

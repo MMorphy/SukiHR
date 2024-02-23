@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import hr.petkovic.iehr.DTO.SiteAndDevicesDTO;
+import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
 import hr.petkovic.iehr.entity.DeviceHistory;
 import hr.petkovic.iehr.entity.Site;
 import hr.petkovic.iehr.entity.SiteDevices;
@@ -102,11 +104,17 @@ public class SiteController {
 		return "redirect:/";
 	}
 
+	@GetMapping("/disable/{id}")
+	public String getSiteDisabling(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("DTO",
+				tServ.findSiteAndDebtBySiteId(id));
+		return "site/disable";
+	}
 	@PostMapping("/disable/{id}")
-	public String disableSite(@PathVariable("id") Long id) {
+	public String disableSite(@PathVariable("id") Long id, SiteWithTotalDebtDTO siteAndDevices) {
 		Site site = siteSer.findSiteById(id);
 		if (site != null && site.getActive().equals(new Boolean(true))) {
-			site = siteSer.disableSite(site);
+			site = siteSer.disableSite(site, siteAndDevices);
 			for (SiteDevices sd : site.getDevices()) {
 				deviceSer.decreaseInUse(sd.getDevice(), sd.getAmount());
 				DeviceHistory dh = new DeviceHistory();
@@ -115,6 +123,13 @@ public class SiteController {
 				dh.setDescription("Povlaćenje lokala " + site.getName());
 				dhSer.saveDeviceHistory(dh);
 				sdSer.delete(sd);
+			}
+			BigDecimal bdValue = BigDecimal.valueOf(tServ.findSiteAndDebtBySiteId(site.getId()).getDebtTotal());
+			bdValue = bdValue.setScale(2, BigDecimal.ROUND_DOWN);
+			if (bdValue.compareTo(new BigDecimal(0) ) == -1) {
+				//wipe old debt and generate new one 
+				siteSer.generatePersonalDebt(site, bdValue);
+				//tServ.addSiteClosureTrans(site,bdValue);
 			}
 		} else {
 			logger.warn("Trying to disable an already inactive site: " + site.getName());

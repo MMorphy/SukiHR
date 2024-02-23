@@ -1,5 +1,6 @@
 package hr.petkovic.iehr.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import hr.petkovic.iehr.DTO.DeviceMapDTO;
 import hr.petkovic.iehr.DTO.SiteAndDevicesDTO;
+import hr.petkovic.iehr.DTO.SiteWithTotalDebtDTO;
 import hr.petkovic.iehr.entity.Device;
 import hr.petkovic.iehr.entity.DeviceHistory;
 import hr.petkovic.iehr.entity.Site;
@@ -29,14 +31,16 @@ public class SiteService {
 	private SiteDevicesService sdSer;
 	private UserService userSer;
 	private DeviceHistoryService dhSer;
+	private PersonalDebtService pdSer;
 
 	public SiteService(SiteRepo siteRepo, DeviceService deviceService, SiteDevicesService sdService,
-			UserService userService, DeviceHistoryService dhService) {
+			UserService userService, DeviceHistoryService dhService, PersonalDebtService pdService) {
 		this.siteRepo = siteRepo;
 		deviceSer = deviceService;
 		sdSer = sdService;
 		userSer = userService;
 		dhSer = dhService;
+		pdSer = pdService;
 	}
 
 	public Site findSiteById(Long id) {
@@ -79,7 +83,6 @@ public class SiteService {
 		for (int i = 0; i < siteList.size(); i++) {
 			Set<SiteDevices> set = new HashSet<>();
 			for (SiteDevices d : siteList.get(i).getDevices()) {
-				// TODO makni null ako radi nakon testa
 				if (d.getAmount() != null && !d.getAmount().equals(0)) {
 					set.add(d);
 				}
@@ -103,12 +106,17 @@ public class SiteService {
 		return siteRepo.findAllByUser_username(username);
 	}
 
-	public Site disableSite(Site site) {
+	public Site disableSite(Site site, SiteWithTotalDebtDTO siteAndDevices) {
 		site.setActive(false);
+		site.setRazlogPovlacenja(siteAndDevices.getSite().getRazlogPovlacenja());
 		site.setReleaseDate(new Date());
 		return saveSite(site);
 	}
 
+	public Site generatePersonalDebt(Site site, BigDecimal amount) {
+		pdSer.addSiteClosureDebt(site.getName(), amount);
+		return site;
+	}
 	public Site saveSite(Site site) {
 		return siteRepo.save(site);
 	}

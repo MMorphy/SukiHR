@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="ISO-8859-1">
+<title>Povuci lokal</title>
+<th:block th:include="fragments/generalFragments.html :: headerfiles">
+</head>
+<body>
+	<div th:replace="fragments/generalFragments.html :: navbar"></div>
+
+	<form method="POST" th:object="${DTO}"
+		th:action="@{'/site/disable/' + *{site.id}}">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="form-group col-lg-3">
+					<label for="name">Naziv lokala:</label> <input type="text"
+						class="form-control" id="name" th:field="*{site.name}"
+						required="required" readonly>
+				</div>
+				<div class="form-group col-lg-3">
+					<label for="subtype">Adresa:</label> <input type="text"
+						class="form-control" id="adress" th:field="*{site.address}"
+						required="required" readonly>
+				</div>
+				<div class="form-group col-lg-3">
+					<label for="subtype">Kontakt (Ime i broj):</label> <input
+						type="text" class="form-control" id="contact"
+						th:field="*{site.contact}" readonly>
+				</div>
+				<div class="form-group col-lg-3">
+					<label for="subtype">Razlog povlacenja:</label> <input type="text"
+						step="0.1" min="0" class="form-control" id="pay"
+						th:field="*{site.razlogPovlacenja}">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group col-lg-4">
+				<input type="submit" th:value="Submit" name="action"> <input
+					type="button" onclick="history.go(-1);" value="Back">
+			</div>
+		</div>
+	</form>
+
+
+</body>
+</html>

@@ -51,6 +51,8 @@ public class Site {
 	private Float debt = 0F;
 
 	private String contact;
+	
+	private String razlogPovlacenja;
 
 	@Column(nullable = false)
 	private Boolean active = true;
@@ -83,19 +85,22 @@ public class Site {
 		this.transactions = new ArrayList<>();
 	}
 
-	public Site(Long id, String address, Date lastVisit, Float debt, String contact, Boolean active,
-			Set<SiteDevices> devices, User user, String name, List<Transaction> transactions, Date createDate,
-			Date releaseDate, Float payPercentage) {
+	public Site(Long id, String name, Date createDate, Date releaseDate, String address, Date lastVisit, Float debt,
+			String contact, String razlogPovlacenja, Boolean active, Set<SiteDevices> devices, User user,
+			Collection<Transaction> transactions, Float payPercentage) {
 		super();
 		this.id = id;
+		this.name = name;
+		this.createDate = createDate;
+		this.releaseDate = releaseDate;
 		this.address = address;
 		this.lastVisit = lastVisit;
 		this.debt = debt;
 		this.contact = contact;
+		this.razlogPovlacenja = razlogPovlacenja;
 		this.active = active;
 		this.devices = devices;
 		this.user = user;
-		this.name = name;
 		this.transactions = transactions;
 		this.payPercentage = payPercentage;
 	}
@@ -203,6 +208,15 @@ public class Site {
 
 	public void setPayPercentage(Float payPercentage) {
 		this.payPercentage = payPercentage;
+	}
+
+	
+	public String getRazlogPovlacenja() {
+		return razlogPovlacenja;
+	}
+
+	public void setRazlogPovlacenja(String razlogPovlacenja) {
+		this.razlogPovlacenja = razlogPovlacenja;
 	}
 
 	// Hashcode and equals
